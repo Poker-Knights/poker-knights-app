@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>{'-> Insert Poker Knight app here! <-\n\n'}</Text>
+      <Text>{'-> Insert Poker Knight app here! Sri was here! <-\n\n'}</Text>
       <Text>David was here!</Text>
 
       <StatusBar style="auto" />
