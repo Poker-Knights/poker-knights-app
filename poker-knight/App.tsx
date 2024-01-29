@@ -10,7 +10,7 @@ export default function App() {
       <Text>Sri was here!</Text>
       <Text>Matthew was here!</Text>
       <Text>Joshie was here!</Text>
-      <Text>Kevin was here!!</Text>
+      <Text>Kevin was here!</Text>
       <Text>-----------------------------------</Text>
       <StatusBar style="auto" />
     </View>
