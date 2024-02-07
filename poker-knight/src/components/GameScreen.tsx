@@ -18,8 +18,9 @@ const GameScreen: React.FC = () => {
       </View>
 
       <View style={styles.communityCardsContainer}>
-        <Text style={styles.playerTurnText}>Billy's Turn</Text>
+        <Text style={styles.playerTurnText}>Player's Turn</Text>
         <Text> Table Visuals Go Here</Text>
+        <Text style={styles.betAmountText}> Current Bet Amount</Text>
       </View>
 
       <ImageBackground
@@ -83,7 +84,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "55%",
     padding: 16,
-    backgroundColor: "013220",
+    backgroundColor: "#013220",
   },
   cardImage: {
     width: 60,
@@ -99,9 +100,9 @@ const styles = StyleSheet.create({
   actionButton: {
     backgroundColor: "#fff",
     padding: 0,
-    height: 45,
-    width: 45,
-    borderRadius: 45 / 2, // Half of the width/height to make it perfectly round
+    height: 65,
+    width: 65,
+    borderRadius: 65 / 2, // Half of the width/height to make it perfectly round
     borderWidth: 1,
     borderColor: "#000",
     alignItems: "center", // Center the child horizontally
@@ -131,6 +132,15 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     // No padding needed here as it is inside the background now
+  },
+
+  betAmountText: {
+    fontSize: 18,
+    fontStyle: "italic",
+    color: "white",
+    bottom: 25,
+    position: "absolute",
+    alignSelf: "center",
   },
 });
 

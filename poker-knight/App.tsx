@@ -5,9 +5,9 @@ const App = () => {
   return (
     <>
       <StatusBar barStyle="light-content" />
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <GameScreen />
-      </SafeAreaView>
+      </View>
     </>
   );
 };
