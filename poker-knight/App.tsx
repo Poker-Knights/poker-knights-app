@@ -1,27 +1,22 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, StatusBar } from "react-native";
+import GameScreen from "./src/components/GameScreen";
 
-export default function App() {
+const App = () => {
   return (
-    <View style={styles.container}>
-      <Text>-----------------------------------</Text>
-      <Text>{'-> Insert Poker Knight app here! <-'}</Text>
-      <Text>David was here!</Text>
-      <Text>Sri was here!</Text>
-      <Text>Matthew was here!</Text>
-      <Text>Joshie was here!</Text>
-      <Text>Kevin was here!</Text>
-      <Text>-----------------------------------</Text>
-      <StatusBar style="auto" />
-    </View>
+    <>
+      <StatusBar barStyle="light-content" />
+      <SafeAreaView style={styles.container}>
+        <GameScreen />
+      </SafeAreaView>
+    </>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#0D0D0D", // Example background color, adjust as necessary
   },
 });
+
+export default App;
