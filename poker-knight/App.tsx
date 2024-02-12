@@ -1,21 +1,46 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-import { Game } from "./src/types/Game";
-import { Player } from "./src/types/Player";
+// App.js
+import React, { useState } from "react";
+import { StyleSheet, SafeAreaView, StatusBar } from "react-native";
+import GameScreen from "./src/components/GameScreen";
 
-export default function App() {
+import AppLoading from "expo-app-loading";
+import * as Font from "expo-font";
+
+const App = () => {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  const loadFonts = async () => {
+    await Font.loadAsync({
+      PixeloidMono: require("./assets/fonts/PixeloidMono.ttf"), // Replace with the correct path to your font file
+    });
+    setFontsLoaded(true);
+  };
+
+  if (!fontsLoaded) {
+    return (
+      <AppLoading
+        startAsync={loadFonts}
+        onFinish={() => setFontsLoaded(true)}
+        onError={console.warn}
+      />
+    );
+  }
+
   return (
-    <View style={styles.container}>
-      <StatusBar style="auto" />
-    </View>
+    <>
+      <StatusBar barStyle="light-content" backgroundColor="#2c2a2a" />
+      <SafeAreaView style={styles.container}>
+        <GameScreen />
+      </SafeAreaView>
+    </>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: "#2c2a2a",
   },
 });
+
+export default App;
