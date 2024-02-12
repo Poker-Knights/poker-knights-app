@@ -1,46 +1,31 @@
 // App.js
-import React, { useState } from "react";
-import { StyleSheet, SafeAreaView, StatusBar } from "react-native";
-import GameScreen from "./src/components/GameScreen";
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack"
 
-import AppLoading from "expo-app-loading";
-import * as Font from "expo-font";
+import HomeScreen from "./src/components/pages/Home";
+import CreateScreen from "./src/components/pages/Create";
+import JoinScreen from "./src/components/pages/Join";
+import GameScreen from "./src/components/pages/Game";
 
-const App = () => {
-  const [fontsLoaded, setFontsLoaded] = useState(false);
-
-  const loadFonts = async () => {
-    await Font.loadAsync({
-      PixeloidMono: require("./assets/fonts/PixeloidMono.ttf"), // Replace with the correct path to your font file
-    });
-    setFontsLoaded(true);
-  };
-
-  if (!fontsLoaded) {
-    return (
-      <AppLoading
-        startAsync={loadFonts}
-        onFinish={() => setFontsLoaded(true)}
-        onError={console.warn}
-      />
-    );
-  }
-
-  return (
-    <>
-      <StatusBar barStyle="light-content" backgroundColor="#2c2a2a" />
-      <SafeAreaView style={styles.container}>
-        <GameScreen />
-      </SafeAreaView>
-    </>
-  );
+export type StackParamList = {
+  Home: undefined,
+  Create: undefined,
+  Join: undefined,
+  Game: undefined,
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#2c2a2a",
-  },
-});
+const Stack = createStackNavigator<StackParamList>();
 
-export default App;
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Create" component={CreateScreen} />
+        <Stack.Screen name="Join" component={JoinScreen} />
+        <Stack.Screen name="Game" component={GameScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
