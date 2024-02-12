@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -9,138 +9,251 @@ import {
   ImageBackground,
 } from "react-native";
 
+import { handleSettingsPress } from "../utils/settingsUtil";
+import { formatCurrency } from "../utils/moneyUtils";
+import {
+  initializePlayers,
+  handleCallPress,
+  handleCheckPress,
+  handleFoldPress,
+  handleRaisePress,
+  handleAllInPress,
+} from "../utils/gameUtils";
+
 import { Ionicons } from "@expo/vector-icons";
+const cardBackgroundImage = require("../Graphics/poker_background.png");
+const defaultAvatar = require("../Graphics/userIcon.png"); // Relative path from the current file to the image
+
 const GameScreen: React.FC = () => {
+  const [pot, setPot] = useState(100); // Initialize pot state with a default value
+  const [currentBet, setCurrentBet] = useState(0); // Initialize current bet state with a default value
+  const [players, setPlayers] = useState(initializePlayers());
+
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.potText}>Pot: $16,538</Text>
+    <View style={styles.backgroundContainer}>
+      {/* Top part of the screen with pot and current bet */}
+      <View style={styles.topContainer}>
+        <Text style={styles.potText}>POT:{formatCurrency(pot)}</Text>
+        <Text style={styles.currentBetText}>
+          Current Bet: {formatCurrency(currentBet)}
+        </Text>
+
+        {/* White line */}
+        <View style={styles.whiteLine} />
       </View>
 
-      <View style={styles.communityCardsContainer}>
-        <Text style={styles.playerTurnText}>Player's Turn</Text>
-        <Text> Table Visuals Go Here</Text>
-        <Text style={styles.betAmountText}> Current Bet Amount</Text>
-      </View>
-
-      <ImageBackground
-        source={require("../imgs/gridbackground.png")} // Testing how inserting own images works
-        resizeMode="repeat"
-        style={styles.playerCardsBackground}
+      {/* Settings Button */}
+      <TouchableOpacity
+        style={styles.settingsButton}
+        onPress={handleSettingsPress}
       >
-        <View style={styles.playerCardsContainer}>
-          {/* Display the player's hand here */}
+        <Image
+          source={require("../Graphics/settingwidget.png")}
+          style={styles.settingsIcon}
+        />
+      </TouchableOpacity>
+
+      <View style={styles.bottomContainer}>
+        <ImageBackground
+          source={cardBackgroundImage}
+          style={styles.cardBackground}
+          resizeMode="contain"
+        ></ImageBackground>
+      </View>
+
+      <View style={styles.playersContainer}>
+        {players.map((player, index) => {
+          // Determine the style based on player's index
+          let playerStyle = styles.playerMiddle; // Default to middle player style
+          if (index === 0) playerStyle = styles.playerLeft; // First player
+          if (index === players.length - 1) playerStyle = styles.playerRight; // Last player
+          return (
+            <View key={player.id} style={[styles.playerContainer, playerStyle]}>
+              <Image
+                source={
+                  player.avatarUri ? { uri: player.avatarUri } : defaultAvatar
+                }
+                style={styles.avatar}
+              />
+              <Text style={styles.playerName}>{player.name}</Text>
+              <Text style={styles.playerMoney}>
+                {formatCurrency(player.money)}
+              </Text>
+              {/*player.currentTurn && <View style={styles.turnIndicator} />*/}
+            </View>
+          );
+        })}
+      </View>
+
+      {/* Action buttons container */}
+      <View style={styles.actionButtonsContainer}>
+        {/* Container for the "ALL-IN" button */}
+        <View style={styles.allInButtonContainer}>
+          <TouchableOpacity onPress={handleAllInPress}>
+            <Text style={styles.allInButtonText}>ALL-IN</Text>
+          </TouchableOpacity>
         </View>
 
-        <View style={styles.actionButtonsContainer}>
-          <TouchableOpacity style={[styles.actionButton, styles.foldButton]}>
-            <Text style={styles.actionButtonText}>Fold</Text>
+        {/* Container for the "CALL", "FOLD", "CHECK", "RAISE" buttons */}
+        <View style={styles.lowerButtonsContainer}>
+          <TouchableOpacity onPress={handleCallPress}>
+            <Text style={styles.lowerActionButtonText}>CALL</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
-            <Text style={styles.actionButtonText}>Check</Text>
+          <TouchableOpacity onPress={handleFoldPress}>
+            <Text style={styles.lowerActionButtonText}>FOLD</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
-            <Text style={styles.actionButtonText}>Call</Text>
+          <TouchableOpacity onPress={handleCheckPress}>
+            <Text style={styles.lowerActionButtonText}>CHECK</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
-            <Text style={styles.actionButtonText}>Raise</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.actionButton, styles.allInButton]}>
-            <Text style={styles.actionButtonText}>All in</Text>
+          <TouchableOpacity onPress={handleRaisePress}>
+            <Text style={styles.lowerActionButtonText}>RAISE</Text>
           </TouchableOpacity>
         </View>
-      </ImageBackground>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  backgroundContainer: {
     flex: 1,
-    backgroundColor: "#691F01",
-    alignItems: "center",
-    justifyContent: "space-between",
+    backgroundColor: "#2c2a2a", // Correct property for background color
   },
-  header: {
-    marginTop: 10,
-    paddingBottom: 25,
+
+  bottomContainer: {
+    position: "absolute",
+    bottom: 230,
+    width: "100%",
+    alignItems: "center",
+    height: "60%",
+  },
+
+  cardBackground: {
+    width: "98%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  settingsButton: {
+    position: "absolute",
+    left: 10, // Adjust as needed
+    top: 6,
+    // ... Other styles for the settings button
+  },
+
+  settingsIcon: {
+    width: 30, // Adjust as needed
+    height: 30, // Adjust as needed
+    // ... Other styles for the settings icon
+  },
+
+  topContainer: {
+    backgroundColor: "#2c2a2a", // Background color as per your design
+    paddingBottom: 10, // Or any other value that fits your design
+    alignItems: "center",
   },
   potText: {
-    fontSize: 24,
-    fontWeight: "bold",
+    fontFamily: "PixeloidMono",
+    color: "#feeb00", // Gold color for the pot amount
+    fontSize: 36, // Adjust the size as needed
+    paddingBottom: 2,
   },
-  playerTurnText: {
-    fontSize: 18,
-    fontStyle: "italic",
-    color: "white",
-    top: 20,
-    position: "absolute",
-    alignSelf: "center",
+  currentBetText: {
+    fontFamily: "PixeloidMono",
+    color: "#feeb00", // Gold color for the current bet amount
+    fontSize: 14, // Adjust the size as needed
   },
-  communityCardsContainer: {
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    height: "55%",
-    padding: 16,
-    backgroundColor: "#013220",
+
+  whiteLine: {
+    height: 2, // Height of the white line
+    backgroundColor: "#FFFFFF", // White color for the line
+    width: "80%", // Width of the line, adjust as needed
+    marginTop: 4, // Space between the text and the line, adjust as needed
   },
-  cardImage: {
-    width: 60,
-    height: 90,
-    resizeMode: "contain",
+
+  avatar: {
+    width: 80, // Adjust the size as needed
+    height: 80, // Adjust the size as needed
+    borderRadius: 40, // Half the width/height to make it a circle
+    borderWidth: 2, // Size of border around the avatar
+    borderColor: "#FFFFFF", // Border color, assuming white is desired
+    backgroundColor: "#C4C4C4", // A placeholder background color in case the image fails to load
   },
-  actionButtonsContainer: {
+  playerName: {
+    fontFamily: "PixeloidMono",
+    color: "#feeb00", // Assuming a gold color for the player's name text
+    fontSize: 16, // Adjust the size as needed
+    marginTop: 4, // Space between the avatar and the name
+  },
+  playerMoney: {
+    fontFamily: "PixeloidMono",
+    color: "#feeb00", // Assuming white color for the player's money text
+    fontSize: 14, // Adjust the size as needed
+    marginTop: 2, // Space between the name and the money
+  },
+
+  playersContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
-    paddingBottom: 50,
+    justifyContent: "center", // This will distribute your player containers evenly across the top
+    height: 250,
+    alignItems: "flex-end",
+  },
+
+  playerContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 10,
+    // If you need to space out the player containers evenly, you might consider additional layout styling here
+  },
+
+  playerLeft: {
+    position: "absolute",
+    left: 5, // Adjust based on your design needs
+    bottom: 5, // Lower the left player to create a triangle formation
+  },
+  playerMiddle: {
+    position: "absolute",
+    bottom: 100, // Adjust based on your design needs, this should be the highest point
+  },
+  playerRight: {
+    position: "absolute",
+    right: 5, // Adjust based on your design needs
+    bottom: 5, // Lower the right player to create a triangle formation
+  },
+
+  actionButtonsContainer: {
+    position: "absolute",
+    bottom: 0,
     width: "100%",
+    alignItems: "center",
   },
-  actionButton: {
-    backgroundColor: "#fff",
-    padding: 0,
-    height: 65,
-    width: 65,
-    borderRadius: 65 / 2, // Half of the width/height to make it perfectly round
-    borderWidth: 1,
-    borderColor: "#000",
-    alignItems: "center", // Center the child horizontally
-    justifyContent: "center", // Center the child vertically
-  },
-  actionButtonText: {
-    fontSize: 12,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  foldButton: {
-    backgroundColor: "#ff0000", // Red color for the fold button
+  allInButtonContainer: {
+    marginBottom: 20, // Space between the "ALL-IN" button and the lower buttons
+    // Other styles as needed
   },
   allInButton: {
-    backgroundColor: "#00ff00", // Green color for the all-in button
+    // Styles for the "ALL-IN" button
+    // Add padding, background color, etc. as per your design
   },
-
-  playerCardsBackground: {
-    width: "100%",
-    height: "55%",
-    justifyContent: "center",
-    alignItems: "center",
+  allInButtonText: {
+    fontFamily: "PixeloidMono",
+    color: "#feeb00", // Assuming white color for the player's money text
+    fontSize: 20, // Adjust the size as needed
   },
-  playerCardsContainer: {
-    width: "100%",
+  lowerButtonsContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    alignItems: "center",
-    // No padding needed here as it is inside the background now
+    width: "100%",
+    // Other styles as needed
   },
 
-  betAmountText: {
-    fontSize: 18,
-    fontStyle: "italic",
-    color: "white",
-    bottom: 25,
-    position: "absolute",
-    alignSelf: "center",
+  lowerActionButtonText: {
+    fontFamily: "PixeloidMono",
+    color: "#feeb00", // Assuming white color for the player's money text
+    fontSize: 20, // Adjust the size as needed
+    bottom: 15,
+    paddingTop: 10,
   },
 });
 
