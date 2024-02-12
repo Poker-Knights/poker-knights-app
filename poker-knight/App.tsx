@@ -1,17 +1,11 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar } from "expo-status-bar";
+import { StyleSheet, Text, View } from "react-native";
+import { Game } from "./src/types/Game";
+import { Player } from "./src/types/Player";
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>-----------------------------------</Text>
-      <Text>{'-> Insert Poker Knight app here! <-'}</Text>
-      <Text>David was here!</Text>
-      <Text>Sri was here!</Text>
-      <Text>Matthew was here!</Text>
-      <Text>Joshie was here!</Text>
-      <Text>Kevin was here!</Text>
-      <Text>-----------------------------------</Text>
       <StatusBar style="auto" />
     </View>
   );
@@ -20,8 +14,8 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
