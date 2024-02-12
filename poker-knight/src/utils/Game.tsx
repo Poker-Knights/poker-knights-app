@@ -1,4 +1,4 @@
-// utilities/gameUtils.ts
+// util/Game.tsx
 import { Player } from "../types/Player";
 
 const initializePlayers = (): Player[] => {

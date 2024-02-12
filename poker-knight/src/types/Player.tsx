@@ -1,4 +1,4 @@
-// types/playerTypes.ts
+// types/Player.tsx
 
 export type Player = {
   id: string;
