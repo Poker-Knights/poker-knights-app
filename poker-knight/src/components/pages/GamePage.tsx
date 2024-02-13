@@ -14,7 +14,7 @@ import {
 } from "react-native";
 
 import { handleSettingsPress } from "../../utils/settingsUtil";
-import { formatCurrency } from "../../utils/moneyUtils";
+import { formatCurrency } from "../../utils/Money";
 import {
   initializePlayers,
   handleCallPress,
@@ -22,7 +22,7 @@ import {
   handleFoldPress,
   handleRaisePress,
   handleAllInPress,
-} from "../../utils/gameUtils";
+} from "../../utils/Game";
 
 import { Ionicons } from "@expo/vector-icons";
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
