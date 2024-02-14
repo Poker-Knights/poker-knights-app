@@ -1,4 +1,8 @@
 import React, { useState } from "react";
+import { StackNavigationProp } from '@react-navigation/stack';
+import { StackParamList } from '../../../App';
+
+
 import {
   View,
   Text,
@@ -9,8 +13,8 @@ import {
   ImageBackground,
 } from "react-native";
 
-import { handleSettingsPress } from "../utils/settingsUtil";
-import { formatCurrency } from "../utils/Money";
+import { handleSettingsPress } from "../../utils/settingsUtil";
+import { formatCurrency } from "../../utils/Money";
 import {
   initializePlayers,
   handleCallPress,
@@ -18,11 +22,11 @@ import {
   handleFoldPress,
   handleRaisePress,
   handleAllInPress,
-} from "../utils/Game";
+} from "../../utils/Game";
 
 import { Ionicons } from "@expo/vector-icons";
-const cardBackgroundImage = require("../Graphics/poker_background.png");
-const defaultAvatar = require("../Graphics/userIcon.png"); // Relative path from the current file to the image
+const cardBackgroundImage = require("../../Graphics/poker_background.png");
+const defaultAvatar = require("../../Graphics/userIcon.png"); // Relative path from the current file to the image
 
 const GameScreen: React.FC = () => {
   const [pot, setPot] = useState(100); // Initialize pot state with a default value
@@ -48,7 +52,7 @@ const GameScreen: React.FC = () => {
         onPress={handleSettingsPress}
       >
         <Image
-          source={require("../Graphics/settingwidget.png")}
+          source={require("../../Graphics/settingwidget.png")}
           style={styles.settingsIcon}
         />
       </TouchableOpacity>
