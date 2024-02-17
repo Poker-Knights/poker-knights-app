@@ -1,18 +1,18 @@
 // App.js
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack"
+import { createStackNavigator } from "@react-navigation/stack";
 
 import HomeScreen from "./src/components/pages/Home";
-import CreateScreen from "./src/components/pages/Create";
+import CreateScreen from "./src/components/pages/CreateGame";
 import JoinScreen from "./src/components/pages/Join";
 import GameScreen from "./src/components/pages/Game";
 
 export type StackParamList = {
-  Home: undefined,
-  Create: undefined,
-  Join: undefined,
-  Game: undefined,
+  Home: undefined;
+  Create: undefined;
+  Join: undefined;
+  Game: undefined;
 };
 
 const Stack = createStackNavigator<StackParamList>();
