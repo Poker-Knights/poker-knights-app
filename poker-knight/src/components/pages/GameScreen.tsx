@@ -27,6 +27,10 @@ import { Ionicons } from "@expo/vector-icons";
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
 const defaultAvatar = require("../../Graphics/userIcon.png"); // Relative path from the current file to the image
 
+type Props = {
+  navigation: StackNavigationProp<StackParamList, "Game">;
+};
+
 const GameScreen = ({ navigation }: Props) => {
   const [pot, setPot] = useState(100); // Initialize pot state with a default value
   const [currentBet, setCurrentBet] = useState(0); // Initialize current bet state with a default value
