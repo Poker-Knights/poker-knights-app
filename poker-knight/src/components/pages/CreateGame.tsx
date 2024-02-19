@@ -24,11 +24,11 @@ const Join = ({ navigation }: Props) => {
     });
   }, [navigation]);
 
-  const [gameID, setGameID] = useState("");
+  const [username, setUsername] = useState("");
 
-  const handleJoinPress = () => {
+  const handleCreateGamePress = () => {
     // Implement what happens when the user presses the join button
-    console.log(gameID); // For now, we'll just log the game ID
+    console.log(username); // For now, we'll just log the game ID
     navigation.navigate("Game");
   };
 
@@ -43,9 +43,9 @@ const Join = ({ navigation }: Props) => {
 
       <View style={styles.titleContainer}>
         <Text style={styles.title}>READY?</Text>
-        <Text style={styles.subtitle}>ENTER GAME ID </Text>
-        <Text style={styles.subtitle}>BELOW! </Text>
-        <Text style={styles.subtitle}> </Text>
+        <Text style={styles.subtitle}>ENTER USERNAME </Text>
+        <Text style={styles.subtitle}>BELOW TO </Text>
+        <Text style={styles.subtitle}>CREATE GAME! </Text>
       </View>
 
       <View style={styles.knightContainer}>
@@ -59,16 +59,16 @@ const Join = ({ navigation }: Props) => {
       <View style={styles.gameIDContainer}>
         <TextInput
           style={styles.gameIDInput}
-          onChangeText={setGameID}
-          value={gameID}
-          placeholder="Game ID"
+          onChangeText={setUsername}
+          value={username}
+          placeholder="Username"
           placeholderTextColor="#a9a9a9" // Placeholder text color
           autoCapitalize="none"
           autoCorrect={false}
         />
         <TouchableOpacity
           style={styles.buttonContainer}
-          onPress={handleJoinPress}
+          onPress={handleCreateGamePress}
           activeOpacity={0.7} // Reduce the opacity on press for visual feedback
         >
           <Image
