@@ -1,140 +1,188 @@
-import React from "react";
+import React, { useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "../../../App";
-import { useState } from "react";
 
 import {
-  Button,
-  ImageBackground,
+  StatusBar,
   StyleSheet,
   Text,
-  TextInput,
   View,
-  Pressable,
-  TouchableOpacity,
-  SafeAreaView,
   Image,
+  TouchableOpacity,
+  TextInput,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type Props = {
-  navigation: StackNavigationProp<StackParamList, "Create">;
+  navigation: StackNavigationProp<StackParamList, "Join">;
 };
 
-const CreateGame = ({ navigation }: Props) => {
-  const [message, setMessage] = useState("");
-  const cardBackgroundImage = require("../../Graphics/poker_background.png");
+const Join = ({ navigation }: Props) => {
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: false, // Set this to false to hide the navigation bar
+    });
+  }, [navigation]);
+
+  const [username, setUsername] = useState("");
+
+  const handleCreateGamePress = () => {
+    // Implement what happens when the user presses the join button
+    console.log(username); // For now, we'll just log the game ID
+    navigation.navigate("Game");
+  };
+
+  const handleBackPress = () => {
+    console.log("Back Arrow Pressed");
+    navigation.navigate("Home");
+  };
 
   return (
-    <View style={styles.backgroundContainer}>
-      {/* Top part of the screen with title */}
-      <View style={styles.topContainer}>
-        <Text style={styles.header}>POKER KNIGHTS</Text>
+    <SafeAreaView style={styles.container}>
+      <StatusBar hidden={true} />
 
-        {/* White line */}
-        <View style={styles.whiteLine} />
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>READY?</Text>
+        <Text style={styles.subtitle}>ENTER USERNAME </Text>
+        <Text style={styles.subtitle}>BELOW TO </Text>
+        <Text style={styles.subtitle}>CREATE GAME! </Text>
       </View>
 
-      {/* Username Input */}
-      <Text style={styles.text}>
-        Please enter your user name and click "Create Game" to start a new game
-      </Text>
-      <TextInput
-        style={styles.textInput}
-        placeholder="Username"
-        value={message}
-        placeholderTextColor={"#feeb00"}
-        onChangeText={(text) => setMessage(text)}
-      />
-
-      {/* Create Game Button */}
-      <Pressable
-        style={styles.button}
-        onPress={() => navigation.navigate("Game")}
-      >
-        <Text style={styles.text}>Create Game</Text>
-      </Pressable>
-
-      {/* Bottom of Screen with Create Game button */}
-      <View style={styles.bottomContainer}>
-        <ImageBackground
-          source={cardBackgroundImage}
-          style={styles.cardBackground}
-          resizeMode="contain"
-        ></ImageBackground>
+      <View style={styles.knightContainer}>
+        <Image
+          source={require("../../Graphics/knight.png")}
+          style={styles.knightIcon}
+          resizeMode="contain" // This will make sure the entire icon is visible
+        />
       </View>
-    </View>
+
+      <View style={styles.gameIDContainer}>
+        <TextInput
+          style={styles.gameIDInput}
+          onChangeText={setUsername}
+          value={username}
+          placeholder="Username"
+          placeholderTextColor="#a9a9a9" // Placeholder text color
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
+        <TouchableOpacity
+          style={styles.buttonContainer}
+          onPress={handleCreateGamePress}
+          activeOpacity={0.7} // Reduce the opacity on press for visual feedback
+        >
+          <Image
+            source={require("../../Graphics/longButton.png")}
+            style={styles.buttonImage}
+            resizeMode="contain"
+          />
+          <Text style={styles.buttonText}>Enter</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.backButton}>
+        <TouchableOpacity
+          // style={}
+          onPress={handleBackPress}
+          activeOpacity={0.7} // Reduce the opacity on press for visual feedback
+        >
+          <Image
+            source={require("../../Graphics/backArrow.png")}
+            style={styles.arrowImage}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  backgroundContainer: {
+  container: {
     flex: 1,
+    backgroundColor: "#292626",
     alignItems: "center",
-    backgroundColor: "#2c2a2a", // Correct property for background color
+    justifyContent: "flex-start", // Align content to the top
+    paddingTop: 30, // Adjust as needed to move everything up
   },
 
-  topContainer: {
-    backgroundColor: "#2c2a2a", // Background color as per your design
-    paddingBottom: 10, // Or any other value that fits your design
+  titleContainer: {
     alignItems: "center",
+    marginTop: 16, // Adjust as needed for spacing from the top
+  },
+  title: {
+    fontSize: 52,
+    fontFamily: "PixeloidMono",
+    color: "#faca0f",
+    marginBottom: 16, // Reduce the space below the 'READY?' text
+  },
+  subtitle: {
+    fontSize: 24,
+    fontFamily: "PixeloidMono",
+    color: "#faca0f",
+    marginBottom: 4, // Increase as needed for spacing above the knight icon
   },
 
-  bottomContainer: {
-    position: "absolute",
-    bottom: 230,
+  knightContainer: {
+    marginTop: 38,
+  },
+  knightIcon: {
+    height: 285,
+    width: 285,
+  },
+
+  gameIDContainer: {
+    marginTop: 20, // Adjust as needed for spacing
+    alignItems: "center", // Center children horizontally
+    width: "100%", // Take up full container width
+  },
+  gameIDInput: {
+    height: 50, // Adjust as needed
+    width: "80%", // Match the width of the button
+    backgroundColor: "#fff", // Background color for the input
+    borderRadius: 5, // Rounded corners for the input
+    paddingHorizontal: 10, // Inner spacing
+    fontSize: 18, // Adjust as needed
+    fontFamily: "PixeloidMono",
+    color: "#000", // Text color
+    marginBottom: 10, // Space between input and button
+  },
+  buttonContainer: {
+    width: "80%", // Same width as the input field
+    height: 50, // Adjust as needed
+    justifyContent: "center", // Center the text vertically
+    alignItems: "center", // Center the text horizontally
+    overflow: "hidden", // Prevent the image from going outside the button area
+  },
+  buttonImage: {
+    ...StyleSheet.absoluteFillObject, // Position the image absolutely to cover the whole button area
     width: "100%",
-    alignItems: "center",
-    height: "60%",
-  },
-
-  cardBackground: {
-    width: "98%",
     height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
   },
-
-  text: {
+  buttonText: {
+    fontSize: 24, // Adjust as needed
     fontFamily: "PixeloidMono",
-    color: "#feeb00", // Gold color for the pot amount
-    fontSize: 12, // Adjust the size as needed
-    paddingBottom: 2,
-    margin: 8,
+    color: "#292626", // Adjust text color to be visible against button background
+    position: "absolute", // Position the text over the image
   },
 
-  header: {
-    fontFamily: "PixeloidMono",
-    color: "#feeb00", // Gold color for the pot amount
-    fontSize: 36, // Adjust the size as needed
-    paddingBottom: 2,
-    marginTop: 5,
+  longButton: {
+    height: 50, // Height of your button PNG
+    width: "80%", // Width as a percentage of the screen width
+    // Add more styles if needed
   },
 
-  textInput: {
-    fontFamily: "PixeloidMono",
-    color: "#feeb00",
-    height: 30,
-    width: 300,
-    margin: 10,
-    textAlign: "center",
-    borderColor: "#feeb00",
-    borderWidth: 2,
-    padding: 10,
+  backButton: {
+    position: "absolute", // Position it over everything else
+    left: 10, // Spacing from the left side of the screen
+    bottom: 10, // Spacing from the bottom of the screen
   },
 
-  whiteLine: {
-    height: 2, // Height of the white line
-    backgroundColor: "#FFFFFF", // White color for the line
-    width: "90%", // Width of the line, adjust as needed
-    marginTop: 4, // Space between the text and the line, adjust as needed
-  },
-
-  button: {
-    marginBottom: 100,
-    color: "#feeb00",
-    borderRadius: 5,
-    borderBlockColor: "#feeb00",
+  arrowImage: {
+    height: 50, // Adjust as needed for your image
+    width: 50, // Adjust as needed for your image
+    // If the image is not displaying correctly, you may remove the resizeMode or adjust it
   },
 });
 
-export default CreateGame;
+export default Join;
