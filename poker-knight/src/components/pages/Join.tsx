@@ -45,6 +45,7 @@ const Join = ({ navigation }: Props) => {
         <Text style={styles.title}>READY?</Text>
         <Text style={styles.subtitle}>ENTER GAME ID </Text>
         <Text style={styles.subtitle}>BELOW! </Text>
+        <Text style={styles.subtitle}> </Text>
       </View>
 
       <View style={styles.knightContainer}>
