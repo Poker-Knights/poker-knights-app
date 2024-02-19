@@ -12,10 +12,6 @@ const Home = ({ navigation }: Props) => {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Put stuff for the home screen here!</Text>
-      <Button
-        title="Create Game"
-        onPress={() => navigation.navigate("Create")}
-      />
       <Button title="Join Game" onPress={() => navigation.navigate("Join")} />
     </View>
   );
