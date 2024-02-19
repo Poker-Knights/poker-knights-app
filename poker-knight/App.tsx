@@ -4,9 +4,9 @@ import * as Font from "expo-font";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
-import HomeScreen from "./src/components/pages/Home";
-import JoinScreen from "./src/components/pages/Join";
-import GameScreen from "./src/components/pages/GamePage";
+import HomeScreen from "./src/components/pages/HomeScreen";
+import JoinScreen from "./src/components/pages/JoinGameScreen";
+import GameScreen from "./src/components/pages/GameScreen";
 import AppLoading from "expo-app-loading";
 
 export type StackParamList = {
