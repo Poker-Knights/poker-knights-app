@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { StackNavigationProp } from '@react-navigation/stack';
-import { StackParamList } from '../../../App';
-
+import { StackNavigationProp } from "@react-navigation/stack";
+import { StackParamList } from "../../../App";
 
 import {
   View,
@@ -121,7 +120,7 @@ const GameScreen: React.FC = () => {
 const styles = StyleSheet.create({
   backgroundContainer: {
     flex: 1,
-    backgroundColor: "#2c2a2a", // Correct property for background color
+    backgroundColor: "#292626", // Correct property for background color
   },
 
   bottomContainer: {
@@ -153,7 +152,7 @@ const styles = StyleSheet.create({
   },
 
   topContainer: {
-    backgroundColor: "#2c2a2a", // Background color as per your design
+    backgroundColor: "#292626", // Background color as per your design
     paddingBottom: 10, // Or any other value that fits your design
     alignItems: "center",
   },
