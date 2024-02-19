@@ -27,10 +27,16 @@ import { Ionicons } from "@expo/vector-icons";
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
 const defaultAvatar = require("../../Graphics/userIcon.png"); // Relative path from the current file to the image
 
-const GameScreen: React.FC = () => {
+const GameScreen = ({ navigation }: Props) => {
   const [pot, setPot] = useState(100); // Initialize pot state with a default value
   const [currentBet, setCurrentBet] = useState(0); // Initialize current bet state with a default value
   const [players, setPlayers] = useState(initializePlayers());
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: false, // Set this to false to hide the navigation bar
+    });
+  }, [navigation]);
 
   return (
     <View style={styles.backgroundContainer}>
@@ -146,6 +152,8 @@ const styles = StyleSheet.create({
   },
 
   settingsIcon: {
+    marginTop: 20,
+    marginLeft: 10,
     width: 30, // Adjust as needed
     height: 30, // Adjust as needed
     // ... Other styles for the settings icon
@@ -155,6 +163,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#292626", // Background color as per your design
     paddingBottom: 10, // Or any other value that fits your design
     alignItems: "center",
+    marginTop: 50,
   },
   potText: {
     fontFamily: "PixeloidMono",
@@ -230,6 +239,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: "100%",
     alignItems: "center",
+    marginBottom: 40,
   },
   allInButtonContainer: {
     marginBottom: 20, // Space between the "ALL-IN" button and the lower buttons
