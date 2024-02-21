@@ -63,11 +63,10 @@ const Join = ({ navigation }: Props) => {
           activeOpacity={0.7} // Reduce the opacity on press for visual feedback
         >
           <Image
-            source={require("../../Graphics/longButton.png")}
+            source={require("../../Graphics/HostGameButton.png")}
             style={styles.buttonImage}
             resizeMode="contain"
           />
-          <Text style={styles.buttonText}>HOST GAME</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.buttonContainer}
@@ -75,11 +74,10 @@ const Join = ({ navigation }: Props) => {
           activeOpacity={0.7} // Reduce the opacity on press for visual feedback
         >
           <Image
-            source={require("../../Graphics/longButton.png")}
+            source={require("../../Graphics/JoinGameButton.png")}
             style={styles.buttonImage}
             resizeMode="contain"
           />
-          <Text style={styles.buttonText}>JOIN GAME</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.buttonContainer}
@@ -87,11 +85,10 @@ const Join = ({ navigation }: Props) => {
           activeOpacity={0.7} // Reduce the opacity on press for visual feedback
         >
           <Image
-            source={require("../../Graphics/longButton.png")}
+            source={require("../../Graphics/SettingsButton.png")}
             style={styles.buttonImage}
             resizeMode="contain"
           />
-          <Text style={styles.buttonText}>SETTINGS</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -126,11 +123,6 @@ const styles = StyleSheet.create({
     marginVertical: 10, // Add margin between buttons
     justifyContent: "center", // Center content vertically
     alignItems: "center", // Center content horizontally
-  },
-  buttonText: {
-    fontSize: 24, // Adjust as needed
-    fontFamily: "PixeloidMono",
-    color: "#000000", // Adjust text color to be visible against button background
   },
   buttonImage: {
     width: "100%", // Ensure the image takes up the full width of the button
