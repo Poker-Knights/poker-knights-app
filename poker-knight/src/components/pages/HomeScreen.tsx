@@ -120,13 +120,13 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: "100%", // Adjust the width percentage as needed
     height: 50, // Adjust as needed
-    marginVertical: 10, // Add margin between buttons
+    marginVertical: 15, // Add margin between buttons
     justifyContent: "center", // Center content vertically
     alignItems: "center", // Center content horizontally
   },
   buttonImage: {
     width: "100%", // Ensure the image takes up the full width of the button
-    height: "100%", // Ensure the image takes up the full height of the button
+    height: "140%", // Ensure the image takes up the full height of the button
   },
 });
 
