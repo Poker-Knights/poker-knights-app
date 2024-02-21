@@ -20,25 +20,6 @@ export type StackParamList = {
 const Stack = createStackNavigator<StackParamList>();
 
 export default function App() {
-  const [fontsLoaded, setFontsLoaded] = useState(false);
-
-  const loadFonts = async () => {
-    await Font.loadAsync({
-      PixeloidMono: require("./assets/fonts/PixeloidMono.ttf"), // Replace with the correct path to your font file
-    });
-    setFontsLoaded(true);
-  };
-
-  if (!fontsLoaded) {
-    return (
-      <AppLoading
-        startAsync={loadFonts}
-        onFinish={() => setFontsLoaded(true)}
-        onError={console.warn}
-      />
-    );
-  }
-
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
