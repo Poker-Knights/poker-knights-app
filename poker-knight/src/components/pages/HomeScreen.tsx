@@ -17,6 +17,7 @@ type Props = {
   navigation: StackNavigationProp<StackParamList, "Join">;
 };
 
+import { Player } from "../../types/Player";
 
 const Join = ({ navigation }: Props) => {
   React.useLayoutEffect(() => {
@@ -24,14 +25,14 @@ const Join = ({ navigation }: Props) => {
       headerShown: false, // Set this to false to hide the navigation bar
     });
   }, [navigation]);
-  
-  const [userName, setUserName] = useState("");
-  // const [gameID, setGameID] = useState("");
+
+  const [username, setUsername] = useState("");
 
   const handleHostGamePress = () => {
     // Implement what happens when the user presses the join button
     console.log("Host Game"); // For now, we'll just log the game ID
-    //navigation.navigate("CreateGameLogic");
+    console.log(username);
+    //player1: Player = new Player(username); // Create Player 1
   };
 
   const handleJoinGamePress = () => {
@@ -60,15 +61,14 @@ const Join = ({ navigation }: Props) => {
       <View style={styles.usernameContainer}>
         <TextInput
           style={styles.usernameInput}
-          textAlign={'center'}
-          onChangeText={setUserName}
-          value={userName}
+          textAlign={"center"}
+          onChangeText={setUsername}
+          value={username}
           placeholder="Username"
           placeholderTextColor="#a9a9a9" // Placeholder text color
           autoCapitalize="none"
           autoCorrect={false}
         />
-
       </View>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
