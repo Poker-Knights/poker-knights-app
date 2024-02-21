@@ -50,7 +50,7 @@ const Join = ({ navigation }: Props) => {
 
       <View style={styles.knightContainer}>
         <Image
-          source={require("../../Graphics/knight.png")}
+          source={require("../../Graphics/PKLogo.png")}
           style={styles.knightIcon}
           resizeMode="contain" // This will make sure the entire icon is visible
         />
@@ -103,43 +103,38 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#292626",
     alignItems: "center",
-    justifyContent: "flex-start", // Align content to the top
-    paddingTop: 30, // Adjust as needed to move everything up
+    justifyContent: "center", // Center content vertically
+    paddingTop: 10, // Adjust as needed to move everything up
   },
   knightContainer: {
-    marginTop: 38,
+    marginTop: 0,
   },
   knightIcon: {
-    height: 285,
-    width: 285,
+    height: 350,
+    width: 350,
   },
   buttonsContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    marginTop: 100,
+    width: "100%", // Ensure the container takes up the full width
+    justifyContent: "center", // Center content vertically
+    alignItems: "center", // Center content horizontally
   },
   buttonContainer: {
-    width: "80%", // Same width as the input field
+    width: "100%", // Adjust the width percentage as needed
     height: 50, // Adjust as needed
-    justifyContent: "center", // Center the text vertically
-    alignItems: "center", // Center the text horizontally
-    //overflow: "hidden", // Prevent the image from going outside the button area
-  },
-  buttonImage: {
-    ...StyleSheet.absoluteFillObject, // Position the image absolutely to cover the whole button area
-    width: "100%",
-    height: "100%",
+    marginVertical: 10, // Add margin between buttons
+    justifyContent: "center", // Center content vertically
+    alignItems: "center", // Center content horizontally
   },
   buttonText: {
     fontSize: 24, // Adjust as needed
     fontFamily: "PixeloidMono",
-    color: "#292626", // Adjust text color to be visible against button background
-    position: "absolute", // Position the text over the image
+    color: "#000000", // Adjust text color to be visible against button background
   },
-  longButton: {
-    height: 50, // Height of your button PNG
-    width: "80%", // Width as a percentage of the screen width
-    // Add more styles if needed
+  buttonImage: {
+    width: "100%", // Ensure the image takes up the full width of the button
+    height: "100%", // Ensure the image takes up the full height of the button
   },
 });
 
