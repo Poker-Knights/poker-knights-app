@@ -1,5 +1,5 @@
 // App.js
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as Font from "expo-font";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -8,6 +8,7 @@ import HomeScreen from "./src/components/pages/HomeScreen";
 import JoinScreen from "./src/components/pages/JoinGameScreen";
 import GameScreen from "./src/components/pages/GameScreen";
 import AppLoading from "expo-app-loading";
+import { useFonts } from "./src/utils/useFonts";
 
 export type StackParamList = {
   Home: undefined;
@@ -19,6 +20,18 @@ export type StackParamList = {
 const Stack = createStackNavigator<StackParamList>();
 
 export default function App() {
+  const [fontsLoaded, loadFonts] = useFonts({
+    PixeloidMono: require("./assets/fonts/PixeloidMono.ttf"), // Make sure the path is correct
+  });
+
+  useEffect(() => {
+    loadFonts(); // This function is now guaranteed to be callable
+  }, []);
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
