@@ -59,6 +59,7 @@ const Join = ({ navigation }: Props) => {
       <View style={styles.gameIDContainer}>
         <TextInput
           style={styles.gameIDInput}
+          textAlign={'center'}
           onChangeText={setGameID}
           value={gameID}
           placeholder="Game ID"
@@ -124,7 +125,7 @@ const styles = StyleSheet.create({
   },
 
   knightContainer: {
-    marginTop: 38,
+    marginTop: 5,
   },
   knightIcon: {
     height: 285,

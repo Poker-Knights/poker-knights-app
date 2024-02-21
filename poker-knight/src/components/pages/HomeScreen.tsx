@@ -17,14 +17,16 @@ type Props = {
   navigation: StackNavigationProp<StackParamList, "Join">;
 };
 
+
 const Join = ({ navigation }: Props) => {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false, // Set this to false to hide the navigation bar
     });
   }, [navigation]);
-
-  const [gameID, setGameID] = useState("");
+  
+  const [userName, setUserName] = useState("");
+  // const [gameID, setGameID] = useState("");
 
   const handleHostGamePress = () => {
     // Implement what happens when the user presses the join button
@@ -55,7 +57,19 @@ const Join = ({ navigation }: Props) => {
           resizeMode="contain" // This will make sure the entire icon is visible
         />
       </View>
+      <View style={styles.usernameContainer}>
+        <TextInput
+          style={styles.usernameInput}
+          textAlign={'center'}
+          onChangeText={setUserName}
+          value={userName}
+          placeholder="Username"
+          placeholderTextColor="#a9a9a9" // Placeholder text color
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
 
+      </View>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
           style={styles.buttonContainer}
@@ -112,7 +126,7 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     flex: 1,
-    marginTop: 100,
+    marginTop: 5,
     width: "100%", // Ensure the container takes up the full width
     justifyContent: "center", // Center content vertically
     alignItems: "center", // Center content horizontally
@@ -127,6 +141,22 @@ const styles = StyleSheet.create({
   buttonImage: {
     width: "100%", // Ensure the image takes up the full width of the button
     height: "140%", // Ensure the image takes up the full height of the button
+  },
+  usernameContainer: {
+    marginTop: 35, // Adjust as needed for spacing
+    alignItems: "center", // Center children horizontally
+    width: "100%", // Take up full container width
+  },
+  usernameInput: {
+    height: 70, // Adjust as needed
+    width: "80%", // Match the width of the button
+    backgroundColor: "#fff", // Background color for the input
+    borderRadius: 5, // Rounded corners for the input
+    paddingHorizontal: 10, // Inner spacing
+    fontSize: 24, // Adjust as needed
+    fontFamily: "PixeloidMono",
+    color: "#000", // Text color
+    marginBottom: 10, // Space between input and button
   },
 });
 
