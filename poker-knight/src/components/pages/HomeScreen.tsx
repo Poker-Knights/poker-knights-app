@@ -24,29 +24,29 @@ const Join = ({ navigation }: Props) => {
     });
   }, [navigation]);
 
-  const [username, setUsername] = useState("");
+  const [gameID, setGameID] = useState("");
 
-  const handleCreateGamePress = () => {
+  const handleHostGamePress = () => {
     // Implement what happens when the user presses the join button
-    console.log(username); // For now, we'll just log the game ID
-    navigation.navigate("Game");
+    console.log("Host Game"); // For now, we'll just log the game ID
+    //navigation.navigate("CreateGameLogic");
   };
 
-  const handleBackPress = () => {
-    console.log("Back Arrow Pressed");
-    navigation.navigate("Home");
+  const handleJoinGamePress = () => {
+    // Implement what happens when the user presses the join button
+    console.log("Join Game"); // For now, we'll just log the game ID
+    navigation.navigate("Join");
+  };
+
+  const handleSettingsPress = () => {
+    // Implement what happens when the user presses the join button
+    console.log("Settings"); // For now, we'll just log the game ID
+    //navigation.navigate("Settings");
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar hidden={true} />
-
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>READY?</Text>
-        <Text style={styles.subtitle}>ENTER USERNAME </Text>
-        <Text style={styles.subtitle}>BELOW TO </Text>
-        <Text style={styles.subtitle}>CREATE GAME! </Text>
-      </View>
 
       <View style={styles.knightContainer}>
         <Image
@@ -56,19 +56,10 @@ const Join = ({ navigation }: Props) => {
         />
       </View>
 
-      <View style={styles.gameIDContainer}>
-        <TextInput
-          style={styles.gameIDInput}
-          onChangeText={setUsername}
-          value={username}
-          placeholder="Username"
-          placeholderTextColor="#a9a9a9" // Placeholder text color
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
+      <View style={styles.buttonsContainer}>
         <TouchableOpacity
           style={styles.buttonContainer}
-          onPress={handleCreateGamePress}
+          onPress={handleHostGamePress}
           activeOpacity={0.7} // Reduce the opacity on press for visual feedback
         >
           <Image
@@ -76,21 +67,31 @@ const Join = ({ navigation }: Props) => {
             style={styles.buttonImage}
             resizeMode="contain"
           />
-          <Text style={styles.buttonText}>Enter</Text>
+          <Text style={styles.buttonText}>HOST GAME</Text>
         </TouchableOpacity>
-      </View>
-
-      <View style={styles.backButton}>
         <TouchableOpacity
-          // style={}
-          onPress={handleBackPress}
+          style={styles.buttonContainer}
+          onPress={handleJoinGamePress}
           activeOpacity={0.7} // Reduce the opacity on press for visual feedback
         >
           <Image
-            source={require("../../Graphics/backArrow.png")}
-            style={styles.arrowImage}
+            source={require("../../Graphics/longButton.png")}
+            style={styles.buttonImage}
             resizeMode="contain"
           />
+          <Text style={styles.buttonText}>JOIN GAME</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.buttonContainer}
+          onPress={handleSettingsPress}
+          activeOpacity={0.7} // Reduce the opacity on press for visual feedback
+        >
+          <Image
+            source={require("../../Graphics/longButton.png")}
+            style={styles.buttonImage}
+            resizeMode="contain"
+          />
+          <Text style={styles.buttonText}>SETTINGS</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -105,24 +106,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start", // Align content to the top
     paddingTop: 30, // Adjust as needed to move everything up
   },
-
-  titleContainer: {
-    alignItems: "center",
-    marginTop: 16, // Adjust as needed for spacing from the top
-  },
-  title: {
-    fontSize: 52,
-    fontFamily: "PixeloidMono",
-    color: "#faca0f",
-    marginBottom: 16, // Reduce the space below the 'READY?' text
-  },
-  subtitle: {
-    fontSize: 24,
-    fontFamily: "PixeloidMono",
-    color: "#faca0f",
-    marginBottom: 4, // Increase as needed for spacing above the knight icon
-  },
-
   knightContainer: {
     marginTop: 38,
   },
@@ -130,29 +113,17 @@ const styles = StyleSheet.create({
     height: 285,
     width: 285,
   },
-
-  gameIDContainer: {
-    marginTop: 20, // Adjust as needed for spacing
-    alignItems: "center", // Center children horizontally
-    width: "100%", // Take up full container width
-  },
-  gameIDInput: {
-    height: 50, // Adjust as needed
-    width: "80%", // Match the width of the button
-    backgroundColor: "#fff", // Background color for the input
-    borderRadius: 5, // Rounded corners for the input
-    paddingHorizontal: 10, // Inner spacing
-    fontSize: 18, // Adjust as needed
-    fontFamily: "PixeloidMono",
-    color: "#000", // Text color
-    marginBottom: 10, // Space between input and button
+  buttonsContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   buttonContainer: {
     width: "80%", // Same width as the input field
     height: 50, // Adjust as needed
     justifyContent: "center", // Center the text vertically
     alignItems: "center", // Center the text horizontally
-    overflow: "hidden", // Prevent the image from going outside the button area
+    //overflow: "hidden", // Prevent the image from going outside the button area
   },
   buttonImage: {
     ...StyleSheet.absoluteFillObject, // Position the image absolutely to cover the whole button area
@@ -165,23 +136,10 @@ const styles = StyleSheet.create({
     color: "#292626", // Adjust text color to be visible against button background
     position: "absolute", // Position the text over the image
   },
-
   longButton: {
     height: 50, // Height of your button PNG
     width: "80%", // Width as a percentage of the screen width
     // Add more styles if needed
-  },
-
-  backButton: {
-    position: "absolute", // Position it over everything else
-    left: 10, // Spacing from the left side of the screen
-    bottom: 10, // Spacing from the bottom of the screen
-  },
-
-  arrowImage: {
-    height: 50, // Adjust as needed for your image
-    width: 50, // Adjust as needed for your image
-    // If the image is not displaying correctly, you may remove the resizeMode or adjust it
   },
 });
 
