@@ -48,19 +48,21 @@ const Join = ({ navigation }: Props) => {
         <Text style={styles.subtitle}> </Text>
       </View>
 
-      <View style={styles.knightContainer}>
+      {/* <View style={styles.knightContainer}>
         <Image
           source={require("../../Graphics/knight.png")}
           style={styles.knightIcon}
           resizeMode="contain" // This will make sure the entire icon is visible
         />
-      </View>
+      </View> */}
 
       <View style={styles.gameIDContainer}>
         <TextInput
           style={styles.gameIDInput}
           textAlign={'center'}
+          keyboardType="numeric"
           onChangeText={setGameID}
+          maxLength={4} // Placeholder
           value={gameID}
           placeholder="Game ID"
           placeholderTextColor="#a9a9a9" // Placeholder text color
@@ -138,7 +140,7 @@ const styles = StyleSheet.create({
     width: "100%", // Take up full container width
   },
   gameIDInput: {
-    height: 50, // Adjust as needed
+    height: 70, // Adjust as needed
     width: "80%", // Match the width of the button
     backgroundColor: "#fff", // Background color for the input
     borderRadius: 5, // Rounded corners for the input
@@ -146,7 +148,7 @@ const styles = StyleSheet.create({
     fontSize: 18, // Adjust as needed
     fontFamily: "PixeloidMono",
     color: "#000", // Text color
-    marginBottom: 10, // Space between input and button
+    marginBottom: 30, // Space between input and button
   },
   buttonContainer: {
     width: "80%", // Same width as the input field
