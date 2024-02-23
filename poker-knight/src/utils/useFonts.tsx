@@ -1,17 +1,20 @@
+// useFonts.js
 import * as Font from "expo-font";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-export function useFonts(fontMap: string | Record<string, Font.FontSource>) {
-  const [loaded, setLoaded] = useState(false);
+export function useFonts(fontMap: {
+  [key: string]: Font.FontSource;
+}): [boolean, () => Promise<void>] {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
 
-  useEffect(() => {
-    async function loadFonts() {
+  const loadFonts = async (): Promise<void> => {
+    try {
       await Font.loadAsync(fontMap);
-      setLoaded(true);
+      setFontsLoaded(true);
+    } catch (error) {
+      console.warn(error);
     }
+  };
 
-    loadFonts();
-  }, []);
-
-  return loaded;
+  return [fontsLoaded, loadFonts];
 }
