@@ -18,6 +18,9 @@ type Props = {
 };
 
 import { Player } from "../../types/Player";
+import { initializePlayers, playerCount} from "../../utils/Game";
+
+
 
 const Join = ({ navigation }: Props) => {
   React.useLayoutEffect(() => {
@@ -27,12 +30,37 @@ const Join = ({ navigation }: Props) => {
   }, [navigation]);
 
   const [username, setUsername] = useState("");
+  const [gameId, setGameId] = useState("");
 
   const handleHostGamePress = () => {
     // Implement what happens when the user presses the join button
     console.log("Host Game"); // For now, we'll just log the game ID
     console.log(username);
-    //player1: Player = new Player(username); // Create Player 1
+
+    const players: Player[] = initializePlayers();
+    // Assign the username to the first player
+    players[0].name = username;
+    // Generate Id for player
+    players[0].id = Math.random().toString(36).substr(2, 9);
+
+    // Assign player profile picture to the first player, avatarUri is a string
+    players[0].avatarUri = "../Graphics/Knight1.png";
+
+    // Increase total players
+    playerCount.totalPlayers++;
+
+    // Randomly set and generate 6 digit game ID
+    setGameId(Math.random().toString(36).substr(2, 6));
+    console.log(gameId);
+
+    // Upon creating game, there must be a way to recognize what network the player is on so other players can join, use socket.io
+    // Make a placeholder function for this that is called from an import, passed the gameID
+    //createGame(gameId);
+    
+
+    // Navigate to the game screen with all the updated info for players and game state
+    navigation.navigate("Game", { gameId: gameId, players: players, playerCount: playerCount});
+
   };
 
   const handleJoinGamePress = () => {
