@@ -17,7 +17,7 @@ import { playerCount } from "./src/utils/Game";
 export type StackParamList = {
   Home: undefined;
   Join: undefined;
-  Game: { gameId: string;};
+  Game: { gameId: string, players: Player[]};
 }
 
 const Stack = createStackNavigator<StackParamList>();

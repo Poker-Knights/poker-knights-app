@@ -37,13 +37,16 @@ const Join = ({ navigation }: Props) => {
 
     const players: Player[] = initializePlayers();
     // Assign the username to the first player
-    players[0].name = username;
-
+    console.log(players);
+    players[1].name = username;
+    
     // Generate Id for player
-    players[0].id = Math.random().toString(36).substr(2, 9);
+    //players[1].id = Math.random().toString(36).substr(2, 9);
 
     // Assign player profile picture to the first player, avatarUri is a string
-    players[0].avatarUri = "../Graphics/Knight1.png";
+    players[1].avatarUri = "../Graphics/knight.png";
+
+
 
     // Increase total players
     playerCount.totalPlayers++;
@@ -58,10 +61,14 @@ const Join = ({ navigation }: Props) => {
 
     // Navigate to the game screen with all the updated info for players and game state if username entered
     if (username) {
+      console.log(players);
       navigation.navigate("Game", {
-        gameId: gameId,
+        gameId: gameId, players: players
       });
-    } else {
+    } 
+
+    else {
+      // If no username entered, alert the user
       alert("Please enter a username");
     }
   };

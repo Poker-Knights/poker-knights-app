@@ -31,10 +31,13 @@ type Props = {
   navigation: StackNavigationProp<StackParamList, "Game">;
 };
 
-const GameScreen = ({ navigation }: Props) => {
+
+const GameScreen = ({ navigation}: Props) => {
+  
   const [pot, setPot] = useState(100); // Initialize pot state with a default value
   const [currentBet, setCurrentBet] = useState(0); // Initialize current bet state with a default value
   const [players, setPlayers] = useState(initializePlayers());
+  
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -81,7 +84,7 @@ const GameScreen = ({ navigation }: Props) => {
           if (index === 0) playerStyle = styles.playerLeft; // First player
           if (index === players.length - 1) playerStyle = styles.playerRight; // Last player
           return (
-            <View key={player.id} style={[styles.playerContainer, playerStyle]}>
+            <View style={[styles.playerContainer, playerStyle]}>
               <Image
                 source={
                   player.avatarUri ? { uri: player.avatarUri } : defaultAvatar
