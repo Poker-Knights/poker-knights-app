@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "../../../App";
-
 import {
   StatusBar,
   StyleSheet,
-  Text,
   View,
   Image,
   TouchableOpacity,
@@ -18,6 +16,7 @@ type Props = {
 };
 
 import { Player } from "../../types/Player";
+import { PopupMenu } from './Settings'; // Import PopupMenu
 
 const Join = ({ navigation }: Props) => {
   React.useLayoutEffect(() => {
@@ -27,6 +26,7 @@ const Join = ({ navigation }: Props) => {
   }, [navigation]);
 
   const [username, setUsername] = useState("");
+  const [menuVisible, setMenuVisible] = useState<boolean>(false);
 
   const handleHostGamePress = () => {
     // Implement what happens when the user presses the join button
@@ -44,12 +44,20 @@ const Join = ({ navigation }: Props) => {
   const handleSettingsPress = () => {
     // Implement what happens when the user presses the join button
     console.log("Settings"); // For now, we'll just log the game ID
+    setMenuVisible(true);
     //navigation.navigate("Settings");
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar hidden={true} />
+
+      <View style={styles.modalView}>
+        <PopupMenu
+          visible={menuVisible}
+          onClose={() => setMenuVisible(false)}
+        />
+      </View>
 
       <View style={styles.knightContainer}>
         <Image
@@ -157,6 +165,9 @@ const styles = StyleSheet.create({
     fontFamily: "PixeloidMono",
     color: "#000", // Text color
     marginBottom: 10, // Space between input and button
+  },
+  modalView: {
+    alignItems: 'center',
   },
 });
 

@@ -12,7 +12,8 @@ import {
   ImageBackground,
 } from "react-native";
 
-import { handleSettingsPress } from "../../utils/settingsUtil";
+import { PopupMenu } from './Settings'; // Import PopupMenu, will need to change
+// import { handleSettingsPress } from "../../utils/settingsUtil";
 import { formatCurrency } from "../../utils/Money";
 import {
   initializePlayers,
@@ -35,6 +36,7 @@ const GameScreen = ({ navigation }: Props) => {
   const [pot, setPot] = useState(100); // Initialize pot state with a default value
   const [currentBet, setCurrentBet] = useState(0); // Initialize current bet state with a default value
   const [players, setPlayers] = useState(initializePlayers());
+  const [menuVisible, setMenuVisible] = useState<boolean>(false);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -42,8 +44,20 @@ const GameScreen = ({ navigation }: Props) => {
     });
   }, [navigation]);
 
+  const handleSettingsPress = () => {
+    // Implement what happens when the user presses the join button
+    console.log("Settings"); // For now, we'll just log the game ID
+    setMenuVisible(true);
+    //navigation.navigate("Settings");
+  };
   return (
     <View style={styles.backgroundContainer}>
+      <View style={styles.modalView}>
+        <PopupMenu
+          visible={menuVisible}
+          onClose={() => setMenuVisible(false)}
+        />
+      </View>
       {/* Top part of the screen with pot and current bet */}
       <View style={styles.topContainer}>
         <Text style={styles.potText}>POT:{formatCurrency(pot)}</Text>
@@ -271,6 +285,9 @@ const styles = StyleSheet.create({
     fontSize: 20, // Adjust the size as needed
     bottom: 15,
     paddingTop: 10,
+  },
+  modalView: {
+    alignItems: 'center',
   },
 });
 
