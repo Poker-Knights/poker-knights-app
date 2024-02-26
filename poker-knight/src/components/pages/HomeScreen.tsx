@@ -40,6 +40,7 @@ const Join = ({ navigation }: Props) => {
     const players: Player[] = initializePlayers();
     // Assign the username to the first player
     players[0].name = username;
+    
     // Generate Id for player
     players[0].id = Math.random().toString(36).substr(2, 9);
 
@@ -49,8 +50,8 @@ const Join = ({ navigation }: Props) => {
     // Increase total players
     playerCount.totalPlayers++;
 
-    // Randomly set and generate 6 digit game ID
-    setGameId(Math.random().toString(36).substr(2, 6));
+    // Randomly generate 6 digit number as the ID
+    setGameId(Math.floor(100000 + Math.random() * 900000).toString());
     console.log(gameId);
 
     // Upon creating game, there must be a way to recognize what network the player is on so other players can join, use socket.io
@@ -58,8 +59,16 @@ const Join = ({ navigation }: Props) => {
     //createGame(gameId);
     
 
-    // Navigate to the game screen with all the updated info for players and game state
-    navigation.navigate("Game", { gameId: gameId, players: players, playerCount: playerCount});
+    // Navigate to the game screen with all the updated info for players and game state if username entered
+    if (username) {
+      navigation.navigate("Game", {
+        gameId: gameId,
+      });
+    }
+
+    else {
+      alert("Please enter a username");
+    }
 
   };
 
