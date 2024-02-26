@@ -1,27 +1,44 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+// App.js
+import React, { useEffect, useState } from "react";
+import * as Font from "expo-font";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+
+import HomeScreen from "./src/components/pages/HomeScreen";
+import JoinScreen from "./src/components/pages/JoinGameScreen";
+import GameScreen from "./src/components/pages/GameScreen";
+import AppLoading from "expo-app-loading";
+import { useFonts } from "./src/utils/useFonts";
+
+export type StackParamList = {
+  Home: undefined;
+  Create: undefined;
+  Join: undefined;
+  Game: undefined;
+};
+
+const Stack = createStackNavigator<StackParamList>();
 
 export default function App() {
+  const [fontsLoaded, loadFonts] = useFonts({
+    PixeloidMono: require("./assets/fonts/PixeloidMono.ttf"), // Make sure the path is correct
+  });
+
+  useEffect(() => {
+    loadFonts(); // This function is now guaranteed to be callable
+  }, []);
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>-----------------------------------</Text>
-      <Text>{'-> Insert Poker Knight app here! <-'}</Text>
-      <Text>David was here!</Text>
-      <Text>Sri was here!</Text>
-      <Text>Matthew was here!</Text>
-      <Text>Joshie was here!</Text>
-      <Text>Kevin was here!</Text>
-      <Text>-----------------------------------</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Join" component={JoinScreen} />
+        <Stack.Screen name="Game" component={GameScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
