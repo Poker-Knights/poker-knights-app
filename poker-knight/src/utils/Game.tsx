@@ -1,27 +1,43 @@
 // util/Game.tsx
 import { Player } from "../types/Player";
 
+
+const playerCount = {
+  totalPlayers: 0
+};
+
 const initializePlayers = (): Player[] => {
   return [
     {
       id: "1",
       name: "PLAYER 1",
-      money: 300,
+      money: 0,
       currentTurn: true,
     },
     {
       id: "2",
       name: "PLAYER 2",
-      money: 400,
+      money: 0,
       currentTurn: false,
     },
     {
       id: "3",
       name: "PLAYER 3",
-      money: 350,
+      money: 0,
       currentTurn: false,
     },
   ];
+};
+
+const addPlayer = (numPlayers: number, userID: string, gameID: string) => {
+  const player: Player = {
+    name: userID,
+    id: gameID,
+    money: 500,
+    currentTurn: false,
+  };
+
+  return player;
 };
 
 // Handle button presses
@@ -65,8 +81,8 @@ const placeBet = (playerId: string, betAmount: number, players: Player[]) => {
   // Logic to place a bet
 };
 
-// Export each function separately
-export {
+// export all the functions together
+export default {
   initializePlayers,
   handlePlayerTurn,
   updatePot,
@@ -76,4 +92,19 @@ export {
   handleCheckPress,
   handleFoldPress,
   handleRaisePress,
+  playerCount,
+};
+// Export each function separately
+export {
+  initializePlayers,
+  addPlayer,
+  handlePlayerTurn,
+  updatePot,
+  placeBet,
+  handleAllInPress,
+  handleCallPress,
+  handleCheckPress,
+  handleFoldPress,
+  handleRaisePress,
+  playerCount,
 };
