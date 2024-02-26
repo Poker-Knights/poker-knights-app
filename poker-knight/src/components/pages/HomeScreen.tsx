@@ -18,9 +18,7 @@ type Props = {
 };
 
 import { Player } from "../../types/Player";
-import { initializePlayers, playerCount} from "../../utils/Game";
-
-
+import { initializePlayers, playerCount } from "../../utils/Game";
 
 const Join = ({ navigation }: Props) => {
   React.useLayoutEffect(() => {
@@ -56,11 +54,13 @@ const Join = ({ navigation }: Props) => {
     // Upon creating game, there must be a way to recognize what network the player is on so other players can join, use socket.io
     // Make a placeholder function for this that is called from an import, passed the gameID
     //createGame(gameId);
-    
 
     // Navigate to the game screen with all the updated info for players and game state
-    navigation.navigate("Game", { gameId: gameId, players: players, playerCount: playerCount});
-
+    navigation.navigate("Game", {
+      gameId: gameId,
+      players: players,
+      playerCount: playerCount,
+    });
   };
 
   const handleJoinGamePress = () => {

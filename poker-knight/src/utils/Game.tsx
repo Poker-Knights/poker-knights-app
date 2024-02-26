@@ -29,6 +29,17 @@ const initializePlayers = (): Player[] => {
   ];
 };
 
+const addPlayer = (numPlayers: number, userID: string, gameID: string) => {
+  const player: Player = {
+    name: userID,
+    id: gameID,
+    money: 500,
+    currentTurn: false,
+  };
+
+  return player;
+};
+
 // Handle button presses
 const handleCallPress = () => {
   console.log("Call action");
@@ -86,6 +97,7 @@ export default {
 // Export each function separately
 export {
   initializePlayers,
+  addPlayer,
   handlePlayerTurn,
   updatePot,
   placeBet,
