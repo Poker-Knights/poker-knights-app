@@ -29,7 +29,7 @@ const Join = ({ navigation }: Props) => {
   const handleJoinPress = () => {
     // Implement what happens when the user presses the join button
     console.log(gameID); // For now, we'll just log the game ID
-    navigation.navigate("Game");
+    navigation.navigate("Game", { gameId: gameID });
   };
 
   const handleBackPress = () => {
@@ -59,10 +59,10 @@ const Join = ({ navigation }: Props) => {
       <View style={styles.gameIDContainer}>
         <TextInput
           style={styles.gameIDInput}
-          textAlign={'center'}
+          textAlign={"center"}
           keyboardType="numeric"
           onChangeText={setGameID}
-          maxLength={4} // Placeholder
+          maxLength={6} // Placeholder
           value={gameID}
           placeholder="Game ID"
           placeholderTextColor="#a9a9a9" // Placeholder text color

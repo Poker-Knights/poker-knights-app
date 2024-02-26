@@ -38,7 +38,7 @@ const Join = ({ navigation }: Props) => {
     const players: Player[] = initializePlayers();
     // Assign the username to the first player
     players[0].name = username;
-    
+
     // Generate Id for player
     players[0].id = Math.random().toString(36).substr(2, 9);
 
@@ -61,12 +61,9 @@ const Join = ({ navigation }: Props) => {
       navigation.navigate("Game", {
         gameId: gameId,
       });
-    }
-
-    else {
+    } else {
       alert("Please enter a username");
     }
-
   };
 
   const handleJoinGamePress = () => {
