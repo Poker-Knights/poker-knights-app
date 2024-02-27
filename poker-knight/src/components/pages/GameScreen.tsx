@@ -24,20 +24,40 @@ import {
 } from "../../utils/Game";
 
 import { Ionicons } from "@expo/vector-icons";
+import { RouteProp } from "@react-navigation/native";
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
+
+
+const userIcon = require("../../Graphics/userIcon.png");
+const avatarImages = {
+  avatar1: require("../../Graphics/knight.png"),
+  avatar2: require("../../Graphics/PKLogo.png"),
+  avatar3: require("../../Graphics/backArrow.png"),
+  //avatar2: require("../../Graphics/avatar2.png"),
+  //avatar3:
+  //avatar4
+
+  // Add all other avatars here
+};
+
 const defaultAvatar = require("../../Graphics/userIcon.png"); // Relative path from the current file to the image
+
+type GameScreenRouteProp = RouteProp<StackParamList, 'Game'>;
 
 type Props = {
   navigation: StackNavigationProp<StackParamList, "Game">;
+  route: GameScreenRouteProp;
 };
 
 
-const GameScreen = ({ navigation}: Props) => {
+const GameScreen = ({ navigation, route}: Props) => {
   
   const [pot, setPot] = useState(100); // Initialize pot state with a default value
   const [currentBet, setCurrentBet] = useState(0); // Initialize current bet state with a default value
-  const [players, setPlayers] = useState(initializePlayers());
+  const { gameId, players } = route.params;
+  const usedKeys = new Set(); // Create a set to keep track of used keys
   
+
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -77,19 +97,38 @@ const GameScreen = ({ navigation}: Props) => {
         ></ImageBackground>
       </View>
 
+      
       <View style={styles.playersContainer}>
         {players.map((player, index) => {
           // Determine the style based on player's index
           let playerStyle = styles.playerMiddle; // Default to middle player style
           if (index === 0) playerStyle = styles.playerLeft; // First player
           if (index === players.length - 1) playerStyle = styles.playerRight; // Last player
+
+          // Get an array of keys from avatarImages
+          const keys = Object.keys(avatarImages);
+
+          let randomKey;
+          do {
+            // Generate a random index based on the number of keys
+            const randomIndex = Math.floor(Math.random() * keys.length);
+            // Get a random key using the random index
+            randomKey = keys[randomIndex];
+          } while (usedKeys.has(randomKey)); // Continue if key is already used
+
+          // Mark the selected key as used
+          usedKeys.add(randomKey);
+          const avatarSource = (avatarImages as any)[randomKey]
+          // Save the profile pic to the player object for game state purposes
+          player.avatarUri = avatarSource; 
+          
           return (
-            <View style={[styles.playerContainer, playerStyle]}>
+            <View key={player.id} style={[styles.playerContainer, playerStyle]}>
               <Image
-                source={
-                  player.avatarUri ? { uri: player.avatarUri } : defaultAvatar
-                }
+                
+                source={avatarSource}
                 style={styles.avatar}
+                resizeMode="contain"
               />
               <Text style={styles.playerName}>{player.name}</Text>
               <Text style={styles.playerMoney}>
@@ -191,6 +230,15 @@ const styles = StyleSheet.create({
     marginTop: 4, // Space between the text and the line, adjust as needed
   },
 
+  // avatar: {
+  //   width: 80, // Adjust the size as needed
+  //   height: 80, // Adjust the size as needed
+  //   borderRadius: 40, // Half the width/height to make it a circle
+  //   borderWidth: 2, // Size of border around the avatar
+  //   borderColor: "#FFFFFF", // Border color, assuming white is desired
+  //   backgroundColor: "#C4C4C4", // A placeholder background color in case the image fails to load
+  // },
+
   avatar: {
     width: 80, // Adjust the size as needed
     height: 80, // Adjust the size as needed
@@ -198,7 +246,9 @@ const styles = StyleSheet.create({
     borderWidth: 2, // Size of border around the avatar
     borderColor: "#FFFFFF", // Border color, assuming white is desired
     backgroundColor: "#C4C4C4", // A placeholder background color in case the image fails to load
+    overflow: 'hidden', // Ensures that the image does not spill out of the border radius
   },
+
   playerName: {
     fontFamily: "PixeloidMono",
     color: "#feeb00", // Assuming a gold color for the player's name text
