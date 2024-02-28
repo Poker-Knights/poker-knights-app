@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "../../../App";
-
 import {
   StatusBar,
   StyleSheet,
-  Text,
   View,
   Image,
   TouchableOpacity,
@@ -18,6 +16,7 @@ type Props = {
 };
 
 import { Player } from "../../types/Player";
+import { PopupMenu } from "./Settings"; // Import PopupMenu
 import { initializePlayers, playerCount } from "../../utils/Game";
 
 const Join = ({ navigation }: Props) => {
@@ -29,6 +28,7 @@ const Join = ({ navigation }: Props) => {
 
   const [username, setUsername] = useState("");
   const [gameId, setGameId] = useState("");
+  const [menuVisible, setMenuVisible] = useState<boolean>(false);
 
   const handleHostGamePress = () => {
     // Implement what happens when the user presses the join button
@@ -39,7 +39,7 @@ const Join = ({ navigation }: Props) => {
     // Assign the username to the first player
     console.log(players);
     players[0].name = username;
-    
+
     // Generate Id for player
     players[0].id = Math.random().toString(36).substr(2, 9);
 
@@ -54,22 +54,18 @@ const Join = ({ navigation }: Props) => {
     // Make a placeholder function for this that is called from an import, passed the gameID
     //createGame(gameId);
 
-    
     // if username exceeds 8 characters, alert user
     if (username.length > 8) {
       alert("Username must be 8 characters or less");
     }
 
-
     //
     else if (username) {
       // If no username entered, alert the user
       alert("Please enter a username");
+    } else {
+      navigation.navigate("Game", { gameId: gameId, players: players });
     }
-
-    else{
-      navigation.navigate("Game", {gameId: gameId, players: players});
-    } 
   };
 
   const handleJoinGamePress = () => {
@@ -81,12 +77,20 @@ const Join = ({ navigation }: Props) => {
   const handleSettingsPress = () => {
     // Implement what happens when the user presses the join button
     console.log("Settings"); // For now, we'll just log the game ID
+    setMenuVisible(true);
     //navigation.navigate("Settings");
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar hidden={true} />
+
+      <View style={styles.modalView}>
+        <PopupMenu
+          visible={menuVisible}
+          onClose={() => setMenuVisible(false)}
+        />
+      </View>
 
       <View style={styles.knightContainer}>
         <Image
@@ -194,6 +198,9 @@ const styles = StyleSheet.create({
     fontFamily: "PixeloidMono",
     color: "#000", // Text color
     marginBottom: 10, // Space between input and button
+  },
+  modalView: {
+    alignItems: "center",
   },
 });
 

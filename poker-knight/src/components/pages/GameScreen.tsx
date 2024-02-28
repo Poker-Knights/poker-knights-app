@@ -12,7 +12,8 @@ import {
   ImageBackground,
 } from "react-native";
 
-import { handleSettingsPress } from "../../utils/settingsUtil";
+import { PopupMenu } from "./Settings"; // Import PopupMenu, will need to change
+// import { handleSettingsPress } from "../../utils/settingsUtil";
 import { formatCurrency } from "../../utils/Money";
 import {
   initializePlayers,
@@ -26,7 +27,6 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { RouteProp } from "@react-navigation/native";
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
-
 
 const userIcon = require("../../Graphics/userIcon.png");
 const avatarImages = {
@@ -42,22 +42,21 @@ const avatarImages = {
 
 const defaultAvatar = require("../../Graphics/userIcon.png"); // Relative path from the current file to the image
 
-type GameScreenRouteProp = RouteProp<StackParamList, 'Game'>;
+type GameScreenRouteProp = RouteProp<StackParamList, "Game">;
 
 type Props = {
   navigation: StackNavigationProp<StackParamList, "Game">;
   route: GameScreenRouteProp;
 };
 
-
-const GameScreen = ({ navigation, route}: Props) => {
-  
+const GameScreen = ({ navigation, route }: Props) => {
   const [pot, setPot] = useState(100); // Initialize pot state with a default value
   const [currentBet, setCurrentBet] = useState(0); // Initialize current bet state with a default value
   const { gameId, players } = route.params;
   const usedKeys = new Set(); // Create a set to keep track of used keys
-  
 
+  const [players, setPlayers] = useState(initializePlayers());
+  const [menuVisible, setMenuVisible] = useState<boolean>(false);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -65,8 +64,20 @@ const GameScreen = ({ navigation, route}: Props) => {
     });
   }, [navigation]);
 
+  const handleSettingsPress = () => {
+    // Implement what happens when the user presses the join button
+    console.log("Settings"); // For now, we'll just log the game ID
+    setMenuVisible(true);
+    //navigation.navigate("Settings");
+  };
   return (
     <View style={styles.backgroundContainer}>
+      <View style={styles.modalView}>
+        <PopupMenu
+          visible={menuVisible}
+          onClose={() => setMenuVisible(false)}
+        />
+      </View>
       {/* Top part of the screen with pot and current bet */}
       <View style={styles.topContainer}>
         <Text style={styles.potText}>POT:{formatCurrency(pot)}</Text>
@@ -97,7 +108,6 @@ const GameScreen = ({ navigation, route}: Props) => {
         ></ImageBackground>
       </View>
 
-      
       <View style={styles.playersContainer}>
         {players.map((player, index) => {
           // Determine the style based on player's index
@@ -118,14 +128,13 @@ const GameScreen = ({ navigation, route}: Props) => {
 
           // Mark the selected key as used
           usedKeys.add(randomKey);
-          const avatarSource = (avatarImages as any)[randomKey]
+          const avatarSource = (avatarImages as any)[randomKey];
           // Save the profile pic to the player object for game state purposes
-          player.avatarUri = avatarSource; 
-          
+          player.avatarUri = avatarSource;
+
           return (
             <View key={player.id} style={[styles.playerContainer, playerStyle]}>
               <Image
-                
                 source={avatarSource}
                 style={styles.avatar}
                 resizeMode="contain"
@@ -246,7 +255,7 @@ const styles = StyleSheet.create({
     borderWidth: 2, // Size of border around the avatar
     borderColor: "#FFFFFF", // Border color, assuming white is desired
     backgroundColor: "#C4C4C4", // A placeholder background color in case the image fails to load
-    overflow: 'hidden', // Ensures that the image does not spill out of the border radius
+    overflow: "hidden", // Ensures that the image does not spill out of the border radius
   },
 
   playerName: {
@@ -324,6 +333,9 @@ const styles = StyleSheet.create({
     fontSize: 20, // Adjust the size as needed
     bottom: 15,
     paddingTop: 10,
+  },
+  modalView: {
+    alignItems: "center",
   },
 });
 
