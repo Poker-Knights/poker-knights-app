@@ -37,16 +37,14 @@ const Join = ({ navigation }: Props) => {
 
     const players: Player[] = initializePlayers();
     // Assign the username to the first player
+    console.log(players);
     players[0].name = username;
-
+    
     // Generate Id for player
     players[0].id = Math.random().toString(36).substr(2, 9);
 
-    // Assign player profile picture to the first player, avatarUri is a string
-    players[0].avatarUri = "../Graphics/Knight1.png";
-
     // Increase total players
-    playerCount.totalPlayers++;
+    //playerCount.totalPlayers++;
 
     // Randomly generate 6 digit number as the ID
     setGameId(Math.floor(100000 + Math.random() * 900000).toString());
@@ -56,14 +54,22 @@ const Join = ({ navigation }: Props) => {
     // Make a placeholder function for this that is called from an import, passed the gameID
     //createGame(gameId);
 
-    // Navigate to the game screen with all the updated info for players and game state if username entered
-    if (username) {
-      navigation.navigate("Game", {
-        gameId: gameId,
-      });
-    } else {
+    
+    // if username exceeds 8 characters, alert user
+    if (username.length > 8) {
+      alert("Username must be 8 characters or less");
+    }
+
+
+    //
+    else if (username) {
+      // If no username entered, alert the user
       alert("Please enter a username");
     }
+
+    else{
+      navigation.navigate("Game", {gameId: gameId, players: players});
+    } 
   };
 
   const handleJoinGamePress = () => {
