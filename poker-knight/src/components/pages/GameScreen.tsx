@@ -52,10 +52,8 @@ type Props = {
 const GameScreen = ({ navigation, route }: Props) => {
   const [pot, setPot] = useState(100); // Initialize pot state with a default value
   const [currentBet, setCurrentBet] = useState(0); // Initialize current bet state with a default value
-  const { gameId, players } = route.params;
+  const { Game } = route.params;
   const usedKeys = new Set(); // Create a set to keep track of used keys
-
-  const [players, setPlayers] = useState(initializePlayers());
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
 
   React.useLayoutEffect(() => {
@@ -109,11 +107,13 @@ const GameScreen = ({ navigation, route }: Props) => {
       </View>
 
       <View style={styles.playersContainer}>
-        {players.map((player, index) => {
+        z
+        {Game.players.map((player, index) => {
           // Determine the style based on player's index
           let playerStyle = styles.playerMiddle; // Default to middle player style
           if (index === 0) playerStyle = styles.playerLeft; // First player
-          if (index === players.length - 1) playerStyle = styles.playerRight; // Last player
+          if (index === Game.players.length - 1)
+            playerStyle = styles.playerRight; // Last player
 
           // Get an array of keys from avatarImages
           const keys = Object.keys(avatarImages);

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "../../../App";
+import { Game } from "../../types/Game";
 
 import {
   StatusBar,
@@ -12,12 +13,17 @@ import {
   TextInput,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { RouteProp } from "@react-navigation/native";
+
+type GameScreenRouteProp = RouteProp<StackParamList, "Join">;
 
 type Props = {
   navigation: StackNavigationProp<StackParamList, "Join">;
+  route: GameScreenRouteProp;
 };
 
-const Join = ({ navigation }: Props) => {
+const Join = ({ navigation, route }: Props) => {
+  const { Game } = route.params;
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false, // Set this to false to hide the navigation bar
@@ -29,7 +35,7 @@ const Join = ({ navigation }: Props) => {
   const handleJoinPress = () => {
     // Implement what happens when the user presses the join button
     console.log(gameID); // For now, we'll just log the game ID
-    navigation.navigate("Game", { gameId: gameID });
+    navigation.navigate("Game", { Game: Game });
   };
 
   const handleBackPress = () => {

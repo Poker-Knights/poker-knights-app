@@ -4,6 +4,6 @@ export type Player = {
   id: string;
   name: string;
   money: number;
-  avatarUri: string;
+  avatarUri?: string;
   currentTurn: boolean;
 };

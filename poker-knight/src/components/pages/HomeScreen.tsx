@@ -16,6 +16,7 @@ type Props = {
 };
 
 import { Player } from "../../types/Player";
+import { Game } from "../../types/Game";
 import { PopupMenu } from "./Settings"; // Import PopupMenu
 import { initializePlayers, playerCount } from "../../utils/Game";
 
@@ -30,12 +31,19 @@ const Join = ({ navigation }: Props) => {
   const [gameId, setGameId] = useState("");
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
 
+  const Game: Game = {
+    players: initializePlayers(),
+    id: gameId,
+    potSize: 0,
+  };
+
   const handleHostGamePress = () => {
     // Implement what happens when the user presses the join button
     console.log("Host Game"); // For now, we'll just log the game ID
     console.log(username);
 
-    const players: Player[] = initializePlayers();
+    const players: Player[] = Game.players; //Store players
+
     // Assign the username to the first player
     console.log(players);
     players[0].name = username;
@@ -64,14 +72,14 @@ const Join = ({ navigation }: Props) => {
       // If no username entered, alert the user
       alert("Please enter a username");
     } else {
-      navigation.navigate("Game", { gameId: gameId, players: players });
+      navigation.navigate("Game", { Game: Game });
     }
   };
 
   const handleJoinGamePress = () => {
     // Implement what happens when the user presses the join button
     console.log("Join Game"); // For now, we'll just log the game ID
-    navigation.navigate("Join");
+    navigation.navigate("Join", { Game: Game });
   };
 
   const handleSettingsPress = () => {

@@ -6,5 +6,4 @@ export type Game = {
   id: string;
   players: Player[];
   potSize: number;
-  currentTurn: string;
 };

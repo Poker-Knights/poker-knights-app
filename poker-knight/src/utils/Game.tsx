@@ -1,9 +1,8 @@
 // util/Game.tsx
 import { Player } from "../types/Player";
 
-
 const playerCount = {
-  totalPlayers: 0
+  totalPlayers: 0,
 };
 
 const initializePlayers = (): Player[] => {
