@@ -28,6 +28,12 @@ const Home = ({navigation}: Props) => {
                     navigation.navigate('Join')
                 }
             />
+            <Button
+                title="Loading"
+                onPress={() => 
+                    navigation.navigate('Loading')
+                }
+            />
         </View>
     )
 }

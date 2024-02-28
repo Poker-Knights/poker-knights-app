@@ -7,12 +7,14 @@ import HomeScreen from "./src/components/pages/Home";
 import CreateScreen from "./src/components/pages/CreateGame";
 import JoinScreen from "./src/components/pages/Join";
 import GameScreen from "./src/components/pages/Game";
+import LoadingScreen from "./src/components/pages/Loading";
 
 export type StackParamList = {
   Home: undefined;
   Create: undefined;
   Join: undefined;
   Game: undefined;
+  Loading: undefined;
 };
 
 const Stack = createStackNavigator<StackParamList>();
@@ -25,6 +27,7 @@ export default function App() {
         <Stack.Screen name="Create" component={CreateScreen} />
         <Stack.Screen name="Join" component={JoinScreen} />
         <Stack.Screen name="Game" component={GameScreen} />
+        <Stack.Screen name="Loading" component={LoadingScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
