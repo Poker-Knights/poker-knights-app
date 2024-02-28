@@ -68,7 +68,7 @@ const Join = ({ navigation }: Props) => {
     }
 
     //
-    else if (username) {
+    else if (!username) {
       // If no username entered, alert the user
       alert("Please enter a username");
     } else {

@@ -107,7 +107,6 @@ const GameScreen = ({ navigation, route }: Props) => {
       </View>
 
       <View style={styles.playersContainer}>
-        z
         {Game.players.map((player, index) => {
           // Determine the style based on player's index
           let playerStyle = styles.playerMiddle; // Default to middle player style
