@@ -1,12 +1,17 @@
-// types/Game.tsx
+// types
 
-import { Player } from "./Player";
-import { Card } from "./Card";
+export type Player = {
+  id: string | undefined;
+  name: string;
+  money: number;
+  avatarUri?: string;
+  currentTurn: boolean;
+};
 
 export type Game = {
-  gameId: string;
+  id: string;
   players: Player[];
-  playerCount: number;
   potSize: number;
-  river: Card[];
+  playerCount: number;
 };
+

@@ -8,19 +8,27 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import io from 'socket.io-client';
+
+// Replace with your server's IP and port
+const SERVER_URL = 'http://10.0.2.2:3000'; 
+
 
 type Props = {
   navigation: StackNavigationProp<StackParamList, "Join">;
 };
 
-import { Player } from "../../types/Player";
-import { Game } from "../../types/Game";
+import { Game, Player } from "../../types/Game";
 import { PopupMenu } from "./Settings"; // Import PopupMenu
 import { initializePlayers, playerCount } from "../../utils/Game";
+import socket from "../../utils/socket";
 
-const Join = ({ navigation }: Props) => {
+
+const Home = ({ navigation }: Props) => {
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false, // Set this to false to hide the navigation bar
@@ -30,55 +38,61 @@ const Join = ({ navigation }: Props) => {
   const [username, setUsername] = useState("");
   const [gameId, setGameId] = useState("");
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
-
+  
+  // Initialize socket connection
+  const socket = io(SERVER_URL);
+  
   const Game: Game = {
+    id: gameId,
     players: initializePlayers(),
-    gameId: gameId,
     potSize: 0,
     playerCount: 0,
-    river: [],
   };
+
+  // Create a game function
+  const createGame = (hostUsername: string) => {
+      
+      // Make 6 digit game ID, set to gameId
+      setGameId(Math.floor(100000 + Math.random() * 900000).toString());
+      console.log(gameId);
+
+      // Emit a 'createGame' event to the server
+      socket.emit('createGame',{gameID: Game.id, host: hostUsername});
+      console.log("socket emitted to server");
+      // Listen for 'gameCreated' event, once created navigate to next screen
+      socket.once('gameCreated', (gameID: string) => {
+          console.log(`Game ${gameID} has been created`);
+          navigation.navigate('Game', {Game});
+      });
+  };
+
 
   const handleHostGamePress = () => {
-    const players: Player[] = Game.players; //Store players
+    // Implement what happens when the user presses the join button
+    console.log("Host Game"); // For now, we'll just log the game ID
+    console.log(username);
 
-    // Assign the username to the first player
-    players[0].name = username;
-
-    // Generate Id for player
-    players[0].id = Math.random().toString(36).substr(2, 9);
-
-    // Increase total players
-    Game.playerCount++;
-
-    // Randomly generate 6 digit number as the ID
-    setGameId(Math.floor(100000 + Math.random() * 900000).toString());
-
-    // Upon creating game, there must be a way to recognize what network the player is on so other players can join, use socket.io
-    // Make a placeholder function for this that is called from an import, passed the gameID
-    //createGame(gameId);
-
-    // if username exceeds 8 characters, alert user
-    if (username.length > 8) {
-      alert("Username must be 8 characters or less");
+    
+    // Connect to server
+    if (username.length <= 8 && username.length > 0) {
+      console.log("Username is valid");
+      createGame(username);
     }
-
-    //
-    else if (!username) {
-      // If no username entered, alert the user
-      alert("Please enter a username");
-    } else {
-      navigation.navigate("Game", { Game: Game });
+    else{
+      Alert.alert("Invalid Username", "Username must be between 1 and 8 characters");
     }
   };
+
 
   const handleJoinGamePress = () => {
     // Implement what happens when the user presses the join button
+    console.log("Join Game"); // For now, we'll just log the game ID
     navigation.navigate("Join", { Game: Game });
   };
 
   const handleSettingsPress = () => {
     // Implement what happens when the user presses the join button
+    console.log("Settings"); // For now, we'll just log the game ID
     setMenuVisible(true);
     //navigation.navigate("Settings");
   };
@@ -206,4 +220,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Join;
+export default Home;
+function setGameId(arg0: string) {
+  throw new Error("Function not implemented.");
+}
+
