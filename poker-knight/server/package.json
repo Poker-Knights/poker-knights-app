@@ -1,11 +1,11 @@
 {
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "nodemon index.js"
+        "start": "nodemon index.ts"
     },
     "name": "server",
     "version": "1.0.0",
-    "main": "index.js",
+    "main": "index.ts",
     "license": "MIT",
     "dependencies": {
         "cors": "^2.8.5",
