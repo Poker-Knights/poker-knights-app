@@ -9,12 +9,13 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
+  LogBox,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import io from 'socket.io-client';
 
 // Replace with your server's IP and port
-const SERVER_URL = 'http://10.0.2.2:3000'; 
+const SERVER_URL = 'http://10.0.2.2:3000'; // May need to change this
 
 
 type Props = {
@@ -24,11 +25,8 @@ type Props = {
 import { Game, Player } from "../../types/Game";
 import { PopupMenu } from "./Settings"; // Import PopupMenu
 import { initializePlayers, playerCount } from "../../utils/Game";
-import socket from "../../utils/socket";
-
 
 const Home = ({ navigation }: Props) => {
-
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false, // Set this to false to hide the navigation bar
@@ -40,11 +38,12 @@ const Home = ({ navigation }: Props) => {
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
   
   // Initialize socket connection
-  const socket = io(SERVER_URL);
+  const socket = io(SERVER_URL, { transports: ['websocket'] }); 
+  socket.emit('test', { message: 'Hello, server!' }); // Emit a test event to the server
   
   const Game: Game = {
     id: gameId,
-    players: initializePlayers(),
+    players: initializePlayers() ,
     potSize: 0,
     playerCount: 0,
   };
@@ -60,8 +59,8 @@ const Home = ({ navigation }: Props) => {
       socket.emit('createGame',{gameID: Game.id, host: hostUsername});
       console.log("socket emitted to server");
       // Listen for 'gameCreated' event, once created navigate to next screen
-      socket.once('gameCreated', (gameID: string) => {
-          console.log(`Game ${gameID} has been created`);
+      socket.once('gameCreated', (game: Game) => {
+          console.log(`Game ${game.id} has been created`);
           navigation.navigate('Game', {Game});
       });
   };
