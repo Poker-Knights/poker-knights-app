@@ -1,4 +1,5 @@
 // types/Player.tsx
+import { Card } from "./Card";
 
 export type Player = {
   id: string;
@@ -6,4 +7,5 @@ export type Player = {
   money: number;
   avatarUri?: string;
   currentTurn: boolean;
+  currentHand: Card[];
 };

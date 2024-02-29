@@ -33,30 +33,26 @@ const Join = ({ navigation }: Props) => {
 
   const Game: Game = {
     players: initializePlayers(),
-    id: gameId,
+    gameId: gameId,
     potSize: 0,
+    playerCount: 0,
+    river: [],
   };
 
   const handleHostGamePress = () => {
-    // Implement what happens when the user presses the join button
-    console.log("Host Game"); // For now, we'll just log the game ID
-    console.log(username);
-
     const players: Player[] = Game.players; //Store players
 
     // Assign the username to the first player
-    console.log(players);
     players[0].name = username;
 
     // Generate Id for player
     players[0].id = Math.random().toString(36).substr(2, 9);
 
     // Increase total players
-    //playerCount.totalPlayers++;
+    Game.playerCount++;
 
     // Randomly generate 6 digit number as the ID
     setGameId(Math.floor(100000 + Math.random() * 900000).toString());
-    console.log(gameId);
 
     // Upon creating game, there must be a way to recognize what network the player is on so other players can join, use socket.io
     // Make a placeholder function for this that is called from an import, passed the gameID
@@ -78,13 +74,11 @@ const Join = ({ navigation }: Props) => {
 
   const handleJoinGamePress = () => {
     // Implement what happens when the user presses the join button
-    console.log("Join Game"); // For now, we'll just log the game ID
     navigation.navigate("Join", { Game: Game });
   };
 
   const handleSettingsPress = () => {
     // Implement what happens when the user presses the join button
-    console.log("Settings"); // For now, we'll just log the game ID
     setMenuVisible(true);
     //navigation.navigate("Settings");
   };
