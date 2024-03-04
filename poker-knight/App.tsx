@@ -12,7 +12,6 @@ import { useFonts } from "./src/utils/useFonts";
 import { Game } from "./src/types/Game";
 import { playerCount } from "./src/utils/Game";
 
-
 // I need Game Screen to take the parameters of gameID, players, and playerCount
 // I need to pass the parameters to Game Screen from Home Screen
 export type StackParamList = {
@@ -24,8 +23,6 @@ export type StackParamList = {
 const Stack = createStackNavigator<StackParamList>();
 
 export default function App() {
-
-  
   const [fontsLoaded, loadFonts] = useFonts({
     PixeloidMono: require("./assets/fonts/PixeloidMono.ttf"), // Make sure the path is correct
   });
@@ -38,7 +35,6 @@ export default function App() {
     return <AppLoading />;
   }
 
-  
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">

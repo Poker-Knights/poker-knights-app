@@ -12,11 +12,10 @@ import {
   LogBox,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import io from 'socket.io-client';
+import io from "socket.io-client";
 
 // Replace with your server's IP and port
-const SERVER_URL = 'http://10.0.2.2:3000'; // May need to change this
-
+const SERVER_URL = "http://10.0.2.2:3000"; // May need to change this
 
 type Props = {
   navigation: StackNavigationProp<StackParamList, "Join">;
@@ -36,52 +35,50 @@ const Home = ({ navigation }: Props) => {
   const [username, setUsername] = useState("");
   const [gameId, setGameId] = useState("");
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
-  
+
   // Initialize socket connection
-  const socket = io(SERVER_URL, { transports: ['websocket'] }); 
-  socket.emit('test', { message: 'Hello, server!' }); // Emit a test event to the server
-  
+  const socket = io(SERVER_URL, { transports: ["websocket"] });
+  socket.emit("test", { message: "Hello, server!" }); // Emit a test event to the server
+
   const Game: Game = {
     id: gameId,
-    players: initializePlayers() ,
+    players: initializePlayers(),
     potSize: 0,
     playerCount: 0,
   };
 
   // Create a game function
   const createGame = (hostUsername: string) => {
-      
-      // Make 6 digit game ID, set to gameId
-      setGameId(Math.floor(100000 + Math.random() * 900000).toString());
-      console.log(gameId);
+    // Make 6 digit game ID, set to gameId
+    setGameId(Math.floor(100000 + Math.random() * 900000).toString());
+    console.log(gameId);
 
-      // Emit a 'createGame' event to the server
-      socket.emit('createGame',{gameID: Game.id, host: hostUsername});
-      console.log("socket emitted to server");
-      // Listen for 'gameCreated' event, once created navigate to next screen
-      socket.once('gameCreated', (game: Game) => {
-          console.log(`Game ${game.id} has been created`);
-          navigation.navigate('Game', {Game});
-      });
+    // Emit a 'createGame' event to the server
+    socket.emit("createGame", { gameID: Game.id, host: hostUsername });
+    console.log("socket emitted to server");
+    // Listen for 'gameCreated' event, once created navigate to next screen
+    socket.once("gameCreated", (game: Game) => {
+      console.log(`Game ${game.id} has been created`);
+      navigation.navigate("Game", { Game });
+    });
   };
-
 
   const handleHostGamePress = () => {
     // Implement what happens when the user presses the join button
     console.log("Host Game"); // For now, we'll just log the game ID
     console.log(username);
 
-    
     // Connect to server
     if (username.length <= 8 && username.length > 0) {
       console.log("Username is valid");
       createGame(username);
-    }
-    else{
-      Alert.alert("Invalid Username", "Username must be between 1 and 8 characters");
+    } else {
+      Alert.alert(
+        "Invalid Username",
+        "Username must be between 1 and 8 characters"
+      );
     }
   };
-
 
   const handleJoinGamePress = () => {
     // Implement what happens when the user presses the join button
@@ -223,4 +220,3 @@ export default Home;
 function setGameId(arg0: string) {
   throw new Error("Function not implemented.");
 }
-

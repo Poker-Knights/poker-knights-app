@@ -1,11 +1,12 @@
 // types
 
 export type Player = {
-  id: string | undefined;
+  id: string;
   name: string;
   money: number;
   avatarUri?: string;
   currentTurn: boolean;
+  currentHand?: Card[];
 };
 
 export type Game = {
@@ -15,3 +16,4 @@ export type Game = {
   playerCount: number;
 };
 
+export type Card = {};
