@@ -15,8 +15,8 @@ type Props = {
   navigation: StackNavigationProp<StackParamList, "Join">;
 };
 
-import { Player } from "../../types/Player";
-import { Game } from "../../types/Game";
+import { Player } from "../types/Player";
+import { Game } from "../types/Game";
 import { PopupMenu } from "./Settings"; // Import PopupMenu
 import { initializePlayers, playerCount } from "../../utils/Game";
 

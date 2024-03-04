@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "../../../App";
-import { Game } from "../../types/Game";
+import { Game } from "../types/Game";
 
 import {
   StatusBar,
