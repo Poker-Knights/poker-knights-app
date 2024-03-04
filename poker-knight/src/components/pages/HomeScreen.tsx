@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "../../../App";
 import {
@@ -12,11 +12,8 @@ import {
   LogBox,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import io from 'socket.io-client';
-
-// Replace with your server's IP and port
-const SERVER_URL = 'http://10.0.2.2:3000'; // May need to change this
-
+import io, { Socket } from 'socket.io-client';
+import {SERVER_URL} from '../../utils/socket';
 
 type Props = {
   navigation: StackNavigationProp<StackParamList, "Join">;
@@ -36,40 +33,66 @@ const Home = ({ navigation }: Props) => {
   const [username, setUsername] = useState("");
   const [gameId, setGameId] = useState("");
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
-  
-  // Initialize socket connection
-  const socket = io(SERVER_URL, { transports: ['websocket'] }); 
-  socket.emit('test', { message: 'Hello, server!' }); // Emit a test event to the server
-  
-  const Game: Game = {
-    id: gameId,
-    players: initializePlayers() ,
-    potSize: 0,
-    playerCount: 0,
-  };
+  const [game, setGame] = useState<Game | null>(null);
+  const socketRef = useRef<Socket | null>(null)
+
+
+  // useEffect is a hook that runs after the first render of the component
+  // It is used to perform side effects like data fetching, subscriptions, or manual DOM manipulations
+  // It runs after the render has been committed to the screen
+  // It is safe to perform side effects in this function
+  // Allows re renders of the component to be skipped if the props or state haven't changed
+  // such as when the user is typing in the input field, the component doesn't need to re render
+
+
+  // Set up socket connection and event listeners
+  useEffect(() => {
+    socketRef.current = io(SERVER_URL, { transports: ['websocket'] });
+
+    // Event listener for 'gameCreated' event
+    const handleGameCreated = (data: any) => {
+
+        const newGame : Game = data.gameState;
+        console.log(`Game ${newGame.id} has been created with username ${newGame.players[0].name}!`); 
+        setGame(game); // Update the game state
+      // Navigate to loading screen until enough players
+      // navigation.navigate("Loading", { Game: newGame });
+    };
+
+    if (socketRef.current) {
+      socketRef.current.on('gameCreated', handleGameCreated);
+    }
+
+    // Cleanup on component unmount
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.off('gameCreated', handleGameCreated);
+        socketRef.current.disconnect();
+      }
+    };
+  }, [navigation]);
+
+
+
 
   // Create a game function
   const createGame = (hostUsername: string) => {
-      
-      // Make 6 digit game ID, set to gameId
-      setGameId(Math.floor(100000 + Math.random() * 900000).toString());
-      console.log(gameId);
+    // Generate a new 6 digit game ID
+    const newGameID = Math.floor(100000 + Math.random() * 900000).toString();
+    setGameId(newGameID); // Update state with newGameID, won't be updated immediately
 
-      // Emit a 'createGame' event to the server
-      socket.emit('createGame',{gameID: Game.id, host: hostUsername});
-      console.log("socket emitted to server");
-      // Listen for 'gameCreated' event, once created navigate to next screen
-      socket.once('gameCreated', (game: Game) => {
-          console.log(`Game ${game.id} has been created`);
-          navigation.navigate('Game', {Game});
-      });
+    // Check if the socket is connected
+    if (socketRef.current) {
+      // Emit the 'createGame' event with the new game ID
+      socketRef.current.emit('createGame', { gameID: newGameID, username: hostUsername });
+      console.log("socket createGame emitted to server with ID: " + newGameID);
+    }
   };
 
 
   const handleHostGamePress = () => {
     // Implement what happens when the user presses the join button
     console.log("Host Game"); // For now, we'll just log the game ID
-    console.log(username);
 
     
     // Connect to server
@@ -86,7 +109,9 @@ const Home = ({ navigation }: Props) => {
   const handleJoinGamePress = () => {
     // Implement what happens when the user presses the join button
     console.log("Join Game"); // For now, we'll just log the game ID
-    navigation.navigate("Join", { Game: Game });
+
+    // Here game may not exist just pass the username to next screen
+    navigation.navigate("Join", { username: username });
   };
 
   const handleSettingsPress = () => {

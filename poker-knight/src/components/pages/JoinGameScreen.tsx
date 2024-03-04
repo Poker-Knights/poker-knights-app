@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "../../../App";
 import { Game } from "../../types/Game";
@@ -11,9 +11,13 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RouteProp } from "@react-navigation/native";
+//import { addPlayer } from "../../utils/Game";
+import io, { Socket } from 'socket.io-client';
+import {SERVER_URL} from '../../utils/socket';
 
 type GameScreenRouteProp = RouteProp<StackParamList, "Join">;
 
@@ -23,19 +27,68 @@ type Props = {
 };
 
 const Join = ({ navigation, route }: Props) => {
-  const { Game } = route.params;
+  const {username} = route.params;
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false, // Set this to false to hide the navigation bar
     });
   }, [navigation]);
 
+  const socketRef = useRef<Socket | null>(null)
   const [gameID, setGameID] = useState("");
+
+   // Set up socket connection and event listeners
+   useEffect(() => {
+    socketRef.current = io(SERVER_URL, { transports: ['websocket'] });
+
+    const handleGameJoined = (data: any) => {
+
+      // Game Id is valid, and not enough players are in the game
+      const joiningGame : Game = data.gameState;
+      console.log(' Attempting to join game, game data: ' + joiningGame);
+      // There is enough players, go to game screen
+      navigation.navigate("Game", { username, Game: joiningGame,});
+    };
+
+    const handleGameNotFound = (data: any) => {
+      // Game ID is not valid or game is full
+      alert("Game not found or full. Please try again.");
+    }
+
+    const handleUsernameTaken = (data: any) => {
+      alert("Username is already taken. Please try again.");
+    }
+
+    if (socketRef.current) {
+      // Event listeners to see if user properly joined game
+      socketRef.current.on('gameJoined', handleGameJoined);
+      socketRef.current.on('gameNotFound', handleGameNotFound);
+      socketRef.current.on('usernameTaken', handleUsernameTaken);
+
+    }
+    
+    // Cleanup on component unmount
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.off('gameJoined', handleGameJoined);
+        socketRef.current.off('gameNotFound', handleGameNotFound);
+        socketRef.current.off('usernameTaken', handleUsernameTaken);
+        socketRef.current.disconnect();
+      }
+    };
+  }, [navigation]);
+
+
 
   const handleJoinPress = () => {
     // Implement what happens when the user presses the join button
-    console.log(gameID); // For now, we'll just log the game ID
-    navigation.navigate("Game", { Game: Game });
+
+    // verify that the gameID is valid
+    if (socketRef.current){
+      console.log("Attempting to  join game with id: " + gameID);
+      socketRef.current.emit('attemptToJoin', {username, gameID: gameID});
+    }
+
   };
 
   const handleBackPress = () => {
@@ -67,9 +120,9 @@ const Join = ({ navigation, route }: Props) => {
           style={styles.gameIDInput}
           textAlign={"center"}
           keyboardType="numeric"
-          onChangeText={setGameID}
+          onChangeText= {setGameID}
           maxLength={6} // Placeholder
-          value={gameID}
+          value = {gameID} // Convert gameID to string
           placeholder="Game ID"
           placeholderTextColor="#a9a9a9" // Placeholder text color
           autoCapitalize="none"
