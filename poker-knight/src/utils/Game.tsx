@@ -1,5 +1,5 @@
 // util/Game.tsx
-import { Player } from "../components/types/Player";
+import { Player } from "../types/Game";
 
 const playerCount = {
   totalPlayers: 0,
