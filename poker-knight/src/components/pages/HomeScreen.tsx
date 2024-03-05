@@ -23,7 +23,7 @@ type Props = {
 
 import { Game, Player } from "../../types/Game";
 import { PopupMenu } from "./Settings"; // Import PopupMenu
-import { initializePlayers, playerCount } from "../../utils/Game";
+//import { initializePlayers } from "../../utils/Game";
 
 const Home = ({ navigation }: Props) => {
   React.useLayoutEffect(() => {

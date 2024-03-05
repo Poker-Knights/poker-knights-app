@@ -3,6 +3,10 @@ import express from 'express';
 import http from 'http';
 // Adjust the import path according to your project structure
 import { Game, Player } from '../src/types/Game';
+import { handleCreateGame } from './home_screen/handleCreateGame'; 
+import { handleAttemptToJoin } from './join_screen/handleAttemptToJoin';
+
+
 
 const app = express();
 const server = http.createServer(app);
@@ -14,74 +18,22 @@ const io = new Server(server, {
   });
 const PORT = 3000;
 
-
-
 const games: { [key: string]: Game } = {};
 
 io.on('connection', (socket: Socket) => {
+    console.log(`User connected: ${socket.id}`);
 
-    console.log(`a user connected: ${socket.id}`);
+    // Register event handlers for this connection
+    socket.on('createGame', handleCreateGame(socket, games));
+    socket.on('attemptToJoin', handleAttemptToJoin(socket, games));
 
-    socket.once('createGame', (gameID: string, username: string) => {
-
-        console.log(`gameID: ${gameID}, username: ${username}`);
-
-        const newPlayer: Player = {
-            id: socket.id,
-            name: username,
-            money: 500,
-            avatarUri: '',
-            currentTurn: false,
-
-        };
-
-        const newGame: Game = {
-            id: gameID,
-            // Add the new player to the game as the 0th index
-            players: [newPlayer],
-            potSize: 0,
-            playerCount: 1,
-        };
-
-        games[gameID] = newGame;
-        
-        socket.emit('gameCreated', {gameState: newGame }); 
-        console.log(newGame.players[0].name);
-        console.log('gameCreated event emitted');
+    // Example of disconnect event
+    socket.on('disconnect', () => {
+        console.log(`User disconnected: ${socket.id}`);
+        // Here you could also handle player disconnection, such as removing them from games, etc.
     });
-
-    socket.on('attemptToJoin', (inputGameID: number, username: string) => {
-        const game = games[inputGameID];
-
-        // Check if username exists
-        if (game && game.players.some((player) => player.name === username)) {
-            socket.emit('usernameTaken', { gameID: inputGameID });
-            return;
-        }
-
-        if (game && game.playerCount < 4) {
-            // Add player to the game
-            const newPlayer: Player = {
-                id: socket.id,
-                name: username,
-                money: 500,
-                avatarUri: '',
-                currentTurn: false,
-            };
-            
-            game.players.push(newPlayer);
-            game.playerCount++;
-
-            socket.emit('gameJoined', { gameState: game });
-
-        } else {
-            socket.emit('gameNotFound', { gameID: inputGameID });
-        }
-    });
-
-
 });
 
 server.listen(PORT, () => {
-    console.log(`Server running on hehe *:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });

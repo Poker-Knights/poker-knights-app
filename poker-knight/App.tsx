@@ -10,7 +10,7 @@ import GameScreen from "./src/components/pages/GameScreen";
 import AppLoading from "expo-app-loading";
 import { useFonts } from "./src/utils/useFonts";
 import { Game } from "./src/types/Game";
-import { playerCount } from "./src/utils/Game";
+//import { playerCount } from "./src/utils/Game";
 
 
 // I need Game Screen to take the parameters of gameID, players, and playerCount

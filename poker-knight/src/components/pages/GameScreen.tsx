@@ -29,16 +29,7 @@ import { RouteProp } from "@react-navigation/native";
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
 
 const userIcon = require("../../Graphics/userIcon.png");
-const avatarImages = {
-  avatar1: require("../../Graphics/knight.png"),
-  avatar2: require("../../Graphics/PKLogo.png"),
-  avatar3: require("../../Graphics/backArrow.png"),
-  //avatar2: require("../../Graphics/avatar2.png"),
-  //avatar3:
-  //avatar4
 
-  // Add all other avatars here
-};
 
 const defaultAvatar = require("../../Graphics/userIcon.png"); // Relative path from the current file to the image
 
@@ -53,7 +44,6 @@ const GameScreen = ({ navigation, route }: Props) => {
   const [pot, setPot] = useState(100); // Initialize pot state with a default value
   const [currentBet, setCurrentBet] = useState(0); // Initialize current bet state with a default value
   const { Game } = route.params;
-  const usedKeys = new Set(); // Create a set to keep track of used keys
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
 
   React.useLayoutEffect(() => {
@@ -114,27 +104,10 @@ const GameScreen = ({ navigation, route }: Props) => {
           if (index === Game.players.length - 1)
             playerStyle = styles.playerRight; // Last player
 
-          // Get an array of keys from avatarImages
-          const keys = Object.keys(avatarImages);
-
-          let randomKey;
-          do {
-            // Generate a random index based on the number of keys
-            const randomIndex = Math.floor(Math.random() * keys.length);
-            // Get a random key using the random index
-            randomKey = keys[randomIndex];
-          } while (usedKeys.has(randomKey)); // Continue if key is already used
-
-          // Mark the selected key as used
-          usedKeys.add(randomKey);
-          const avatarSource = (avatarImages as any)[randomKey];
-          // Save the profile pic to the player object for game state purposes
-          player.avatarUri = avatarSource;
-
           return (
             <View key={player.id} style={[styles.playerContainer, playerStyle]}>
               <Image
-                source={avatarSource}
+                source={{uri:player.avatarUri}}
                 style={styles.avatar}
                 resizeMode="contain"
               />
