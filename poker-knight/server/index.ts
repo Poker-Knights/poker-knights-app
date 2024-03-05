@@ -23,7 +23,9 @@ io.on('connection', (socket: Socket) => {
     console.log(`a user connected: ${socket.id}`);
 
     socket.once('createGame', (gameID: string, username: string) => {
+
         console.log(`gameID: ${gameID}, username: ${username}`);
+
         const newPlayer: Player = {
             id: socket.id,
             name: username,

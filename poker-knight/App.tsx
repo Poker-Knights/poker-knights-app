@@ -17,8 +17,8 @@ import { playerCount } from "./src/utils/Game";
 // I need to pass the parameters to Game Screen from Home Screen
 export type StackParamList = {
   Home: undefined;
-  Join: { username: String};
-  Game: { username: String, Game: Game };
+  Join: { username: string};
+  Game: { username: string, Game: Game };
 };
 
 const Stack = createStackNavigator<StackParamList>();

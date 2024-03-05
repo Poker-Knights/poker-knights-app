@@ -39,6 +39,8 @@ const addPlayer = (numPlayers: number, userID: string, gameID: string) => {
   return player;
 };
 
+
+
 // Handle button presses
 const handleCallPress = () => {
   console.log("Call action");
@@ -79,6 +81,20 @@ const updatePot = (newPotValue: number) => {
 const placeBet = (playerId: string, betAmount: number, players: Player[]) => {
   // Logic to place a bet
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // export all the functions together
 export default {

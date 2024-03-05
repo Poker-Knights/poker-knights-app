@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "../../../App";
+import { createGame, handleHostGamePress, handleJoinGamePress, handleSettingsPress, handleGameCreated } from "../../utils/Home";
+import { styles} from "../../styles/HomeScreenStyles";
 import {
   StatusBar,
   StyleSheet,
@@ -45,82 +47,33 @@ const Home = ({ navigation }: Props) => {
   // such as when the user is typing in the input field, the component doesn't need to re render
 
 
-  // Set up socket connection and event listeners
+
   useEffect(() => {
-    socketRef.current = io(SERVER_URL, { transports: ['websocket'] });
+      socketRef.current = io(SERVER_URL, { transports: ['websocket'] });
 
-    // Event listener for 'gameCreated' event
-    const handleGameCreated = (data: any) => {
+      // Use the imported helper function, passing necessary dependencies
+      const gameCreatedHandler = handleGameCreated(setGame, navigation, socketRef);
 
-        const newGame : Game = data.gameState;
-        console.log(`Game ${newGame.id} has been created with username ${newGame.players[0].name}!`); 
-        setGame(game); // Update the game state
-      // Navigate to loading screen until enough players
-      // navigation.navigate("Loading", { Game: newGame });
-    };
-
-    if (socketRef.current) {
-      socketRef.current.on('gameCreated', handleGameCreated);
-    }
-
-    // Cleanup on component unmount
-    return () => {
       if (socketRef.current) {
-        socketRef.current.off('gameCreated', handleGameCreated);
-        socketRef.current.disconnect();
+        socketRef.current.on('gameCreated', gameCreatedHandler);
       }
-    };
-  }, [navigation]);
 
-
-
-
-  // Create a game function
-  const createGame = (hostUsername: string) => {
-    // Generate a new 6 digit game ID
-    const newGameID = Math.floor(100000 + Math.random() * 900000).toString();
-    setGameId(newGameID); // Update state with newGameID, won't be updated immediately
-
-    // Check if the socket is connected
-    if (socketRef.current) {
-      // Emit the 'createGame' event with the new game ID
-      socketRef.current.emit('createGame', { gameID: newGameID, username: hostUsername });
-      console.log("socket createGame emitted to server with ID: " + newGameID);
-    }
-  };
-
-
-  const handleHostGamePress = () => {
-    // Implement what happens when the user presses the join button
-    console.log("Host Game"); // For now, we'll just log the game ID
-
+      // Cleanup on component unmount
+      return () => {
+        if (socketRef.current) {
+          socketRef.current.off('gameCreated', gameCreatedHandler);
+          socketRef.current.disconnect();
+        }
+      };
+    }, [navigation])
     
-    // Connect to server
-    if (username.length <= 8 && username.length > 0) {
-      console.log("Username is valid");
-      createGame(username);
-    }
-    else{
-      Alert.alert("Invalid Username", "Username must be between 1 and 8 characters");
-    }
-  };
 
-
-  const handleJoinGamePress = () => {
-    // Implement what happens when the user presses the join button
-    console.log("Join Game"); // For now, we'll just log the game ID
-
-    // Here game may not exist just pass the username to next screen
-    navigation.navigate("Join", { username: username });
-  };
-
-  const handleSettingsPress = () => {
-    // Implement what happens when the user presses the join button
-    console.log("Settings"); // For now, we'll just log the game ID
-    setMenuVisible(true);
-    //navigation.navigate("Settings");
-  };
-
+  // Event emitters & helper functions for buttons
+  const onCreateGame = () => createGame(username, socketRef, setGameId);
+  const onHostGamePress = () => handleHostGamePress(username, onCreateGame);
+  const onJoinGamePress = () => handleJoinGamePress(username, navigation);
+  const onSettingsPress = () => handleSettingsPress(setMenuVisible);
+  
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar hidden={true} />
@@ -154,7 +107,7 @@ const Home = ({ navigation }: Props) => {
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
           style={styles.buttonContainer}
-          onPress={handleHostGamePress}
+          onPress={onHostGamePress}
           activeOpacity={0.7} // Reduce the opacity on press for visual feedback
         >
           <Image
@@ -165,7 +118,7 @@ const Home = ({ navigation }: Props) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.buttonContainer}
-          onPress={handleJoinGamePress}
+          onPress={onJoinGamePress}
           activeOpacity={0.7} // Reduce the opacity on press for visual feedback
         >
           <Image
@@ -176,7 +129,7 @@ const Home = ({ navigation }: Props) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.buttonContainer}
-          onPress={handleSettingsPress}
+          onPress={onSettingsPress}
           activeOpacity={0.7} // Reduce the opacity on press for visual feedback
         >
           <Image
@@ -189,60 +142,6 @@ const Home = ({ navigation }: Props) => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#292626",
-    alignItems: "center",
-    justifyContent: "center", // Center content vertically
-    paddingTop: 10, // Adjust as needed to move everything up
-  },
-  knightContainer: {
-    marginTop: 0,
-  },
-  knightIcon: {
-    height: 350,
-    width: 350,
-  },
-  buttonsContainer: {
-    flex: 1,
-    marginTop: 5,
-    width: "100%", // Ensure the container takes up the full width
-    justifyContent: "center", // Center content vertically
-    alignItems: "center", // Center content horizontally
-  },
-  buttonContainer: {
-    width: "100%", // Adjust the width percentage as needed
-    height: 50, // Adjust as needed
-    marginVertical: 15, // Add margin between buttons
-    justifyContent: "center", // Center content vertically
-    alignItems: "center", // Center content horizontally
-  },
-  buttonImage: {
-    width: "100%", // Ensure the image takes up the full width of the button
-    height: "140%", // Ensure the image takes up the full height of the button
-  },
-  usernameContainer: {
-    marginTop: 35, // Adjust as needed for spacing
-    alignItems: "center", // Center children horizontally
-    width: "100%", // Take up full container width
-  },
-  usernameInput: {
-    height: 70, // Adjust as needed
-    width: "80%", // Match the width of the button
-    backgroundColor: "#fff", // Background color for the input
-    borderRadius: 5, // Rounded corners for the input
-    paddingHorizontal: 10, // Inner spacing
-    fontSize: 24, // Adjust as needed
-    fontFamily: "PixeloidMono",
-    color: "#000", // Text color
-    marginBottom: 10, // Space between input and button
-  },
-  modalView: {
-    alignItems: "center",
-  },
-});
 
 export default Home;
 function setGameId(arg0: string) {
