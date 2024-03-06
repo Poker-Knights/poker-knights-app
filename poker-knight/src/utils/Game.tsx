@@ -1,7 +1,6 @@
 // util/Game.tsx
 import { Player, Game } from "../types/Game";
 
-
 const initializePlayers = (): Player[] => {
   return [
     {
@@ -27,17 +26,14 @@ const initializePlayers = (): Player[] => {
 
 // Function to get random but unique avatar and give to player
 const generateAvatar = (players: Player[]): string => {
-
   // Get the number of players
-  const defaultAvatar: string = require("../../Graphics/userIcon.png");
+  const defaultAvatar: string = require("../Graphics/userIcon.png");
   const avatarImages: { [key: string]: any } = {
-    avatar1: require("../../Graphics/knight.png"),
-    avatar2: require("../../Graphics/PKLogo.png"),
-    avatar3: require("../../Graphics/backArrow.png"),
-    avatar4: require("../../Graphics/longButton.png"),
-    //avatar2: require("../../Graphics/avatar2.png"),
-    //avatar3:
-    //avatar4
+    avatar1: require("../Graphics/knight.png"),
+    avatar2: require("../Graphics/PKLogo.png"),
+    avatar3: require("../Graphics/backArrow.png"),
+    avatar4: require("../Graphics/longButton.png"),
+
     // Add all other avatars here
   };
 
@@ -50,27 +46,25 @@ const generateAvatar = (players: Player[]): string => {
   const randomIndex = Math.floor(Math.random() * avatarKeys.length);
 
   // Check if the selected avatar is already in use, if not, return it
-  if (players.every((player) => player.avatarUri !== avatarImages[avatarKeys[randomIndex]])) {
+  if (
+    players.every(
+      (player) => player.avatarUri !== avatarImages[avatarKeys[randomIndex]]
+    )
+  ) {
     return avatarImages[avatarKeys[randomIndex]];
-  }
-
-  else
-    return defaultAvatar;
-
-}
+  } else return defaultAvatar;
+};
 
 // Function to create a new player and add to the specified game
 const createAndAddPlayer = (username: string, socketId: string, game: Game) => {
+  // call generateAvatar here
 
- // call generateAvatar here
-
-  
   const newPlayer: Player = {
-      id: socketId,
-      name: username,
-      money: 500, // Default starting money
-      avatarUri: generateAvatar(game.players), // Call the generateAvatar function here
-      currentTurn: false, // Set initial turn status
+    id: socketId,
+    name: username,
+    money: 500, // Default starting money
+    //avatarUri: generateAvatar(game.players), // Call the generateAvatar function here
+    currentTurn: false, // Set initial turn status
   };
 
   // Add the new player to the game
@@ -79,8 +73,6 @@ const createAndAddPlayer = (username: string, socketId: string, game: Game) => {
 
   return newPlayer; // Return the new player object for any further use
 };
-
-
 
 // Handle button presses
 const handleCallPress = () => {
