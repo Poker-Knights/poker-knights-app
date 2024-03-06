@@ -9,17 +9,23 @@ import JoinScreen from "./src/components/pages/JoinGameScreen";
 import GameScreen from "./src/components/pages/GameScreen";
 import AppLoading from "expo-app-loading";
 import { useFonts } from "./src/utils/useFonts";
+import { Game } from "./src/types/Game";
+//import { playerCount } from "./src/utils/Game";
 
+
+// I need Game Screen to take the parameters of gameID, players, and playerCount
+// I need to pass the parameters to Game Screen from Home Screen
 export type StackParamList = {
   Home: undefined;
-  Create: undefined;
-  Join: undefined;
-  Game: undefined;
+  Join: { username: string};
+  Game: { username: string, Game: Game };
 };
 
 const Stack = createStackNavigator<StackParamList>();
 
 export default function App() {
+
+  
   const [fontsLoaded, loadFonts] = useFonts({
     PixeloidMono: require("./assets/fonts/PixeloidMono.ttf"), // Make sure the path is correct
   });
@@ -32,6 +38,7 @@ export default function App() {
     return <AppLoading />;
   }
 
+  
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">

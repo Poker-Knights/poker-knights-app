@@ -12,7 +12,8 @@ import {
   ImageBackground,
 } from "react-native";
 
-import { handleSettingsPress } from "../../utils/settingsUtil";
+import { PopupMenu } from "./Settings"; // Import PopupMenu, will need to change
+// import { handleSettingsPress } from "../../utils/settingsUtil";
 import { formatCurrency } from "../../utils/Money";
 import {
   initializePlayers,
@@ -24,17 +25,26 @@ import {
 } from "../../utils/Game";
 
 import { Ionicons } from "@expo/vector-icons";
+import { RouteProp } from "@react-navigation/native";
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
+
+const userIcon = require("../../Graphics/userIcon.png");
+
+
 const defaultAvatar = require("../../Graphics/userIcon.png"); // Relative path from the current file to the image
+
+type GameScreenRouteProp = RouteProp<StackParamList, "Game">;
 
 type Props = {
   navigation: StackNavigationProp<StackParamList, "Game">;
+  route: GameScreenRouteProp;
 };
 
-const GameScreen = ({ navigation }: Props) => {
+const GameScreen = ({ navigation, route }: Props) => {
   const [pot, setPot] = useState(100); // Initialize pot state with a default value
   const [currentBet, setCurrentBet] = useState(0); // Initialize current bet state with a default value
-  const [players, setPlayers] = useState(initializePlayers());
+  const { Game } = route.params;
+  const [menuVisible, setMenuVisible] = useState<boolean>(false);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -42,8 +52,20 @@ const GameScreen = ({ navigation }: Props) => {
     });
   }, [navigation]);
 
+  const handleSettingsPress = () => {
+    // Implement what happens when the user presses the join button
+    console.log("Settings"); // For now, we'll just log the game ID
+    setMenuVisible(true);
+    //navigation.navigate("Settings");
+  };
   return (
     <View style={styles.backgroundContainer}>
+      <View style={styles.modalView}>
+        <PopupMenu
+          visible={menuVisible}
+          onClose={() => setMenuVisible(false)}
+        />
+      </View>
       {/* Top part of the screen with pot and current bet */}
       <View style={styles.topContainer}>
         <Text style={styles.potText}>POT:{formatCurrency(pot)}</Text>
@@ -75,18 +97,19 @@ const GameScreen = ({ navigation }: Props) => {
       </View>
 
       <View style={styles.playersContainer}>
-        {players.map((player, index) => {
+        {Game.players.map((player, index) => {
           // Determine the style based on player's index
           let playerStyle = styles.playerMiddle; // Default to middle player style
           if (index === 0) playerStyle = styles.playerLeft; // First player
-          if (index === players.length - 1) playerStyle = styles.playerRight; // Last player
+          if (index === Game.players.length - 1)
+            playerStyle = styles.playerRight; // Last player
+
           return (
             <View key={player.id} style={[styles.playerContainer, playerStyle]}>
               <Image
-                source={
-                  player.avatarUri ? { uri: player.avatarUri } : defaultAvatar
-                }
+                source={{uri:player.avatarUri}}
                 style={styles.avatar}
+                resizeMode="contain"
               />
               <Text style={styles.playerName}>{player.name}</Text>
               <Text style={styles.playerMoney}>
@@ -188,6 +211,15 @@ const styles = StyleSheet.create({
     marginTop: 4, // Space between the text and the line, adjust as needed
   },
 
+  // avatar: {
+  //   width: 80, // Adjust the size as needed
+  //   height: 80, // Adjust the size as needed
+  //   borderRadius: 40, // Half the width/height to make it a circle
+  //   borderWidth: 2, // Size of border around the avatar
+  //   borderColor: "#FFFFFF", // Border color, assuming white is desired
+  //   backgroundColor: "#C4C4C4", // A placeholder background color in case the image fails to load
+  // },
+
   avatar: {
     width: 80, // Adjust the size as needed
     height: 80, // Adjust the size as needed
@@ -195,7 +227,9 @@ const styles = StyleSheet.create({
     borderWidth: 2, // Size of border around the avatar
     borderColor: "#FFFFFF", // Border color, assuming white is desired
     backgroundColor: "#C4C4C4", // A placeholder background color in case the image fails to load
+    overflow: "hidden", // Ensures that the image does not spill out of the border radius
   },
+
   playerName: {
     fontFamily: "PixeloidMono",
     color: "#feeb00", // Assuming a gold color for the player's name text
@@ -271,6 +305,9 @@ const styles = StyleSheet.create({
     fontSize: 20, // Adjust the size as needed
     bottom: 15,
     paddingTop: 10,
+  },
+  modalView: {
+    alignItems: "center",
   },
 });
 
