@@ -29,12 +29,12 @@ const initializePlayers = (): Player[] => {
 const generateAvatar = (players: Player[]): string => {
 
   // Get the number of players
-  const defaultAvatar: string = require("../../Graphics/userIcon.png");
+  const defaultAvatar: string = require("../Graphics/userIcon.png");
   const avatarImages: { [key: string]: any } = {
-    avatar1: require("../../Graphics/knight.png"),
-    avatar2: require("../../Graphics/PKLogo.png"),
-    avatar3: require("../../Graphics/backArrow.png"),
-    avatar4: require("../../Graphics/longButton.png"),
+    avatar1: require("../Graphics/knight.png"),
+    avatar2: require("../Graphics/PKLogo.png"),
+    avatar3: require("../Graphics/backArrow.png"),
+    avatar4: require("../Graphics/longButton.png"),
     //avatar2: require("../../Graphics/avatar2.png"),
     //avatar3:
     //avatar4
