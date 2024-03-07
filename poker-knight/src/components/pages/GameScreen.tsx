@@ -16,7 +16,6 @@ import { PopupMenu } from "./Settings"; // Import PopupMenu, will need to change
 // import { handleSettingsPress } from "../../utils/settingsUtil";
 import { formatCurrency } from "../../utils/Money";
 import {
-  initializePlayers,
   handleCallPress,
   handleCheckPress,
   handleFoldPress,
@@ -29,7 +28,6 @@ import { RouteProp } from "@react-navigation/native";
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
 
 const userIcon = require("../../Graphics/userIcon.png");
-
 
 const defaultAvatar = require("../../Graphics/userIcon.png"); // Relative path from the current file to the image
 
@@ -107,7 +105,7 @@ const GameScreen = ({ navigation, route }: Props) => {
           return (
             <View key={player.id} style={[styles.playerContainer, playerStyle]}>
               <Image
-                source={{uri:player.avatarUri}}
+                source={{ uri: player.avatarUri }}
                 style={styles.avatar}
                 resizeMode="contain"
               />
