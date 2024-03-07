@@ -41,6 +41,10 @@ const createAndAddPlayer = (username: string, socketId: string, game: Game) => {
     money: 500, // Default starting money
     //avatarUri: generateAvatar(game.players), // Call the generateAvatar function here
     currentTurn: false, // Set initial turn status
+    lastBet: 0,
+    fold: false,
+    isLittleBlind: false,
+    isBigBlind: false,
   };
 
   // Add the new player to the game
@@ -51,52 +55,66 @@ const createAndAddPlayer = (username: string, socketId: string, game: Game) => {
 };
 
 // Handle button presses
-const handleCallPress = () => {
+const handleCallPress = (game: Game) => {
   console.log("Call action");
   // Implement the call action logic here
+  const curPlayer = game.players[game.currentPlayer]; // Get current player
+  curPlayer.money -= game.currentBet; // Reflect bet
+  curPlayer.lastBet = game.currentBet; // Update last bet
+  game.potSize += game.currentBet; // Update Pot Value
+  nextPlayer(game); // Move to next player
 };
 
-const handleFoldPress = () => {
+const handleFoldPress = (game: Game) => {
   console.log("Fold action");
   // Implement the fold action logic here
+  const curPlayer = game.players[game.currentPlayer]; // Get current player
+  curPlayer.fold = true;
+  nextPlayer(game); // Move to next player
 };
 
-const handleCheckPress = () => {
+const handleCheckPress = (game: Game) => {
   console.log("Check action");
   // Implement the check action logic here
+  nextPlayer(game); // Move to next player
 };
 
-const handleRaisePress = () => {
+const handleRaisePress = (game: Game, betValue: number) => {
   console.log("Raise action");
   // Implement the raise action logic here
+  const curPlayer = game.players[game.currentPlayer]; // Get current player
+  curPlayer.money -= betValue; // Reflect bet
+  curPlayer.lastBet = betValue; // Update last bet
+  game.currentBet = betValue; // Update current game bet to new value
+  game.potSize += game.currentBet; // Update Pot Value
+  nextPlayer(game); // Move to next player
 };
 
-const handleAllInPress = () => {
+const handleAllInPress = (game: Game) => {
   console.log("All-in action");
   // Implement the all-in action logic here
+  const curPlayer = game.players[game.currentPlayer]; // Get current player
+  game.currentBet = curPlayer.money; // Set current bet to players worth
+  curPlayer.money = 0; // Empty players money
+  game.potSize += game.currentBet; // Update Pot Value
+  nextPlayer(game); // Move to next player
+};
+
+const handlePlayerTurn = (game: Game, player: Player) => {
+  console.log("Handle Player Turn");
 };
 
 // Function to handle a player's turn, return player
-const handlePlayerTurn = (playerId: string, players: Player[]) => {
+const nextPlayer = (game: Game) => {
   // Logic to handle player's turn
-};
-
-// Function to update the pot, return number
-const updatePot = (newPotValue: number) => {
-  // Logic to update the pot
-};
-
-// Function to place a bet
-const placeBet = (playerId: string, betAmount: number, players: Player[]) => {
-  // Logic to place a bet
+  if (game.currentPlayer == game.playerCount) game.currentPlayer == 0;
+  else game.currentPlayer++;
 };
 
 // Export each function separately
 export {
   createAndAddPlayer,
   handlePlayerTurn,
-  updatePot,
-  placeBet,
   handleAllInPress,
   handleCallPress,
   handleCheckPress,

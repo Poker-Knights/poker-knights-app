@@ -6,6 +6,10 @@ export type Player = {
   money: number;
   avatarUri?: string;
   currentTurn: boolean;
+  lastBet: number;
+  fold: boolean;
+  isLittleBlind: boolean;
+  isBigBlind: boolean;
 };
 
 export type Game = {
@@ -13,5 +17,6 @@ export type Game = {
   players: Player[];
   potSize: number;
   playerCount: number;
+  currentBet: number;
+  currentPlayer: number;
 };
-
