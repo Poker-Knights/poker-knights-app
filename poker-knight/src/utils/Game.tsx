@@ -69,7 +69,7 @@ const createAndAddPlayer = (username: string, socketId: string, game: Game) => {
 
   // Add the new player to the game
   game.players.push(newPlayer);
-  game.playerCount = game.players.length; // Update player count
+  game.playerCount++; // Update player count
 
   return newPlayer; // Return the new player object for any further use
 };
