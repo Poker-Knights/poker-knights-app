@@ -10,7 +10,6 @@ const generateAvatar = (players: Player[]): string => {
     avatar2: require("../Graphics/PKLogo.png"),
     avatar3: require("../Graphics/backArrow.png"),
     avatar4: require("../Graphics/longButton.png"),
-
     // Add all other avatars here
   };
 
