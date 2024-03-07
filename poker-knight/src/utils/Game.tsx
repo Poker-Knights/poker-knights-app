@@ -1,29 +1,6 @@
 // util/Game.tsx
 import { Player, Game } from "../types/Game";
 
-const initializePlayers = (): Player[] => {
-  return [
-    {
-      id: "1",
-      name: "PLAYER 1",
-      money: 0,
-      currentTurn: true,
-    },
-    {
-      id: "2",
-      name: "PLAYER 2",
-      money: 0,
-      currentTurn: false,
-    },
-    {
-      id: "3",
-      name: "PLAYER 3",
-      money: 0,
-      currentTurn: false,
-    },
-  ];
-};
-
 // Function to get random but unique avatar and give to player
 const generateAvatar = (players: Player[]): string => {
   // Get the number of players
@@ -117,7 +94,6 @@ const placeBet = (playerId: string, betAmount: number, players: Player[]) => {
 
 // Export each function separately
 export {
-  initializePlayers,
   createAndAddPlayer,
   handlePlayerTurn,
   updatePot,

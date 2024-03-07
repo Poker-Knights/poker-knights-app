@@ -7,9 +7,6 @@ export const handleAttemptToJoin =
   (inputGameID: string, username: string) => {
     const game = games[inputGameID];
 
-    console.log(username);
-    console.log(inputGameID);
-
     if (!game) {
       socket.emit("gameNotFound", { gameID: inputGameID });
       return;
