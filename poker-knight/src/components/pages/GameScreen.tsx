@@ -123,23 +123,23 @@ const GameScreen = ({ navigation, route }: Props) => {
       <View style={styles.actionButtonsContainer}>
         {/* Container for the "ALL-IN" button */}
         <View style={styles.allInButtonContainer}>
-          <TouchableOpacity onPress={handleAllInPress}>
+          <TouchableOpacity onPress={() => handleAllInPress(Game)}>
             <Text style={styles.allInButtonText}>ALL-IN</Text>
           </TouchableOpacity>
         </View>
 
         {/* Container for the "CALL", "FOLD", "CHECK", "RAISE" buttons */}
         <View style={styles.lowerButtonsContainer}>
-          <TouchableOpacity onPress={handleCallPress}>
+          <TouchableOpacity onPress={() => handleCallPress(Game)}>
             <Text style={styles.lowerActionButtonText}>CALL</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleFoldPress}>
+          <TouchableOpacity onPress={() => handleFoldPress(Game)}>
             <Text style={styles.lowerActionButtonText}>FOLD</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleCheckPress}>
+          <TouchableOpacity onPress={() => handleCheckPress(Game)}>
             <Text style={styles.lowerActionButtonText}>CHECK</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleRaisePress}>
+          <TouchableOpacity onPress={() => handleRaisePress(Game, 10)}>
             <Text style={styles.lowerActionButtonText}>RAISE</Text>
           </TouchableOpacity>
         </View>

@@ -107,8 +107,8 @@ const handlePlayerTurn = (game: Game, player: Player) => {
 // Function to handle a player's turn, return player
 const nextPlayer = (game: Game) => {
   // Logic to handle player's turn
+  game.currentPlayer++;
   if (game.currentPlayer == game.playerCount) game.currentPlayer == 0;
-  else game.currentPlayer++;
 };
 
 // Export each function separately
