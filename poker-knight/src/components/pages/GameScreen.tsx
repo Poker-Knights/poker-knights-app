@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "../../../App";
 
@@ -16,6 +16,7 @@ import { PopupMenu } from "./Settings"; // Import PopupMenu, will need to change
 // import { handleSettingsPress } from "../../utils/settingsUtil";
 import { formatCurrency } from "../../utils/Money";
 import {
+  Card,
   initializePlayers,
   handleCallPress,
   handleCheckPress,
@@ -23,7 +24,9 @@ import {
   handleRaisePress,
   handleAllInPress,
 } from "../../utils/Game";
-
+// import {Card} from '../../utils/Game';
+import io, { Socket } from 'socket.io-client';
+import { SERVER_URL } from '../../utils/socket';
 import { Ionicons } from "@expo/vector-icons";
 import { RouteProp } from "@react-navigation/native";
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
@@ -45,6 +48,30 @@ const GameScreen = ({ navigation, route }: Props) => {
   const [currentBet, setCurrentBet] = useState(0); // Initialize current bet state with a default value
   const { Game } = route.params;
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
+  const [cards, setCards] = useState([]);
+  const socketRef = useRef<Socket | null>(null)
+
+
+  useEffect(() => {
+    socketRef.current = io(SERVER_URL, { transports: ['websocket'] });
+
+    // Use the imported helper function, passing necessary dependencies
+    // const setCardHandler = handleGameCreated(setGame, navigation, socketRef);
+
+    // if (socketRef.current) {
+    //   socketRef.current.on('setCards', playerCards) => {
+    //     setCards(playerCards);
+    //   }; // change
+    // }
+
+    // Cleanup on component unmount
+    return () => {
+      if (socketRef.current) {
+        // socketRef.current.off('setCards', setCardHandler);
+        socketRef.current.disconnect();
+      }
+    };
+  }, [navigation])
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -119,6 +146,13 @@ const GameScreen = ({ navigation, route }: Props) => {
             </View>
           );
         })}
+      </View>
+
+      <View style={styles.cardContainer}>
+        {cards.map((card, index) => (
+          // Use the Card component to render each card
+          <Card key={index} value={card.value} suit={card.suit} />
+        ))}
       </View>
 
       {/* Action buttons container */}
@@ -309,6 +343,11 @@ const styles = StyleSheet.create({
   modalView: {
     alignItems: "center",
   },
+  cardContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 });
 
 export default GameScreen;

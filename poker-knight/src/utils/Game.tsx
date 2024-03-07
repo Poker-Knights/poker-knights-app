@@ -1,5 +1,7 @@
 // util/Game.tsx
 import { Player, Game } from "../types/Game";
+import React from 'react';
+import { Image, StyleSheet } from 'react-native';
 
 const initializePlayers = (): Player[] => {
   return [
@@ -23,6 +25,35 @@ const initializePlayers = (): Player[] => {
     },
   ];
 };
+
+const cardImages = {
+  'ace_of_spades': require('./assets/cards/ace_of_spades.png'),
+  'two_of_hearts': require('./assets/cards/two_of_hearts.png'),
+  // ... other cards
+};
+
+
+// Assuming you have an 'assets/cards' directory with images named 'ace_of_spades.png', 'two_of_hearts.png', etc.
+const Card = ({ value, suit }: {value: string; suit: string}) => {
+  // Convert the value and suit to a file name
+  // const imageName = `${value}.png`.toLowerCase();
+  const imageSource = require(`../Graphics/Cards/${suit.toLowerCase}/${value.toLowerCase}`);
+
+  return (
+    <Image source={imageSource} style={styles.card} />
+  );
+};
+
+const styles = StyleSheet.create({
+  card: {
+    width: 100,  // Set the width of the card
+    height: 150, // Set the height of the card
+    resizeMode: 'contain', // Keep the aspect ratio
+  }
+});
+
+// export default Card;
+
 
 // Function to get random but unique avatar and give to player
 const generateAvatar = (players: Player[]): string => {
@@ -100,6 +131,10 @@ const handleAllInPress = () => {
   // Implement the all-in action logic here
 };
 
+const renderPlayerCards = (card1: string, card2: string) => {
+
+}
+
 // Function to handle a player's turn, return player
 const handlePlayerTurn = (playerId: string, players: Player[]) => {
   // Logic to handle player's turn
@@ -117,6 +152,7 @@ const placeBet = (playerId: string, betAmount: number, players: Player[]) => {
 
 // Export each function separately
 export {
+  Card,
   initializePlayers,
   createAndAddPlayer,
   handlePlayerTurn,
