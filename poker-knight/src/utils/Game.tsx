@@ -60,14 +60,14 @@ const handleCallPress = (game: Game) => {
   console.log("Call action");
   // Implement the call action logic here
   const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
-  if (curPlayer.money >= game.currentBet)
+  if (curPlayer.money >= game.currentBet) {
     curPlayer.money -= game.currentBet; // Reflect bet
-  else {
+    curPlayer.lastBet = game.currentBet; // Update last bet
+    game.potSize += game.currentBet; // Update Pot Value
+  } else {
     curPlayer.allInFg = true; // Player is all in
     // All in logic
   }
-  curPlayer.lastBet = game.currentBet; // Update last bet
-  game.potSize += game.currentBet; // Update Pot Value
   nextPlayer(game); // Move to next player
 };
 
@@ -89,14 +89,15 @@ const handleRaisePress = (game: Game, betValue: number) => {
   console.log("Raise action");
   // Implement the raise action logic here
   const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
-  if (curPlayer.money >= betValue) curPlayer.money -= betValue; // Reflect bet
-  else {
+  if (curPlayer.money >= betValue) {
+    curPlayer.money -= betValue; // Reflect bet
+    curPlayer.lastBet = betValue; // Update last bet
+    game.currentBet = betValue; // Update current game bet to new value
+    game.potSize += game.currentBet; // Update Pot Value
+  } else {
     curPlayer.allInFg = true; // Player is all in
     // All in logic
   }
-  curPlayer.lastBet = betValue; // Update last bet
-  game.currentBet = betValue; // Update current game bet to new value
-  game.potSize += game.currentBet; // Update Pot Value
   nextPlayer(game); // Move to next player
 };
 

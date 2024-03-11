@@ -59,6 +59,7 @@ const GameScreen = ({ navigation, route }: Props) => {
     //navigation.navigate("Settings");
   };
 
+  // Function to handle when buttons are pressed
   const handleButtonPress = (buttonPressed: string) => {
     // Handle Pressed Button
     switch (buttonPressed) {
