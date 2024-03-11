@@ -1,6 +1,6 @@
-import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import { Modal, StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { handleUserQuit } from "../../utils/settingsUtil";
 
 interface PopupMenuProps {
   visible: boolean;
@@ -8,15 +8,6 @@ interface PopupMenuProps {
 }
 
 const PopupMenu: React.FC<PopupMenuProps> = ({ visible, onClose }) => {
-  const navigation = useNavigation(); // Initialize useNavigation hook
-
-  const userQuit = (user: number) => {
-    navigation.navigate("Home"); // Go home
-
-    //Logic to disconnect player
-    /* */
-  };
-
   return (
     <Modal
       animationType="slide"
@@ -39,7 +30,7 @@ const PopupMenu: React.FC<PopupMenuProps> = ({ visible, onClose }) => {
           {/* Menu Item: Quit Game */}
           <TouchableOpacity
             style={[styles.button, styles.buttonClose]}
-            onPress={() => userQuit(1)} // Pass user val
+            onPress={() => handleUserQuit(1)} // Pass user val
           >
             <Text style={styles.textStyle}>Quit Game</Text>
           </TouchableOpacity>

@@ -44,7 +44,7 @@ const GameScreen = ({ navigation, route }: Props) => {
   const [currentBet, setCurrentBet] = useState(0); // Initialize current bet state with a default value
   const { Game } = route.params;
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
-  let [curRaiseVal, setCurRaiseVal] = useState(0); //Track Raise Value
+  let [curRaiseVal, setCurRaiseVal] = useState(10); //Track Raise Value
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -61,7 +61,7 @@ const GameScreen = ({ navigation, route }: Props) => {
 
   // Function to handle when buttons are pressed
   const handleButtonPress = (buttonPressed: string) => {
-    // Handle Pressed Button
+    // Switch to handle the button pressed
     switch (buttonPressed) {
       case "Call":
         handleCallPress(Game);
@@ -88,6 +88,21 @@ const GameScreen = ({ navigation, route }: Props) => {
           curRaiseVal = Game.players[Game.currentPlayer - 1].money;
         }
         break;
+    }
+    // Handle Proper current raise value
+    if (
+      buttonPressed != "incrementRaise" &&
+      buttonPressed != "decrementRaise"
+    ) {
+      if (
+        Game.players[(Game.currentPlayer + 1) % Game.playerCount].money >=
+        curRaiseVal + 10
+      ) {
+        curRaiseVal = Game.currentBet + 10;
+      } else {
+        curRaiseVal =
+          Game.players[(Game.currentPlayer + 1) % Game.playerCount].money;
+      }
     }
 
     //Update Value

@@ -57,7 +57,6 @@ const createAndAddPlayer = (username: string, socketId: string, game: Game) => {
 
 // Handle button presses
 const handleCallPress = (game: Game) => {
-  console.log("Call action");
   // Implement the call action logic here
   const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
   if (curPlayer.money >= game.currentBet) {
@@ -72,7 +71,6 @@ const handleCallPress = (game: Game) => {
 };
 
 const handleFoldPress = (game: Game) => {
-  console.log("Fold action");
   // Implement the fold action logic here
   const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
   curPlayer.fold = true;
@@ -80,13 +78,11 @@ const handleFoldPress = (game: Game) => {
 };
 
 const handleCheckPress = (game: Game) => {
-  console.log("Check action");
   // Implement the check action logic here
   nextPlayer(game); // Move to next player
 };
 
 const handleRaisePress = (game: Game, betValue: number) => {
-  console.log("Raise action");
   // Implement the raise action logic here
   const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
   if (curPlayer.money >= betValue) {
@@ -102,7 +98,6 @@ const handleRaisePress = (game: Game, betValue: number) => {
 };
 
 const handleAllInPress = (game: Game) => {
-  console.log("All-in action");
   // Implement the all-in action logic here
   const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
   game.currentBet = curPlayer.money; // Set current bet to players worth
@@ -111,8 +106,9 @@ const handleAllInPress = (game: Game) => {
   nextPlayer(game); // Move to next player
 };
 
-const handlePlayerTurn = (game: Game, player: Player) => {
-  console.log("Handle Player Turn");
+const handleServerComm = (game: Game) => {
+  console.log("Handle Server Comms");
+  /* Kevin do your code here */
 };
 
 // Function to handle a player's turn, return player
@@ -120,17 +116,15 @@ const nextPlayer = (game: Game) => {
   // Logic to handle player's turn
   game.currentPlayer++;
   if (game.currentPlayer >= game.playerCount) game.currentPlayer = 1;
-  console.log(game.currentPlayer);
-  console.log(game.playerCount);
-  console.log(game.players[game.playerCount - 1].money);
-  console.log(game.players[game.playerCount - 1].lastBet);
-  console.log(game.potSize);
+
+  // Handle Server Communications
+  handleServerComm(game);
 };
 
 // Export each function separately
 export {
   createAndAddPlayer,
-  handlePlayerTurn,
+  handleServerComm,
   handleAllInPress,
   handleCallPress,
   handleCheckPress,

@@ -62,7 +62,6 @@ export const handleGameCreated =
 
     // Navigate to loading screen until enough players
     navigation.navigate("Game", {
-      username: newGame.players[0].name,
       Game: newGame,
     });
   };
