@@ -39,6 +39,7 @@ const createAndAddPlayer = (username: string, socketId: string, game: Game) => {
     id: socketId,
     name: username,
     money: 500, // Default starting money
+    allInFg: false,
     //avatarUri: generateAvatar(game.players), // Call the generateAvatar function here
     currentTurn: false, // Set initial turn status
     lastBet: 0,
@@ -59,7 +60,12 @@ const handleCallPress = (game: Game) => {
   console.log("Call action");
   // Implement the call action logic here
   const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
-  curPlayer.money -= game.currentBet; // Reflect bet
+  if (curPlayer.money >= game.currentBet)
+    curPlayer.money -= game.currentBet; // Reflect bet
+  else {
+    curPlayer.allInFg = true; // Player is all in
+    // All in logic
+  }
   curPlayer.lastBet = game.currentBet; // Update last bet
   game.potSize += game.currentBet; // Update Pot Value
   nextPlayer(game); // Move to next player
@@ -83,7 +89,11 @@ const handleRaisePress = (game: Game, betValue: number) => {
   console.log("Raise action");
   // Implement the raise action logic here
   const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
-  curPlayer.money -= betValue; // Reflect bet
+  if (curPlayer.money >= betValue) curPlayer.money -= betValue; // Reflect bet
+  else {
+    curPlayer.allInFg = true; // Player is all in
+    // All in logic
+  }
   curPlayer.lastBet = betValue; // Update last bet
   game.currentBet = betValue; // Update current game bet to new value
   game.potSize += game.currentBet; // Update Pot Value

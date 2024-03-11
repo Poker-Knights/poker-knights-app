@@ -44,7 +44,7 @@ const GameScreen = ({ navigation, route }: Props) => {
   const [currentBet, setCurrentBet] = useState(0); // Initialize current bet state with a default value
   const { Game } = route.params;
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
-  let curRaiseVal = 0; //Track Raise Value
+  let [curRaiseVal, setCurRaiseVal] = useState(0); //Track Raise Value
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -83,10 +83,14 @@ const GameScreen = ({ navigation, route }: Props) => {
       case "incrementRaise":
         if (curRaiseVal < Game.players[Game.currentPlayer - 1].money - 10)
           curRaiseVal += 10;
+        else {
+          curRaiseVal = Game.players[Game.currentPlayer - 1].money;
+        }
         break;
     }
 
     //Update Value
+    setCurRaiseVal(curRaiseVal);
     setPot(Game.potSize);
     setCurrentBet(Game.currentBet);
   };
@@ -163,7 +167,7 @@ const GameScreen = ({ navigation, route }: Props) => {
       <View style={GameScreenStyles.actionButtonsContainer}>
         {/* Container for the "ALL-IN" button */}
         <View style={GameScreenStyles.allInButtonContainer}>
-          <TouchableOpacity onPress={() => handleAllInPress(Game)}>
+          <TouchableOpacity onPress={() => handleButtonPress("All-in")}>
             <Text style={GameScreenStyles.allInButtonText}>ALL-IN</Text>
           </TouchableOpacity>
         </View>
