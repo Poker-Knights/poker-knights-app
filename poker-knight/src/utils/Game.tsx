@@ -58,7 +58,7 @@ const createAndAddPlayer = (username: string, socketId: string, game: Game) => {
 const handleCallPress = (game: Game) => {
   console.log("Call action");
   // Implement the call action logic here
-  const curPlayer = game.players[game.currentPlayer]; // Get current player
+  const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
   curPlayer.money -= game.currentBet; // Reflect bet
   curPlayer.lastBet = game.currentBet; // Update last bet
   game.potSize += game.currentBet; // Update Pot Value
@@ -68,7 +68,7 @@ const handleCallPress = (game: Game) => {
 const handleFoldPress = (game: Game) => {
   console.log("Fold action");
   // Implement the fold action logic here
-  const curPlayer = game.players[game.currentPlayer]; // Get current player
+  const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
   curPlayer.fold = true;
   nextPlayer(game); // Move to next player
 };
@@ -82,7 +82,7 @@ const handleCheckPress = (game: Game) => {
 const handleRaisePress = (game: Game, betValue: number) => {
   console.log("Raise action");
   // Implement the raise action logic here
-  const curPlayer = game.players[game.currentPlayer]; // Get current player
+  const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
   curPlayer.money -= betValue; // Reflect bet
   curPlayer.lastBet = betValue; // Update last bet
   game.currentBet = betValue; // Update current game bet to new value
@@ -93,7 +93,7 @@ const handleRaisePress = (game: Game, betValue: number) => {
 const handleAllInPress = (game: Game) => {
   console.log("All-in action");
   // Implement the all-in action logic here
-  const curPlayer = game.players[game.currentPlayer]; // Get current player
+  const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
   game.currentBet = curPlayer.money; // Set current bet to players worth
   curPlayer.money = 0; // Empty players money
   game.potSize += game.currentBet; // Update Pot Value
@@ -108,7 +108,12 @@ const handlePlayerTurn = (game: Game, player: Player) => {
 const nextPlayer = (game: Game) => {
   // Logic to handle player's turn
   game.currentPlayer++;
-  if (game.currentPlayer == game.playerCount) game.currentPlayer == 0;
+  if (game.currentPlayer >= game.playerCount) game.currentPlayer = 1;
+  console.log(game.currentPlayer);
+  console.log(game.playerCount);
+  console.log(game.players[game.playerCount - 1].money);
+  console.log(game.players[game.playerCount - 1].lastBet);
+  console.log(game.potSize);
 };
 
 // Export each function separately
