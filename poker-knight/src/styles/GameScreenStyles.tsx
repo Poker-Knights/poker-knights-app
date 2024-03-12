@@ -79,7 +79,6 @@ export const GameScreenStyles = StyleSheet.create({
     backgroundColor: "#C4C4C4", // A placeholder background color in case the image fails to load
     overflow: "hidden", // Ensures that the image does not spill out of the border radius
   },
-
   playerName: {
     fontFamily: "PixeloidMono",
     color: "#feeb00", // Assuming a gold color for the player's name text
@@ -92,21 +91,18 @@ export const GameScreenStyles = StyleSheet.create({
     fontSize: 14, // Adjust the size as needed
     marginTop: 2, // Space between the name and the money
   },
-
   playersContainer: {
     flexDirection: "row",
     justifyContent: "center", // This will distribute your player containers evenly across the top
     height: 250,
     alignItems: "flex-end",
   },
-
   playerContainer: {
     alignItems: "center",
     justifyContent: "center",
     padding: 10,
     // If you need to space out the player containers evenly, you might consider additional layout styling here
   },
-
   playerLeft: {
     position: "absolute",
     left: 5, // Adjust based on your design needs
@@ -121,7 +117,6 @@ export const GameScreenStyles = StyleSheet.create({
     right: 5, // Adjust based on your design needs
     bottom: 5, // Lower the right player to create a triangle formation
   },
-
   actionButtonsContainer: {
     position: "absolute",
     bottom: 0,
@@ -129,44 +124,54 @@ export const GameScreenStyles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 40,
   },
-  allInButtonContainer: {
-    marginBottom: 20, // Space between the "ALL-IN" button and the lower buttons
-    // Other styles as needed
+  modalView: {
+    alignItems: "center",
   },
-  allInButton: {
-    // Styles for the "ALL-IN" button
-    // Add padding, background color, etc. as per your design
-  },
-  allInButtonText: {
-    fontFamily: "PixeloidMono",
-    color: "#feeb00", // Assuming white color for the player's money text
-    fontSize: 20, // Adjust the size as needed
-  },
-  lowerButtonsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    width: "100%",
-    // Other styles as needed
-  },
-
-  lowerActionButtonText: {
+  actionButtonText: {
     fontFamily: "PixeloidMono",
     color: "#feeb00", // Assuming white color for the player's money text
     fontSize: 20, // Adjust the size as needed
     bottom: 15,
     paddingTop: 10,
   },
-  modalView: {
-    alignItems: "center",
-  },
-  raiseValueContainer: {
+  topButtonsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    width: "100%",
+    alignItems: "center",
+    marginTop: 30, // Adjust as needed
+  },
+  raiseButtonContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   raiseValueText: {
     fontFamily: "PixeloidMono",
-    color: "#feeb00", // Assuming white color for the player's money text
-    fontSize: 20, // Adjust the size as needed
+    color: "#feeb00",
+    fontSize: 20,
+  },
+  allInButtonContainer: {
+    borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  allInButtonText: {
+    fontFamily: "PixeloidMono",
+    color: "#feeb00",
+    fontSize: 20,
+  },
+  bottomButtonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+    marginTop: 10,
+  },
+  callButtonContainer: {
+    // Adjust styles as needed
+  },
+  foldButtonContainer: {
+    // Adjust styles as needed
+  },
+  checkButtonContainer: {
+    // Adjust styles as needed
   },
 });

@@ -179,39 +179,63 @@ const GameScreen = ({ navigation, route }: Props) => {
         })}
       </View>
 
-      {/* Action buttons container */}
       <View style={GameScreenStyles.actionButtonsContainer}>
-        {/* Container for the "ALL-IN" button */}
-        <View style={GameScreenStyles.allInButtonContainer}>
-          <TouchableOpacity onPress={() => handleButtonPress("All-in")}>
-            <Text style={GameScreenStyles.allInButtonText}>ALL-IN</Text>
-          </TouchableOpacity>
+        {/* Container for the Raise and All-in buttons */}
+        <View style={GameScreenStyles.topButtonsContainer}>
+          {/* Raise Functionality */}
+          <View style={GameScreenStyles.raiseButtonContainer}>
+            <TouchableOpacity onPress={() => handleButtonPress("Raise")}>
+              <Text style={GameScreenStyles.actionButtonText}>RAISE</Text>
+              <View style={GameScreenStyles.raiseButtonContainer}>
+                <TouchableOpacity
+                  onPress={() => handleButtonPress("decrementRaise")}
+                >
+                  <Text style={GameScreenStyles.raiseValueText}>-</Text>
+                </TouchableOpacity>
+                <Text style={GameScreenStyles.raiseValueText}>
+                  {curRaiseVal}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => handleButtonPress("incrementRaise")}
+                >
+                  <Text style={GameScreenStyles.raiseValueText}>+</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          {/* ALL-IN Button */}
+          <View style={GameScreenStyles.allInButtonContainer}>
+            <TouchableOpacity onPress={() => handleButtonPress("All-in")}>
+              <Text style={GameScreenStyles.allInButtonText}>ALL-IN</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
-        {/* Raise Functioanlity Container*/}
-        <View style={GameScreenStyles.raiseValueContainer}>
-          <TouchableOpacity onPress={() => handleButtonPress("decrementRaise")}>
-            <Text style={GameScreenStyles.raiseValueText}>-</Text>
-          </TouchableOpacity>
-          <Text style={GameScreenStyles.raiseValueText}>{curRaiseVal}</Text>
-          <TouchableOpacity onPress={() => handleButtonPress("incrementRaise")}>
-            <Text style={GameScreenStyles.raiseValueText}>+</Text>
-          </TouchableOpacity>
+        {/* Container for the Call and Fold buttons */}
+        <View style={GameScreenStyles.bottomButtonsContainer}>
+          {/* Call Button Container */}
+          <View style={GameScreenStyles.callButtonContainer}>
+            <TouchableOpacity onPress={() => handleButtonPress("Call")}>
+              <Text style={GameScreenStyles.actionButtonText}>CALL</Text>
+            </TouchableOpacity>
+            <Text style={GameScreenStyles.raiseValueText}>
+              {Game.currentBet}
+            </Text>
+          </View>
+
+          {/* Fold Button Container */}
+          <View style={GameScreenStyles.foldButtonContainer}>
+            <TouchableOpacity onPress={() => handleButtonPress("Fold")}>
+              <Text style={GameScreenStyles.actionButtonText}>FOLD</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
-        {/* Container for the "CALL", "FOLD", "CHECK", "RAISE" buttons */}
-        <View style={GameScreenStyles.lowerButtonsContainer}>
-          <TouchableOpacity onPress={() => handleButtonPress("Call")}>
-            <Text style={GameScreenStyles.lowerActionButtonText}>CALL</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => handleButtonPress("Fold")}>
-            <Text style={GameScreenStyles.lowerActionButtonText}>FOLD</Text>
-          </TouchableOpacity>
+        {/* Container for the Check button */}
+        <View style={GameScreenStyles.checkButtonContainer}>
           <TouchableOpacity onPress={() => handleButtonPress("Check")}>
-            <Text style={GameScreenStyles.lowerActionButtonText}>CHECK</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => handleButtonPress("Raise")}>
-            <Text style={GameScreenStyles.lowerActionButtonText}>RAISE</Text>
+            <Text style={GameScreenStyles.actionButtonText}>CHECK</Text>
           </TouchableOpacity>
         </View>
       </View>
