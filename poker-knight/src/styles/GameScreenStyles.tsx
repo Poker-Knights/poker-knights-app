@@ -121,8 +121,13 @@ export const GameScreenStyles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     width: "100%",
+    height: "11%",
     alignItems: "center",
-    marginBottom: 40,
+    marginBottom: 30,
+    backgroundColor: "#333", // Background color
+    borderColor: "#555", // Border color
+    borderWidth: 2, // Border width
+    borderRadius: 10, // Border radius
   },
   modalView: {
     alignItems: "center",
@@ -136,42 +141,57 @@ export const GameScreenStyles = StyleSheet.create({
   },
   topButtonsContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 30, // Adjust as needed
   },
   raiseButtonContainer: {
     flexDirection: "row",
-    alignItems: "center",
+    padding: 7,
+    marginRight: 40,
   },
   raiseValueText: {
     fontFamily: "PixeloidMono",
     color: "#feeb00",
     fontSize: 20,
+    padding: 4,
   },
-  allInButtonContainer: {
-    borderRadius: 5,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+  callButtonContainer: {
+    flexDirection: "row",
+    marginRight: 10,
   },
-  allInButtonText: {
+  callButtonText: {
     fontFamily: "PixeloidMono",
     color: "#feeb00",
     fontSize: 20,
   },
   bottomButtonsContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
     width: "100%",
-    marginTop: 10,
+    justifyContent: "center",
   },
-  callButtonContainer: {
-    // Adjust styles as needed
+  allInButtonContainer: {
+    paddingHorizontal: 30,
+  },
+  allInButtonText: {
+    fontFamily: "PixeloidMono",
+    color: "#feeb00",
+    fontSize: 20,
+    alignContent: "space-around",
   },
   foldButtonContainer: {
-    // Adjust styles as needed
+    paddingHorizontal: 30,
+  },
+  foldButtonText: {
+    fontFamily: "PixeloidMono",
+    color: "#feeb00",
+    fontSize: 20,
   },
   checkButtonContainer: {
-    // Adjust styles as needed
+    paddingHorizontal: 10,
+    marginRight: 25,
+  },
+  checkButtonText: {
+    fontFamily: "PixeloidMono",
+    color: "#feeb00",
+    fontSize: 20,
   },
 });
