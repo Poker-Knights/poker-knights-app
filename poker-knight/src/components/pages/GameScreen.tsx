@@ -45,6 +45,7 @@ const GameScreen = ({ navigation, route }: Props) => {
   const { Game } = route.params;
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
   let [curRaiseVal, setCurRaiseVal] = useState(10); //Track Raise Value
+  let [callRaiseText, setCallRaiseText] = useState("CALL"); //Track Raise Value
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -79,12 +80,29 @@ const GameScreen = ({ navigation, route }: Props) => {
         handleAllInPress(Game);
         break;
       case "decrementRaise":
-        if (curRaiseVal != 0) curRaiseVal -= 10;
+        if (curRaiseVal != 0 && curRaiseVal >= Game.currentBet) {
+          if (curRaiseVal === Game.currentBet + 10) {
+            setCallRaiseText("CALL");
+            curRaiseVal -= 10;
+          } else if (curRaiseVal === Game.currentBet) {
+            curRaiseVal = 0;
+            setCallRaiseText("CHECK");
+          } else {
+            curRaiseVal -= 10;
+          }
+        }
         break;
       case "incrementRaise":
-        if (curRaiseVal < Game.players[Game.currentPlayer - 1].money - 10)
+        if (curRaiseVal === 0) {
+          curRaiseVal = Game.currentBet;
+          setCallRaiseText("CALL");
+        } else if (
+          curRaiseVal <
+          Game.players[Game.currentPlayer - 1].money - 10
+        ) {
           curRaiseVal += 10;
-        else {
+          if (curRaiseVal > Game.currentBet) setCallRaiseText("RAISE");
+        } else {
           curRaiseVal = Game.players[Game.currentPlayer - 1].money;
         }
         break;
@@ -185,7 +203,9 @@ const GameScreen = ({ navigation, route }: Props) => {
           {/* Raise Functionality */}
           <View style={GameScreenStyles.raiseButtonContainer}>
             <TouchableOpacity onPress={() => handleButtonPress("Raise")}>
-              <Text style={GameScreenStyles.raiseValueText}>RAISE:</Text>
+              <Text style={GameScreenStyles.raiseValueText}>
+                {callRaiseText}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => handleButtonPress("decrementRaise")}
@@ -198,16 +218,6 @@ const GameScreen = ({ navigation, route }: Props) => {
             >
               <Text style={GameScreenStyles.raiseValueText}>+</Text>
             </TouchableOpacity>
-          </View>
-
-          {/* Call Button Container */}
-          <View style={GameScreenStyles.callButtonContainer}>
-            <TouchableOpacity onPress={() => handleButtonPress("Call")}>
-              <Text style={GameScreenStyles.callButtonText}>CALL: </Text>
-            </TouchableOpacity>
-            <Text style={GameScreenStyles.callButtonText}>
-              {Game.currentBet}
-            </Text>
           </View>
         </View>
 
