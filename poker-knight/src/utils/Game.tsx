@@ -101,6 +101,7 @@ const handleAllInPress = (game: Game) => {
   // Implement the all-in action logic here
   const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
   game.currentBet = curPlayer.money; // Set current bet to players worth
+  curPlayer.lastBet = curPlayer.money; // Update last bet
   curPlayer.money = 0; // Empty players money
   game.potSize += game.currentBet; // Update Pot Value
   nextPlayer(game); // Move to next player
