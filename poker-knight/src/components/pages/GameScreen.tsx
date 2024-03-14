@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "../../../App";
 import { GameScreenStyles } from "../../styles/GameScreenStyles";
@@ -26,6 +26,9 @@ import {
 
 import { Ionicons } from "@expo/vector-icons";
 import { RouteProp } from "@react-navigation/native";
+import io, { Socket } from "socket.io-client";
+import { SERVER_URL } from "../../utils/socket";
+
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
 
 const userIcon = require("../../Graphics/userIcon.png");
@@ -43,16 +46,66 @@ const GameScreen = ({ navigation, route }: Props) => {
   const [pot, setPot] = useState(100); // Initialize pot state with a default value
   const [currentBet, setCurrentBet] = useState(0); // Initialize current bet state with a default value
   const { Game } = route.params;
+  const [theGame, setGame] = useState(Game); // this is your client side representation of game object
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
   let [curRaiseVal, setCurRaiseVal] = useState(10); //Track Raise Value
-  let [callRaiseText, setCallRaiseText] = useState("CALL"); //Track Raise Value
+  let [callRaiseText, setCallRaiseText] = useState("CALL:"); //Track Raise Value
+  
+  const socketRef = useRef<Socket | null>(null);
+  
+
+
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false, // Set this to false to hide the navigation bar
     });
   }, [navigation]);
+  
 
+
+  // When compoment mounts, connect to the server
+  useEffect(() => {
+    socketRef.current = io(SERVER_URL, { transports: ["websocket"] });
+
+    if (socketRef.current) 
+    {
+
+      // if 4 players in game
+      if(Game.playerCount === 4)
+      {
+        // emit initialize players event
+        socketRef.current.emit("initializePlayers", Game.id);
+      }
+
+      // listen for playersForGameInitialized event
+      socketRef.current.on("playersForGameInitialized", (data:any) => {
+        let initGame = data.gameState;
+        // update game state
+        setGame(initGame);
+        console.log(initGame);
+        // turn off the event listener
+        if (socketRef.current)
+        {
+          socketRef.current.off("playersForGameInitialized");
+        }
+    
+      });
+    }
+
+    return () => {
+      // turn off playersForGameInitialized
+      if (socketRef.current) {
+        socketRef.current.off("playersForGameInitialized");
+      }} 
+
+  }, []);
+
+  // any changes to theGame from the server will trigger this useEffect
+  // --------------------------------------------------------------------
+
+  
+  
   const handleSettingsPress = () => {
     // Implement what happens when the user presses the join button
     console.log("Settings"); // For now, we'll just log the game ID
@@ -60,50 +113,54 @@ const GameScreen = ({ navigation, route }: Props) => {
     //navigation.navigate("Settings");
   };
 
-  // Function to handle when buttons are pressed
+  // Function to handle when buttons are pressed  // export this to utils file for game
+  // you have to update player last bet here as well --> Matthew
   const handleButtonPress = (buttonPressed: string) => {
     // Switch to handle the button pressed
     switch (buttonPressed) {
       case "Call":
-        handleCallPress(Game);
+        handleCallPress(theGame);
         break;
       case "Fold":
-        handleFoldPress(Game);
+        handleFoldPress(theGame);
         break;
       case "Check":
-        handleCheckPress(Game);
+        handleCheckPress(theGame);
         break;
       case "Raise":
-        handleRaisePress(Game, curRaiseVal);
+        handleRaisePress(theGame, curRaiseVal);
         break;
       case "All-in":
-        handleAllInPress(Game);
+        handleAllInPress(theGame);
         break;
       case "decrementRaise":
-        if (curRaiseVal != 0 && curRaiseVal >= Game.currentBet) {
-          if (curRaiseVal === Game.currentBet + 10) {
-            setCallRaiseText("CALL");
+        if (curRaiseVal != 0 && curRaiseVal >= theGame.currentBet) {
+          if (curRaiseVal === theGame.currentBet + 10) {
+            setCallRaiseText("CALL: ");
             curRaiseVal -= 10;
-          } else if (curRaiseVal === Game.currentBet) {
+          } else if (curRaiseVal === theGame.currentBet) {
             curRaiseVal = 0;
-            setCallRaiseText("CHECK");
+            setCallRaiseText("CHECK: ");
           } else {
             curRaiseVal -= 10;
           }
         }
         break;
       case "incrementRaise":
-        if (curRaiseVal === 0) {
-          curRaiseVal = Game.currentBet;
-          setCallRaiseText("CALL");
-        } else if (
-          curRaiseVal <
-          Game.players[Game.currentPlayer - 1].money - 10
-        ) {
+        if (curRaiseVal === 0) 
+        {
+          curRaiseVal = theGame.currentBet;
+          setCallRaiseText("CALL: ");
+        } 
+        else if (curRaiseVal < theGame.players[theGame.currentPlayer - 1].money - 10) 
+        {
           curRaiseVal += 10;
-          if (curRaiseVal > Game.currentBet) setCallRaiseText("RAISE");
-        } else {
-          curRaiseVal = Game.players[Game.currentPlayer - 1].money;
+          if (curRaiseVal > theGame.currentBet) 
+            setCallRaiseText("RAISE: ");
+        } 
+        
+        else {
+          curRaiseVal = theGame.players[theGame.currentPlayer - 1].money;
         }
         break;
     }
@@ -113,20 +170,23 @@ const GameScreen = ({ navigation, route }: Props) => {
       buttonPressed != "decrementRaise"
     ) {
       if (
-        Game.players[(Game.currentPlayer + 1) % Game.playerCount].money >=
+        theGame.players[(theGame.currentPlayer + 1) % theGame.playerCount].money >=
         curRaiseVal + 10
       ) {
-        curRaiseVal = Game.currentBet + 10;
+        curRaiseVal = theGame.currentBet + 10;
       } else {
         curRaiseVal =
-          Game.players[(Game.currentPlayer + 1) % Game.playerCount].money;
+          theGame.players[(theGame.currentPlayer + 1) % theGame.playerCount].money;
       }
     }
 
-    //Update Value
+    //Update Values
     setCurRaiseVal(curRaiseVal);
-    setPot(Game.potSize);
-    setCurrentBet(Game.currentBet);
+
+    // * IMPORTANT*
+    // these values need to be updated on the server side as well 
+    setPot(theGame.potSize);
+    setCurrentBet(theGame.currentBet);
   };
 
   return (
@@ -140,10 +200,10 @@ const GameScreen = ({ navigation, route }: Props) => {
       {/* Top part of the screen with pot and current bet */}
       <View style={GameScreenStyles.topContainer}>
         <Text style={GameScreenStyles.potText}>
-          POT:{formatCurrency(Game.potSize)}
+          POT:{formatCurrency(theGame.potSize)}
         </Text>
         <Text style={GameScreenStyles.currentBetText}>
-          Current Bet: {formatCurrency(Game.currentBet)}
+          Current Bet: {formatCurrency(theGame.currentBet)}
         </Text>
 
         {/* White line */}
@@ -189,7 +249,7 @@ const GameScreen = ({ navigation, route }: Props) => {
               />
               <Text style={GameScreenStyles.playerName}>{player.name}</Text>
               <Text style={GameScreenStyles.playerMoney}>
-                {formatCurrency(Game.players[Game.currentPlayer - 1].money)}
+                {formatCurrency(theGame.players[theGame.currentPlayer - 1].money)}
               </Text>
               {/*player.currentTurn && <View style={GameScreenStyles.turnIndicator} />*/}
             </View>

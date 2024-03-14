@@ -146,7 +146,7 @@ export const GameScreenStyles = StyleSheet.create({
   raiseButtonContainer: {
     flexDirection: "row",
     padding: 7,
-    marginRight: 40,
+    marginRight: 0,
   },
   raiseValueText: {
     fontFamily: "PixeloidMono",
@@ -156,7 +156,7 @@ export const GameScreenStyles = StyleSheet.create({
   },
   callButtonContainer: {
     flexDirection: "row",
-    marginRight: 10,
+    marginRight: 0,
   },
   callButtonText: {
     fontFamily: "PixeloidMono",

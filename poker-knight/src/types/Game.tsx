@@ -20,4 +20,5 @@ export type Game = {
   playerCount: number;
   currentBet: number;
   currentPlayer: number;
+  gameStarted: boolean;
 };
