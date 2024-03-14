@@ -5,6 +5,8 @@ import http from 'http';
 import { Game, Player } from '../src/types/Game';
 import { handleCreateGame } from './home_screen/handleCreateGame'; 
 import { handleAttemptToJoin } from './join_screen/handleAttemptToJoin';
+import { handleInitializePlayersforGame } from './game_screen/handleInitializePlayers';
+
 
 
 
@@ -26,6 +28,10 @@ io.on('connection', (socket: Socket) => {
     // Register event handlers for this connection
     socket.on('createGame', handleCreateGame(socket, games));
     socket.on('attemptToJoin', handleAttemptToJoin(socket, games));
+
+
+    // Listen for Intiialize game event for a game
+    socket.on('initializePlayers', handleInitializePlayersforGame(socket, games));
 
     // Example of disconnect event
     socket.on('disconnect', () => {
