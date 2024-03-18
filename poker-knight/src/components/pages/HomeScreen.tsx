@@ -78,6 +78,7 @@ const Home = ({ navigation }: Props) => {
   const onHostGamePress = () => handleHostGamePress(username, onCreateGame);
   const onJoinGamePress = () => handleJoinGamePress(username, navigation);
 
+  
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar hidden={true} />

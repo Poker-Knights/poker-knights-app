@@ -194,4 +194,8 @@ export const GameScreenStyles = StyleSheet.create({
     color: "#feeb00",
     fontSize: 20,
   },
+  disabledButton: {
+    backgroundColor: '#ccc', // Grey color
+  },
+  
 });

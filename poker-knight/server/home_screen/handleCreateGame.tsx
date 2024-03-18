@@ -15,6 +15,7 @@ export const handleCreateGame =
       playerCount: 0, // Will be updated when adding a player
       currentBet: 0,
       currentPlayer: 1,
+      gameStarted: false
     };
 
     // Use the utility function to create and add the new player to the game
