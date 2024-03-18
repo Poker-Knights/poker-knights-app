@@ -50,6 +50,26 @@ const createAndAddPlayer = (username: string, socketId: string, game: Game) => {
   return newPlayer; // Return the new player object for any further use
 };
 
+// Function to remove a player from the specified game
+const removePlayer = (socketId: string, game: Game) => {
+  console.log(`Current player count: ${game.playerCount}`);
+  console.log(`Removing user: ${socketId} from player list`);
+
+  // Iterate through all players in game
+  for (let i = 0; i < game.playerCount; i++) {
+    // If player at index i has the same id, then remove from players array
+    if (game.players[i].id == socketId) {
+      game.players.splice(i, 1); // 2nd parameter means remove one item only
+      game.playerCount--; // Update player count
+      break;
+    }
+  }
+
+  console.log(`Updated players count: ${game.playerCount}`);
+
+  return game.players; // Return players left in the game for any further use
+};
+
 // Handle button presses
 const handleCallPress = () => {
   console.log("Call action");
@@ -91,9 +111,42 @@ const placeBet = (playerId: string, betAmount: number, players: Player[]) => {
   // Logic to place a bet
 };
 
+const handleExitConfirmPress = (
+  socketRef: React.RefObject<any>,
+  gameID: string
+) => {
+  if (socketRef.current) {
+    console.log(`Disconnecting player ${socketRef.current.id} from game ${gameID}`);
+    
+    const playerID = socketRef.current.id;
+
+    socketRef.current.emit("exitGame", playerID, gameID);
+  }
+};
+
+const handleExit = (
+  navigation: any,
+  socketRef: React.RefObject<any>,
+  gameID: string
+) => (data: any) => {
+  if (socketRef.current) {
+    socketRef.current.disconnect();
+
+    console.log("Exit game was successful");
+    
+    navigation.navigate("Home");
+  }
+  else {
+    console.log("Exit game was unsuccessful");
+  }
+};
+
 // Export each function separately
 export {
   createAndAddPlayer,
+  removePlayer,
+  handleExitConfirmPress,
+  handleExit,
   handlePlayerTurn,
   updatePot,
   placeBet,

@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "../../../App";
 
 import {
   View,
   Text,
+  Modal,
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
@@ -12,8 +13,6 @@ import {
   ImageBackground,
 } from "react-native";
 
-import { PopupMenu } from "./Settings"; // Import PopupMenu, will need to change
-// import { handleSettingsPress } from "../../utils/settingsUtil";
 import { formatCurrency } from "../../utils/Money";
 import {
   handleCallPress,
@@ -21,10 +20,15 @@ import {
   handleFoldPress,
   handleRaisePress,
   handleAllInPress,
+  handleExit,
+  handleExitConfirmPress,
 } from "../../utils/Game";
 
 import { Ionicons } from "@expo/vector-icons";
 import { RouteProp } from "@react-navigation/native";
+import io, { Socket } from 'socket.io-client';
+import {SERVER_URL} from '../../utils/socket';
+
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
 
 const userIcon = require("../../Graphics/userIcon.png");
@@ -32,6 +36,7 @@ const userIcon = require("../../Graphics/userIcon.png");
 const defaultAvatar = require("../../Graphics/userIcon.png"); // Relative path from the current file to the image
 
 type GameScreenRouteProp = RouteProp<StackParamList, "Game">;
+
 
 type Props = {
   navigation: StackNavigationProp<StackParamList, "Game">;
@@ -50,20 +55,75 @@ const GameScreen = ({ navigation, route }: Props) => {
     });
   }, [navigation]);
 
-  const handleSettingsPress = () => {
-    // Implement what happens when the user presses the join button
-    console.log("Settings"); // For now, we'll just log the game ID
+  const socketRef = useRef<Socket | null>(null)
+
+  useEffect(() => {
+    socketRef.current = io(SERVER_URL, { transports: ['websocket'] });
+
+    // Use the imported helper function, passing necessary dependencies
+    const exitGameHandler = handleExit(navigation, socketRef, Game.id);
+
+    if (socketRef.current) {
+      socketRef.current.on('gameExited', exitGameHandler);
+    }
+
+    // Cleanup on component unmount
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.off('gameExited', exitGameHandler);
+        socketRef.current.disconnect();
+        navigation.navigate("Home");
+      }
+    };
+  }, [navigation, socketRef])
+
+  // Bring user to exit confirmation modal
+  const handleExitPress = () => {
+    console.log("Exit button was pressed");
     setMenuVisible(true);
-    //navigation.navigate("Settings");
   };
+
+  const onExitConfirmPress = () => handleExitConfirmPress(socketRef, Game.id);
+
   return (
     <View style={styles.backgroundContainer}>
-      <View style={styles.modalView}>
-        <PopupMenu
+      <View>
+        <Modal
+          animationType="slide"
+          transparent={true}
           visible={menuVisible}
-          onClose={() => setMenuVisible(false)}
-        />
+          onRequestClose={() => setMenuVisible(false)}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>Are you sure you want to exit the game?</Text>
+
+              {/* Exit game Button */}
+              <TouchableOpacity
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => {
+                  console.log('Game was attempted to be exited');
+                  onExitConfirmPress();
+                }}
+              >
+                <Text style={styles.textStyle}>Exit game</Text>
+              </TouchableOpacity>
+
+              {/* Continue game */}
+              <TouchableOpacity
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => {
+                    console.log('Game was continued');
+                    setMenuVisible(false);
+                }}
+              >
+                <Text style={styles.textStyle}>Continue game</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </View>
+      
       {/* Top part of the screen with pot and current bet */}
       <View style={styles.topContainer}>
         <Text style={styles.potText}>POT:{formatCurrency(pot)}</Text>
@@ -75,15 +135,16 @@ const GameScreen = ({ navigation, route }: Props) => {
         <View style={styles.whiteLine} />
       </View>
 
-      {/* Settings Button */}
+      {/* Exit Button */}
       <TouchableOpacity
-        style={styles.settingsButton}
-        onPress={handleSettingsPress}
+        style={styles.exitButton}
+        onPress={handleExitPress}
       >
-        <Image
+        {/* <Image
           source={require("../../Graphics/settingwidget.png")}
           style={styles.settingsIcon}
-        />
+        /> */}
+        <Text style={styles.exitText}>EXIT</Text>
       </TouchableOpacity>
 
       <View style={styles.bottomContainer}>
@@ -169,11 +230,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  settingsButton: {
+  exitButton: {
     position: "absolute",
     left: 10, // Adjust as needed
     top: 6,
-    // ... Other styles for the settings button
+    // ... Other styles for the exit button
   },
 
   settingsIcon: {
@@ -182,6 +243,15 @@ const styles = StyleSheet.create({
     width: 30, // Adjust as needed
     height: 30, // Adjust as needed
     // ... Other styles for the settings icon
+  },
+
+  exitText: {
+    fontFamily: "PixeloidMono",
+    color: "#feeb00", // Gold color for the pot amount
+    fontSize: 20, // Adjust the size as needed
+    paddingBottom: 2,
+    marginTop: 20,
+    marginLeft: 10,
   },
 
   topContainer: {
@@ -304,8 +374,52 @@ const styles = StyleSheet.create({
     bottom: 15,
     paddingTop: 10,
   },
+  
+  /* Modal Styles */
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
   modalView: {
-    alignItems: "center",
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  openButton: {
+    backgroundColor: '#F194FF',
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginTop: 10,
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
   },
 });
 
