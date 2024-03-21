@@ -145,8 +145,10 @@ export const GameScreenStyles = StyleSheet.create({
   },
   raiseButtonContainer: {
     flexDirection: "row",
-    padding: 7,
+    padding: 2,
     marginRight: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   raiseValueText: {
     fontFamily: "PixeloidMono",
@@ -198,4 +200,29 @@ export const GameScreenStyles = StyleSheet.create({
     backgroundColor: '#ccc', // Grey color
   },
   
+
+  clientChipCountContainer: {
+    // Position it towards the bottom-left part of the bottomContainer
+    left: 10, // Adjust as needed for padding from the left edge
+    bottom: -200, // Adjust as needed to position above the action buttons
+    backgroundColor: '#292626', // Slightly darker background for readability
+    padding: 5,
+    borderRadius: 5,
+  },
+  
+  clientChipCountText: {
+    color: '#feeb00',
+    fontSize: 16,
+    fontFamily: 'PixeloidMono',
+  },
+
+  labelText: {
+    // Style for the RAISE/CHECK/CALL label text
+    color: '#feeb00', // Use the same color as your raiseValueText for consistency
+    fontFamily: 'PixeloidMono',
+    fontSize: 20, // Adjust the size as needed
+    marginRight: 4, 
+    marginHorizontal: 4, // This adds spacing on both sides of the value,// Add some margin to the right of the label
+    // Add other styles as necessary
+  },
 });

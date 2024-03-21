@@ -15,6 +15,7 @@ export type Player = {
 
 export type Game = {
   id: string;
+  hostPlayer: string;
   players: Player[];
   potSize: number;
   playerCount: number;
