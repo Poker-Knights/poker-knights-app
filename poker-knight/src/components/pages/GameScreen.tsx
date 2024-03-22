@@ -50,46 +50,36 @@ const GameScreen = ({ navigation, route }: Props) => {
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
   let [curRaiseVal, setCurRaiseVal] = useState(10); //Track Raise Value
   let [callRaiseText, setCallRaiseText] = useState("CALL:"); //Track Raise Value
-  
+
   const socketRef = useRef<Socket | null>(null);
-  
-
-
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false, // Set this to false to hide the navigation bar
     });
   }, [navigation]);
-  
-
 
   // When compoment mounts, connect to the server
   useEffect(() => {
     socketRef.current = io(SERVER_URL, { transports: ["websocket"] });
 
-    if (socketRef.current) 
-    {
-
+    if (socketRef.current) {
       // if 4 players in game
-      if(Game.playerCount === 4)
-      {
+      if (Game.playerCount === 4) {
         // emit initialize players event
         socketRef.current.emit("initializePlayers", Game.id);
       }
 
       // listen for playersForGameInitialized event
-      socketRef.current.on("playersForGameInitialized", (data:any) => {
+      socketRef.current.on("playersForGameInitialized", (data: any) => {
         let initGame = data.gameState;
         // update game state
         setGame(initGame);
         console.log(initGame);
         // turn off the event listener
-        if (socketRef.current)
-        {
+        if (socketRef.current) {
           socketRef.current.off("playersForGameInitialized");
         }
-    
       });
     }
 
@@ -97,15 +87,13 @@ const GameScreen = ({ navigation, route }: Props) => {
       // turn off playersForGameInitialized
       if (socketRef.current) {
         socketRef.current.off("playersForGameInitialized");
-      }} 
-
+      }
+    };
   }, []);
 
   // any changes to theGame from the server will trigger this useEffect
   // --------------------------------------------------------------------
 
-  
-  
   const handleSettingsPress = () => {
     // Implement what happens when the user presses the join button
     console.log("Settings"); // For now, we'll just log the game ID
@@ -147,19 +135,16 @@ const GameScreen = ({ navigation, route }: Props) => {
         }
         break;
       case "incrementRaise":
-        if (curRaiseVal === 0) 
-        {
+        if (curRaiseVal === 0) {
           curRaiseVal = theGame.currentBet;
           setCallRaiseText("CALL: ");
-        } 
-        else if (curRaiseVal < theGame.players[theGame.currentPlayer - 1].money - 10) 
-        {
+        } else if (
+          curRaiseVal <
+          theGame.players[theGame.currentPlayer - 1].money - 10
+        ) {
           curRaiseVal += 10;
-          if (curRaiseVal > theGame.currentBet) 
-            setCallRaiseText("RAISE: ");
-        } 
-        
-        else {
+          if (curRaiseVal > theGame.currentBet) setCallRaiseText("RAISE: ");
+        } else {
           curRaiseVal = theGame.players[theGame.currentPlayer - 1].money;
         }
         break;
@@ -170,13 +155,15 @@ const GameScreen = ({ navigation, route }: Props) => {
       buttonPressed != "decrementRaise"
     ) {
       if (
-        theGame.players[(theGame.currentPlayer + 1) % theGame.playerCount].money >=
-        curRaiseVal + 10
+        theGame.players[(theGame.currentPlayer + 1) % theGame.playerCount]
+          .money >= curRaiseVal
       ) {
-        curRaiseVal = theGame.currentBet + 10;
+        curRaiseVal = theGame.currentBet;
+        setCallRaiseText("CALL");
       } else {
         curRaiseVal =
-          theGame.players[(theGame.currentPlayer + 1) % theGame.playerCount].money;
+          theGame.players[(theGame.currentPlayer + 1) % theGame.playerCount]
+            .money;
       }
     }
 
@@ -184,7 +171,7 @@ const GameScreen = ({ navigation, route }: Props) => {
     setCurRaiseVal(curRaiseVal);
 
     // * IMPORTANT*
-    // these values need to be updated on the server side as well 
+    // these values need to be updated on the server side as well
     setPot(theGame.potSize);
     setCurrentBet(theGame.currentBet);
   };
@@ -249,7 +236,9 @@ const GameScreen = ({ navigation, route }: Props) => {
               />
               <Text style={GameScreenStyles.playerName}>{player.name}</Text>
               <Text style={GameScreenStyles.playerMoney}>
-                {formatCurrency(theGame.players[theGame.currentPlayer - 1].money)}
+                {formatCurrency(
+                  theGame.players[theGame.currentPlayer - 1].money
+                )}
               </Text>
               {/*player.currentTurn && <View style={GameScreenStyles.turnIndicator} />*/}
             </View>
