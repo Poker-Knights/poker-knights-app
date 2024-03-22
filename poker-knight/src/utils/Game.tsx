@@ -39,8 +39,13 @@ const createAndAddPlayer = (username: string, socketId: string, game: Game) => {
     id: socketId,
     name: username,
     money: 500, // Default starting money
+    allInFg: false,
     //avatarUri: generateAvatar(game.players), // Call the generateAvatar function here
     currentTurn: false, // Set initial turn status
+    lastBet: 0,
+    fold: false,
+    isLittleBlind: false,
+    isBigBlind: false,
   };
 
   // Add the new player to the game
@@ -71,44 +76,70 @@ const removePlayer = (socketId: string, game: Game) => {
 };
 
 // Handle button presses
-const handleCallPress = () => {
-  console.log("Call action");
+const handleCallPress = (game: Game) => {
   // Implement the call action logic here
+  const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
+  if (curPlayer.money >= game.currentBet) {
+    curPlayer.money -= game.currentBet; // Reflect bet
+    curPlayer.lastBet = game.currentBet; // Update last bet
+    game.potSize += game.currentBet; // Update Pot Value
+  } else {
+    curPlayer.allInFg = true; // Player is all in
+    // All in logic
+  }
+  nextPlayer(game); // Move to next player
 };
 
-const handleFoldPress = () => {
-  console.log("Fold action");
+const handleFoldPress = (game: Game) => {
   // Implement the fold action logic here
+  const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
+  curPlayer.fold = true;
+  nextPlayer(game); // Move to next player
 };
 
-const handleCheckPress = () => {
-  console.log("Check action");
+const handleCheckPress = (game: Game) => {
   // Implement the check action logic here
+  nextPlayer(game); // Move to next player
 };
 
-const handleRaisePress = () => {
-  console.log("Raise action");
+const handleRaisePress = (game: Game, betValue: number) => {
   // Implement the raise action logic here
+  const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
+  if (curPlayer.money >= betValue) {
+    curPlayer.money -= betValue; // Reflect bet
+    curPlayer.lastBet = betValue; // Update last bet
+    game.currentBet = betValue; // Update current game bet to new value
+    game.potSize += game.currentBet; // Update Pot Value
+  } else {
+    curPlayer.allInFg = true; // Player is all in
+    // All in logic
+  }
+  nextPlayer(game); // Move to next player
 };
 
-const handleAllInPress = () => {
-  console.log("All-in action");
+const handleAllInPress = (game: Game) => {
   // Implement the all-in action logic here
+  const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
+  game.currentBet = curPlayer.money; // Set current bet to players worth
+  curPlayer.lastBet = curPlayer.money; // Update last bet
+  curPlayer.money = 0; // Empty players money
+  game.potSize += game.currentBet; // Update Pot Value
+  nextPlayer(game); // Move to next player
+};
+
+const handleServerComm = (game: Game) => {
+  console.log("Handle Server Comms");
+  /* Kevin do your code here */
 };
 
 // Function to handle a player's turn, return player
-const handlePlayerTurn = (playerId: string, players: Player[]) => {
+const nextPlayer = (game: Game) => {
   // Logic to handle player's turn
-};
+  game.currentPlayer++;
+  if (game.currentPlayer >= game.playerCount) game.currentPlayer = 1;
 
-// Function to update the pot, return number
-const updatePot = (newPotValue: number) => {
-  // Logic to update the pot
-};
-
-// Function to place a bet
-const placeBet = (playerId: string, betAmount: number, players: Player[]) => {
-  // Logic to place a bet
+  // Handle Server Communications
+  handleServerComm(game);
 };
 
 const handleExitConfirmPress = (
@@ -116,40 +147,37 @@ const handleExitConfirmPress = (
   gameID: string
 ) => {
   if (socketRef.current) {
-    console.log(`Disconnecting player ${socketRef.current.id} from game ${gameID}`);
-    
+    console.log(
+      `Disconnecting player ${socketRef.current.id} from game ${gameID}`
+    );
+
     const playerID = socketRef.current.id;
 
     socketRef.current.emit("exitGame", playerID, gameID);
   }
 };
 
-const handleExit = (
-  navigation: any,
-  socketRef: React.RefObject<any>,
-  gameID: string
-) => (data: any) => {
-  if (socketRef.current) {
-    socketRef.current.disconnect();
+const handleExit =
+  (navigation: any, socketRef: React.RefObject<any>, gameID: string) =>
+  (data: any) => {
+    if (socketRef.current) {
+      socketRef.current.disconnect();
 
-    console.log("Exit game was successful");
-    
-    navigation.navigate("Home");
-  }
-  else {
-    console.log("Exit game was unsuccessful");
-  }
-};
+      console.log("Exit game was successful");
+
+      navigation.navigate("Home");
+    } else {
+      console.log("Exit game was unsuccessful");
+    }
+  };
 
 // Export each function separately
 export {
-  createAndAddPlayer,
   removePlayer,
   handleExitConfirmPress,
   handleExit,
-  handlePlayerTurn,
-  updatePot,
-  placeBet,
+  createAndAddPlayer,
+  handleServerComm,
   handleAllInPress,
   handleCallPress,
   handleCheckPress,

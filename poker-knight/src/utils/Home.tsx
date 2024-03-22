@@ -20,10 +20,7 @@ export const handleHostGamePress = (
   username: string,
   createGameFunction: Function
 ) => {
-  console.log("Host Game");
-
   if (username.length <= 8 && username.length > 0) {
-    console.log("Username is valid");
     createGameFunction(username);
   } else {
     Alert.alert(
@@ -35,8 +32,14 @@ export const handleHostGamePress = (
 
 // Assuming `navigation` is from `useNavigation` in react-navigation
 export const handleJoinGamePress = (username: string, navigation: any) => {
-  console.log("Join Game");
-  navigation.navigate("Join", { username });
+  if (username.length <= 8 && username.length > 0) {
+    navigation.navigate("Join", { username });
+  } else {
+    Alert.alert(
+      "Invalid Username",
+      "Username must be between 1 and 8 characters"
+    );
+  }
 };
 
 export const handleSettingsPress = (
@@ -62,7 +65,6 @@ export const handleGameCreated =
 
     // Navigate to loading screen until enough players
     navigation.navigate("Game", {
-      username: newGame.players[0].name,
       Game: newGame,
     });
   };

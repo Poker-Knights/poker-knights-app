@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "../../../App";
+import { GameScreenStyles } from "../../styles/GameScreenStyles";
 
 import {
   View,
@@ -26,8 +27,8 @@ import {
 
 import { Ionicons } from "@expo/vector-icons";
 import { RouteProp } from "@react-navigation/native";
-import io, { Socket } from 'socket.io-client';
-import {SERVER_URL} from '../../utils/socket';
+import io, { Socket } from "socket.io-client";
+import { SERVER_URL } from "../../utils/socket";
 
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
 
@@ -36,7 +37,6 @@ const userIcon = require("../../Graphics/userIcon.png");
 const defaultAvatar = require("../../Graphics/userIcon.png"); // Relative path from the current file to the image
 
 type GameScreenRouteProp = RouteProp<StackParamList, "Game">;
-
 
 type Props = {
   navigation: StackNavigationProp<StackParamList, "Game">;
@@ -47,7 +47,10 @@ const GameScreen = ({ navigation, route }: Props) => {
   const [pot, setPot] = useState(100); // Initialize pot state with a default value
   const [currentBet, setCurrentBet] = useState(0); // Initialize current bet state with a default value
   const { Game } = route.params;
+  const [theGame, setGame] = useState(Game); // this is your client side representation of game object
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
+  let [curRaiseVal, setCurRaiseVal] = useState(10); //Track Raise Value
+  let [callRaiseText, setCallRaiseText] = useState("CALL:"); //Track Raise Value
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -55,27 +58,27 @@ const GameScreen = ({ navigation, route }: Props) => {
     });
   }, [navigation]);
 
-  const socketRef = useRef<Socket | null>(null)
+  const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    socketRef.current = io(SERVER_URL, { transports: ['websocket'] });
+    socketRef.current = io(SERVER_URL, { transports: ["websocket"] });
 
     // Use the imported helper function, passing necessary dependencies
     const exitGameHandler = handleExit(navigation, socketRef, Game.id);
 
     if (socketRef.current) {
-      socketRef.current.on('gameExited', exitGameHandler);
+      socketRef.current.on("gameExited", exitGameHandler);
     }
 
     // Cleanup on component unmount
     return () => {
       if (socketRef.current) {
-        socketRef.current.off('gameExited', exitGameHandler);
+        socketRef.current.off("gameExited", exitGameHandler);
         socketRef.current.disconnect();
         navigation.navigate("Home");
       }
     };
-  }, [navigation, socketRef])
+  }, [navigation, socketRef]);
 
   // Bring user to exit confirmation modal
   const handleExitPress = () => {
@@ -85,342 +88,233 @@ const GameScreen = ({ navigation, route }: Props) => {
 
   const onExitConfirmPress = () => handleExitConfirmPress(socketRef, Game.id);
 
+  // Function to handle when buttons are pressed  // export this to utils file for game
+  // you have to update player last bet here as well --> Matthew
+  const handleButtonPress = (buttonPressed: string) => {
+    // Switch to handle the button pressed
+    switch (buttonPressed) {
+      case "Call":
+        handleCallPress(theGame);
+        break;
+      case "Fold":
+        handleFoldPress(theGame);
+        break;
+      case "Check":
+        handleCheckPress(theGame);
+        break;
+      case "Raise":
+        handleRaisePress(theGame, curRaiseVal);
+        break;
+      case "All-in":
+        handleAllInPress(theGame);
+        break;
+      case "decrementRaise":
+        if (curRaiseVal != 0 && curRaiseVal >= theGame.currentBet) {
+          if (curRaiseVal === theGame.currentBet + 10) {
+            setCallRaiseText("CALL: ");
+            curRaiseVal -= 10;
+          } else if (curRaiseVal === theGame.currentBet) {
+            curRaiseVal = 0;
+            setCallRaiseText("CHECK: ");
+          } else {
+            curRaiseVal -= 10;
+          }
+        }
+        break;
+      case "incrementRaise":
+        if (curRaiseVal === 0) {
+          curRaiseVal = theGame.currentBet;
+          setCallRaiseText("CALL: ");
+        } else if (
+          curRaiseVal <
+          theGame.players[theGame.currentPlayer - 1].money - 10
+        ) {
+          curRaiseVal += 10;
+          if (curRaiseVal > theGame.currentBet) setCallRaiseText("RAISE: ");
+        } else {
+          curRaiseVal = theGame.players[theGame.currentPlayer - 1].money;
+        }
+        break;
+    }
+    // Handle Proper current raise value
+    if (
+      buttonPressed != "incrementRaise" &&
+      buttonPressed != "decrementRaise"
+    ) {
+      if (
+        theGame.players[(theGame.currentPlayer + 1) % theGame.playerCount]
+          .money >= curRaiseVal
+      ) {
+        curRaiseVal = theGame.currentBet;
+        setCallRaiseText("CALL");
+      } else {
+        curRaiseVal =
+          theGame.players[(theGame.currentPlayer + 1) % theGame.playerCount]
+            .money;
+      }
+    }
+
+    //Update Values
+    setCurRaiseVal(curRaiseVal);
+
+    // * IMPORTANT*
+    // these values need to be updated on the server side as well
+    setPot(theGame.potSize);
+    setCurrentBet(theGame.currentBet);
+  };
+
   return (
-    <View style={styles.backgroundContainer}>
-      <View>
+    <View style={GameScreenStyles.backgroundContainer}>
+      <View style={GameScreenStyles.modalView}>
         <Modal
           animationType="slide"
           transparent={true}
           visible={menuVisible}
           onRequestClose={() => setMenuVisible(false)}
         >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>Are you sure you want to exit the game?</Text>
+          <View style={GameScreenStyles.centeredView}>
+            <View style={GameScreenStyles.modalView}>
+              <Text style={GameScreenStyles.modalText}>
+                Are you sure you want to exit the game?
+              </Text>
 
               {/* Exit game Button */}
               <TouchableOpacity
-                style={[styles.button, styles.buttonClose]}
+                style={[GameScreenStyles.button, GameScreenStyles.buttonClose]}
                 onPress={() => {
-                  console.log('Game was attempted to be exited');
+                  console.log("Game was attempted to be exited");
                   onExitConfirmPress();
                 }}
               >
-                <Text style={styles.textStyle}>Exit game</Text>
+                <Text style={GameScreenStyles.textStyle}>Exit game</Text>
               </TouchableOpacity>
 
               {/* Continue game */}
               <TouchableOpacity
-                style={[styles.button, styles.buttonClose]}
+                style={[GameScreenStyles.button, GameScreenStyles.buttonClose]}
                 onPress={() => {
-                    console.log('Game was continued');
-                    setMenuVisible(false);
+                  console.log("Game was continued");
+                  setMenuVisible(false);
                 }}
               >
-                <Text style={styles.textStyle}>Continue game</Text>
+                <Text style={GameScreenStyles.textStyle}>Continue game</Text>
               </TouchableOpacity>
             </View>
           </View>
         </Modal>
       </View>
-      
+
       {/* Top part of the screen with pot and current bet */}
-      <View style={styles.topContainer}>
-        <Text style={styles.potText}>POT:{formatCurrency(pot)}</Text>
-        <Text style={styles.currentBetText}>
-          Current Bet: {formatCurrency(currentBet)}
+      <View style={GameScreenStyles.topContainer}>
+        <Text style={GameScreenStyles.potText}>
+          POT:{formatCurrency(theGame.potSize)}
+        </Text>
+        <Text style={GameScreenStyles.currentBetText}>
+          Current Bet: {formatCurrency(theGame.currentBet)}
         </Text>
 
         {/* White line */}
-        <View style={styles.whiteLine} />
+        <View style={GameScreenStyles.whiteLine} />
       </View>
 
       {/* Exit Button */}
       <TouchableOpacity
-        style={styles.exitButton}
+        style={GameScreenStyles.exitButton}
         onPress={handleExitPress}
       >
         {/* <Image
           source={require("../../Graphics/settingwidget.png")}
-          style={styles.settingsIcon}
+          style={GameScreenStyles.settingsIcon}
         /> */}
-        <Text style={styles.exitText}>EXIT</Text>
+        <Text style={GameScreenStyles.exitText}>EXIT</Text>
       </TouchableOpacity>
 
-      <View style={styles.bottomContainer}>
+      <View style={GameScreenStyles.bottomContainer}>
         <ImageBackground
           source={cardBackgroundImage}
-          style={styles.cardBackground}
+          style={GameScreenStyles.cardBackground}
           resizeMode="contain"
         ></ImageBackground>
       </View>
 
-      <View style={styles.playersContainer}>
+      <View style={GameScreenStyles.playersContainer}>
         {Game.players.map((player, index) => {
           // Determine the style based on player's index
-          let playerStyle = styles.playerMiddle; // Default to middle player style
-          if (index === 0) playerStyle = styles.playerLeft; // First player
+          let playerStyle = GameScreenStyles.playerMiddle; // Default to middle player style
+          if (index === 0) playerStyle = GameScreenStyles.playerLeft; // First player
           if (index === Game.players.length - 1)
-            playerStyle = styles.playerRight; // Last player
+            playerStyle = GameScreenStyles.playerRight; // Last player
 
           return (
-            <View key={player.id} style={[styles.playerContainer, playerStyle]}>
+            <View
+              key={player.id}
+              style={[GameScreenStyles.playerContainer, playerStyle]}
+            >
               <Image
                 source={{ uri: player.avatarUri }}
-                style={styles.avatar}
+                style={GameScreenStyles.avatar}
                 resizeMode="contain"
               />
-              <Text style={styles.playerName}>{player.name}</Text>
-              <Text style={styles.playerMoney}>
-                {formatCurrency(player.money)}
+              <Text style={GameScreenStyles.playerName}>{player.name}</Text>
+              <Text style={GameScreenStyles.playerMoney}>
+                {formatCurrency(
+                  theGame.players[theGame.currentPlayer - 1].money
+                )}
               </Text>
-              {/*player.currentTurn && <View style={styles.turnIndicator} />*/}
+              {/*player.currentTurn && <View style={GameScreenStyles.turnIndicator} />*/}
             </View>
           );
         })}
       </View>
 
-      {/* Action buttons container */}
-      <View style={styles.actionButtonsContainer}>
-        {/* Container for the "ALL-IN" button */}
-        <View style={styles.allInButtonContainer}>
-          <TouchableOpacity onPress={handleAllInPress}>
-            <Text style={styles.allInButtonText}>ALL-IN</Text>
-          </TouchableOpacity>
+      <View style={GameScreenStyles.actionButtonsContainer}>
+        {/* Container for the Raise and All-in buttons */}
+        <View style={GameScreenStyles.topButtonsContainer}>
+          {/* Raise Functionality */}
+          <View style={GameScreenStyles.raiseButtonContainer}>
+            <TouchableOpacity onPress={() => handleButtonPress("Raise")}>
+              <Text style={GameScreenStyles.raiseValueText}>
+                {callRaiseText}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleButtonPress("decrementRaise")}
+            >
+              <Text style={GameScreenStyles.raiseValueText}>-</Text>
+            </TouchableOpacity>
+            <Text style={GameScreenStyles.raiseValueText}>{curRaiseVal}</Text>
+            <TouchableOpacity
+              onPress={() => handleButtonPress("incrementRaise")}
+            >
+              <Text style={GameScreenStyles.raiseValueText}>+</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
-        {/* Container for the "CALL", "FOLD", "CHECK", "RAISE" buttons */}
-        <View style={styles.lowerButtonsContainer}>
-          <TouchableOpacity onPress={handleCallPress}>
-            <Text style={styles.lowerActionButtonText}>CALL</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleFoldPress}>
-            <Text style={styles.lowerActionButtonText}>FOLD</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleCheckPress}>
-            <Text style={styles.lowerActionButtonText}>CHECK</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleRaisePress}>
-            <Text style={styles.lowerActionButtonText}>RAISE</Text>
-          </TouchableOpacity>
+        {/* Container for the Call and Fold buttons */}
+        <View style={GameScreenStyles.bottomButtonsContainer}>
+          {/* ALL-IN Button */}
+          <View style={GameScreenStyles.allInButtonContainer}>
+            <TouchableOpacity onPress={() => handleButtonPress("All-in")}>
+              <Text style={GameScreenStyles.allInButtonText}>ALL-IN</Text>
+            </TouchableOpacity>
+          </View>
+          {/* Container for the Check button */}
+          <View style={GameScreenStyles.checkButtonContainer}>
+            <TouchableOpacity onPress={() => handleButtonPress("Check")}>
+              <Text style={GameScreenStyles.checkButtonText}>CHECK</Text>
+            </TouchableOpacity>
+          </View>
+          {/* Fold Button Container */}
+          <View style={GameScreenStyles.foldButtonContainer}>
+            <TouchableOpacity onPress={() => handleButtonPress("Fold")}>
+              <Text style={GameScreenStyles.foldButtonText}>FOLD</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  backgroundContainer: {
-    flex: 1,
-    backgroundColor: "#292626", // Correct property for background color
-  },
-
-  bottomContainer: {
-    position: "absolute",
-    bottom: 230,
-    width: "100%",
-    alignItems: "center",
-    height: "60%",
-  },
-
-  cardBackground: {
-    width: "98%",
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  exitButton: {
-    position: "absolute",
-    left: 10, // Adjust as needed
-    top: 6,
-    // ... Other styles for the exit button
-  },
-
-  settingsIcon: {
-    marginTop: 20,
-    marginLeft: 10,
-    width: 30, // Adjust as needed
-    height: 30, // Adjust as needed
-    // ... Other styles for the settings icon
-  },
-
-  exitText: {
-    fontFamily: "PixeloidMono",
-    color: "#feeb00", // Gold color for the pot amount
-    fontSize: 20, // Adjust the size as needed
-    paddingBottom: 2,
-    marginTop: 20,
-    marginLeft: 10,
-  },
-
-  topContainer: {
-    backgroundColor: "#292626", // Background color as per your design
-    paddingBottom: 10, // Or any other value that fits your design
-    alignItems: "center",
-    marginTop: 50,
-  },
-  potText: {
-    fontFamily: "PixeloidMono",
-    color: "#feeb00", // Gold color for the pot amount
-    fontSize: 36, // Adjust the size as needed
-    paddingBottom: 2,
-  },
-  currentBetText: {
-    fontFamily: "PixeloidMono",
-    color: "#feeb00", // Gold color for the current bet amount
-    fontSize: 14, // Adjust the size as needed
-  },
-
-  whiteLine: {
-    height: 2, // Height of the white line
-    backgroundColor: "#FFFFFF", // White color for the line
-    width: "80%", // Width of the line, adjust as needed
-    marginTop: 4, // Space between the text and the line, adjust as needed
-  },
-
-  // avatar: {
-  //   width: 80, // Adjust the size as needed
-  //   height: 80, // Adjust the size as needed
-  //   borderRadius: 40, // Half the width/height to make it a circle
-  //   borderWidth: 2, // Size of border around the avatar
-  //   borderColor: "#FFFFFF", // Border color, assuming white is desired
-  //   backgroundColor: "#C4C4C4", // A placeholder background color in case the image fails to load
-  // },
-
-  avatar: {
-    width: 80, // Adjust the size as needed
-    height: 80, // Adjust the size as needed
-    borderRadius: 40, // Half the width/height to make it a circle
-    borderWidth: 2, // Size of border around the avatar
-    borderColor: "#FFFFFF", // Border color, assuming white is desired
-    backgroundColor: "#C4C4C4", // A placeholder background color in case the image fails to load
-    overflow: "hidden", // Ensures that the image does not spill out of the border radius
-  },
-
-  playerName: {
-    fontFamily: "PixeloidMono",
-    color: "#feeb00", // Assuming a gold color for the player's name text
-    fontSize: 16, // Adjust the size as needed
-    marginTop: 4, // Space between the avatar and the name
-  },
-  playerMoney: {
-    fontFamily: "PixeloidMono",
-    color: "#feeb00", // Assuming white color for the player's money text
-    fontSize: 14, // Adjust the size as needed
-    marginTop: 2, // Space between the name and the money
-  },
-
-  playersContainer: {
-    flexDirection: "row",
-    justifyContent: "center", // This will distribute your player containers evenly across the top
-    height: 250,
-    alignItems: "flex-end",
-  },
-
-  playerContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 10,
-    // If you need to space out the player containers evenly, you might consider additional layout styling here
-  },
-
-  playerLeft: {
-    position: "absolute",
-    left: 5, // Adjust based on your design needs
-    bottom: 5, // Lower the left player to create a triangle formation
-  },
-  playerMiddle: {
-    position: "absolute",
-    bottom: 100, // Adjust based on your design needs, this should be the highest point
-  },
-  playerRight: {
-    position: "absolute",
-    right: 5, // Adjust based on your design needs
-    bottom: 5, // Lower the right player to create a triangle formation
-  },
-
-  actionButtonsContainer: {
-    position: "absolute",
-    bottom: 0,
-    width: "100%",
-    alignItems: "center",
-    marginBottom: 40,
-  },
-  allInButtonContainer: {
-    marginBottom: 20, // Space between the "ALL-IN" button and the lower buttons
-    // Other styles as needed
-  },
-  allInButton: {
-    // Styles for the "ALL-IN" button
-    // Add padding, background color, etc. as per your design
-  },
-  allInButtonText: {
-    fontFamily: "PixeloidMono",
-    color: "#feeb00", // Assuming white color for the player's money text
-    fontSize: 20, // Adjust the size as needed
-  },
-  lowerButtonsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    width: "100%",
-    // Other styles as needed
-  },
-
-  lowerActionButtonText: {
-    fontFamily: "PixeloidMono",
-    color: "#feeb00", // Assuming white color for the player's money text
-    fontSize: 20, // Adjust the size as needed
-    bottom: 15,
-    paddingTop: 10,
-  },
-  
-  /* Modal Styles */
-  centeredView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 22,
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  openButton: {
-    backgroundColor: '#F194FF',
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-    marginTop: 10,
-  },
-  buttonClose: {
-    backgroundColor: '#2196F3',
-  },
-  textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-});
 
 export default GameScreen;
