@@ -165,7 +165,7 @@ const GameScreen = ({ navigation, route }: Props) => {
 
   return (
     <View style={GameScreenStyles.backgroundContainer}>
-      <View style={GameScreenStyles.modalView}>
+      <View style={GameScreenStyles.modalExitView}>
         <Modal
           animationType="slide"
           transparent={true}
@@ -173,7 +173,7 @@ const GameScreen = ({ navigation, route }: Props) => {
           onRequestClose={() => setMenuVisible(false)}
         >
           <View style={GameScreenStyles.centeredView}>
-            <View style={GameScreenStyles.modalView}>
+            <View style={GameScreenStyles.modalPopupView}>
               <Text style={GameScreenStyles.modalText}>
                 Are you sure you want to exit the game?
               </Text>
