@@ -77,9 +77,8 @@ const removePlayer = (socketId: string, game: Game) => {
 
 // Handle button presses
 const handleCallPress = (game: Game) => {
-  // Implement the call action logic here
-  console.log("Call");
   const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
+
   if (curPlayer.money >= game.currentBet) {
     curPlayer.money -= game.currentBet; // Reflect bet
     curPlayer.lastBet = game.currentBet; // Update last bet
@@ -88,6 +87,7 @@ const handleCallPress = (game: Game) => {
     curPlayer.allInFg = true; // Player is all in
     // All in logic
   }
+
   nextPlayer(game); // Move to next player
 };
 
@@ -100,23 +100,26 @@ const handleFoldPress = (game: Game) => {
 
 const handleCheckPress = (game: Game) => {
   // Implement the check action logic here
-  console.log("Check");
   nextPlayer(game); // Move to next player
 };
 
 const handleRaisePress = (game: Game, betValue: number) => {
   // Implement the raise action logic here
-  console.log("Raise");
   const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
+
   if (curPlayer.money >= betValue) {
     curPlayer.money -= betValue; // Reflect bet
     curPlayer.lastBet = betValue; // Update last bet
     game.currentBet = betValue; // Update current game bet to new value
     game.potSize += game.currentBet; // Update Pot Value
+    if (curPlayer.money === betValue) {
+      curPlayer.allInFg = true; // Player is all in
+      // All in logic
+    }
   } else {
-    curPlayer.allInFg = true; // Player is all in
-    // All in logic
+    // Logic for player doesnt have enough to bet
   }
+
   nextPlayer(game); // Move to next player
 };
 
