@@ -134,19 +134,6 @@ export const GameScreenStyles = StyleSheet.create({
     bottom: 5, // Lower the right player to create a triangle formation
   },
 
-  actionButtonsContainer: {
-    position: "absolute",
-    bottom: 0,
-    width: "100%",
-    height: "11%",
-    alignItems: "center",
-    marginBottom: 30,
-    backgroundColor: "#333", // Background color
-    borderColor: "#555", // Border color
-    borderWidth: 2, // Border width
-    borderRadius: 10, // Border radius
-  },
-
   centeredView: {
     flex: 1,
     justifyContent: "center",
@@ -159,6 +146,7 @@ export const GameScreenStyles = StyleSheet.create({
     top: 4,
     marginTop: 20,
     marginLeft: 20,
+    marginBottom: 8,
     backgroundColor: "#333",
     borderRadius: 20,
     height: 40,
@@ -212,78 +200,55 @@ export const GameScreenStyles = StyleSheet.create({
     textAlign: "center",
   },
 
-  actionButtonText: {
-    fontFamily: "PixeloidMono",
-    color: "#feeb00", // Assuming white color for the player's money text
-    fontSize: 20, // Adjust the size as needed
-    bottom: 15,
-    paddingTop: 10,
+  actionButtonsContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 10,
+    width: "95%",
+    height: "15%",
+    alignItems: "baseline",
+    marginBottom: 30,
+    backgroundColor: "#333", // Background color
+    borderColor: "#555", // Border color
+    borderWidth: 2, // Border width
+    borderRadius: 10, // Border radius
   },
 
   topButtonsContainer: {
     flexDirection: "row",
-    alignItems: "center",
   },
 
-  raiseButtonContainer: {
+  raiseCallButtonContainer: {
     flexDirection: "row",
-    padding: 7,
-    marginRight: 0,
+    marginLeft: 5,
   },
 
-  raiseValueText: {
+  raiseCallValueText: {
     fontFamily: "PixeloidMono",
     color: "#feeb00",
     fontSize: 20,
-    padding: 4,
-  },
-
-  callButtonContainer: {
-    flexDirection: "row",
-    marginRight: 0,
-  },
-
-  callButtonText: {
-    fontFamily: "PixeloidMono",
-    color: "#feeb00",
-    fontSize: 20,
-  },
-
-  bottomButtonsContainer: {
-    flexDirection: "row",
-    width: "100%",
-    justifyContent: "center",
+    paddingHorizontal: 4,
   },
 
   allInButtonContainer: {
-    paddingHorizontal: 30,
+    paddingTop: 10,
   },
 
   allInButtonText: {
     fontFamily: "PixeloidMono",
     color: "#feeb00",
     fontSize: 20,
-    alignContent: "space-around",
+    marginLeft: 10,
   },
 
   foldButtonContainer: {
-    paddingHorizontal: 30,
+    paddingVertical: 10,
   },
 
   foldButtonText: {
     fontFamily: "PixeloidMono",
     color: "#feeb00",
     fontSize: 20,
-  },
-
-  checkButtonContainer: {
-    paddingHorizontal: 10,
-    marginRight: 25,
-  },
-
-  checkButtonText: {
-    fontFamily: "PixeloidMono",
-    color: "#feeb00",
-    fontSize: 20,
+    marginLeft: 10,
   },
 });

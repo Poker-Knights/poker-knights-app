@@ -45,12 +45,23 @@ type Props = {
 
 const GameScreen = ({ navigation, route }: Props) => {
   const [pot, setPot] = useState(100); // Initialize pot state with a default value
-  const [currentBet, setCurrentBet] = useState(0); // Initialize current bet state with a default value
   const { Game } = route.params;
   const [theGame, setGame] = useState(Game); // this is your client side representation of game object
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
-  let [curRaiseVal, setCurRaiseVal] = useState(10); //Track Raise Value
+  const [currentBet, setCurrentBet] = useState(theGame.currentBet); // Initialize current bet state with a default value
+  let [curRaiseVal, setCurRaiseVal] = useState(theGame.currentBet); //Track Raise Value
   let [callRaiseText, setCallRaiseText] = useState("CALL:"); //Track Raise Value
+
+  const initScreenProps = () => {
+    if (theGame.currentBet === 0) {
+      setCallRaiseText("CHECK:");
+    }
+    if (curRaiseVal <= theGame.players[theGame.playerCount - 1].money) {
+      curRaiseVal = theGame.currentBet;
+    } else {
+      curRaiseVal = theGame.players[theGame.playerCount - 1].money;
+    }
+  };
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -91,67 +102,67 @@ const GameScreen = ({ navigation, route }: Props) => {
   // Function to handle when buttons are pressed  // export this to utils file for game
   // you have to update player last bet here as well --> Matthew
   const handleButtonPress = (buttonPressed: string) => {
+    /* TO BE DELETED, ONLY FOR TESTING*/
+    // Handle Bet type
+    if (buttonPressed === "BET") {
+      if (curRaiseVal === 0) {
+        buttonPressed = "CHECK";
+      } else if (curRaiseVal === theGame.currentBet) {
+        buttonPressed = "CALL";
+      } else if (curRaiseVal > theGame.currentBet) {
+        buttonPressed = "RAISE";
+      }
+    }
+
     // Switch to handle the button pressed
+    /* buttonPressed = buttonPressed.split(":)[0];*/
     switch (buttonPressed) {
-      case "Call":
+      case "CALL":
         handleCallPress(theGame);
         break;
-      case "Fold":
+
+      case "FOLD":
         handleFoldPress(theGame);
         break;
-      case "Check":
+
+      case "CHECK":
         handleCheckPress(theGame);
         break;
-      case "Raise":
+
+      case "RAISE":
         handleRaisePress(theGame, curRaiseVal);
         break;
-      case "All-in":
+
+      case "ALL-IN":
         handleAllInPress(theGame);
         break;
+
       case "decrementRaise":
-        if (curRaiseVal != 0 && curRaiseVal >= theGame.currentBet) {
-          if (curRaiseVal === theGame.currentBet + 10) {
-            setCallRaiseText("CALL: ");
-            curRaiseVal -= 10;
-          } else if (curRaiseVal === theGame.currentBet) {
-            curRaiseVal = 0;
-            setCallRaiseText("CHECK: ");
-          } else {
-            curRaiseVal -= 10;
-          }
+        if (theGame.currentBet === 0 && curRaiseVal === 10) {
+          setCallRaiseText("CHECK:");
+          curRaiseVal -= 10;
+        } else if (curRaiseVal === theGame.currentBet + 10) {
+          setCallRaiseText("CALL:");
+          curRaiseVal -= 10;
+        } else if (theGame.currentBet < curRaiseVal) {
+          setCallRaiseText("RAISE:");
+          curRaiseVal -= 10;
         }
         break;
+
       case "incrementRaise":
-        if (curRaiseVal === 0) {
-          curRaiseVal = theGame.currentBet;
-          setCallRaiseText("CALL: ");
-        } else if (
+        if (
           curRaiseVal <
           theGame.players[theGame.currentPlayer - 1].money - 10
         ) {
-          curRaiseVal += 10;
-          if (curRaiseVal > theGame.currentBet) setCallRaiseText("RAISE: ");
+          if (curRaiseVal >= theGame.currentBet) {
+            setCallRaiseText("RAISE:");
+            curRaiseVal += 10;
+          }
         } else {
           curRaiseVal = theGame.players[theGame.currentPlayer - 1].money;
         }
         break;
-    }
-    // Handle Proper current raise value
-    if (
-      buttonPressed != "incrementRaise" &&
-      buttonPressed != "decrementRaise"
-    ) {
-      if (
-        theGame.players[(theGame.currentPlayer + 1) % theGame.playerCount]
-          .money >= curRaiseVal
-      ) {
-        curRaiseVal = theGame.currentBet;
-        setCallRaiseText("CALL");
-      } else {
-        curRaiseVal =
-          theGame.players[(theGame.currentPlayer + 1) % theGame.playerCount]
-            .money;
-      }
     }
 
     //Update Values
@@ -268,47 +279,40 @@ const GameScreen = ({ navigation, route }: Props) => {
       </View>
 
       <View style={GameScreenStyles.actionButtonsContainer}>
-        {/* Container for the Raise and All-in buttons */}
+        {/* Container for the buttons */}
+        {/* Container for the Call and Fold buttons */}
+        {/* ALL-IN Button */}
+        <View style={GameScreenStyles.allInButtonContainer}>
+          <TouchableOpacity onPress={() => handleButtonPress("ALL-IN")}>
+            <Text style={GameScreenStyles.allInButtonText}>ALL-IN</Text>
+          </TouchableOpacity>
+        </View>
+        {/* Fold Button Container */}
+        <View style={GameScreenStyles.foldButtonContainer}>
+          <TouchableOpacity onPress={() => handleButtonPress("FOLD")}>
+            <Text style={GameScreenStyles.foldButtonText}>FOLD</Text>
+          </TouchableOpacity>
+        </View>
         <View style={GameScreenStyles.topButtonsContainer}>
-          {/* Raise Functionality */}
-          <View style={GameScreenStyles.raiseButtonContainer}>
-            <TouchableOpacity onPress={() => handleButtonPress("Raise")}>
-              <Text style={GameScreenStyles.raiseValueText}>
+          {/* Call/Raise Functionality */}
+          <View style={GameScreenStyles.raiseCallButtonContainer}>
+            <TouchableOpacity onPress={() => handleButtonPress("BET")}>
+              <Text style={GameScreenStyles.raiseCallValueText}>
                 {callRaiseText}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => handleButtonPress("decrementRaise")}
             >
-              <Text style={GameScreenStyles.raiseValueText}>-</Text>
+              <Text style={GameScreenStyles.raiseCallValueText}>-</Text>
             </TouchableOpacity>
-            <Text style={GameScreenStyles.raiseValueText}>{curRaiseVal}</Text>
+            <Text style={GameScreenStyles.raiseCallValueText}>
+              {curRaiseVal}
+            </Text>
             <TouchableOpacity
               onPress={() => handleButtonPress("incrementRaise")}
             >
-              <Text style={GameScreenStyles.raiseValueText}>+</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Container for the Call and Fold buttons */}
-        <View style={GameScreenStyles.bottomButtonsContainer}>
-          {/* ALL-IN Button */}
-          <View style={GameScreenStyles.allInButtonContainer}>
-            <TouchableOpacity onPress={() => handleButtonPress("All-in")}>
-              <Text style={GameScreenStyles.allInButtonText}>ALL-IN</Text>
-            </TouchableOpacity>
-          </View>
-          {/* Container for the Check button */}
-          <View style={GameScreenStyles.checkButtonContainer}>
-            <TouchableOpacity onPress={() => handleButtonPress("Check")}>
-              <Text style={GameScreenStyles.checkButtonText}>CHECK</Text>
-            </TouchableOpacity>
-          </View>
-          {/* Fold Button Container */}
-          <View style={GameScreenStyles.foldButtonContainer}>
-            <TouchableOpacity onPress={() => handleButtonPress("Fold")}>
-              <Text style={GameScreenStyles.foldButtonText}>FOLD</Text>
+              <Text style={GameScreenStyles.raiseCallValueText}>+</Text>
             </TouchableOpacity>
           </View>
         </View>

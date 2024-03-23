@@ -78,6 +78,7 @@ const removePlayer = (socketId: string, game: Game) => {
 // Handle button presses
 const handleCallPress = (game: Game) => {
   // Implement the call action logic here
+  console.log("Call");
   const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
   if (curPlayer.money >= game.currentBet) {
     curPlayer.money -= game.currentBet; // Reflect bet
@@ -99,11 +100,13 @@ const handleFoldPress = (game: Game) => {
 
 const handleCheckPress = (game: Game) => {
   // Implement the check action logic here
+  console.log("Check");
   nextPlayer(game); // Move to next player
 };
 
 const handleRaisePress = (game: Game, betValue: number) => {
   // Implement the raise action logic here
+  console.log("Raise");
   const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
   if (curPlayer.money >= betValue) {
     curPlayer.money -= betValue; // Reflect bet
