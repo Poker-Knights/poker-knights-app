@@ -9,13 +9,15 @@ export type Player = {
   currentTurn: boolean;
   lastBet: number;
   fold: boolean;
-  isLittleBlind: boolean;
-  isBigBlind: boolean;
 };
 
 export type Game = {
   id: string;
   players: Player[];
+  curLittleBlind: number;
+  curBigBlind: number;
+  littleBlindBet: number;
+  bigBlindBet: number;
   potSize: number;
   playerCount: number;
   currentBet: number;

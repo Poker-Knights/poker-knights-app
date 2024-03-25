@@ -5,12 +5,14 @@ import { createAndAddPlayer } from "../../src/utils/Game";
 export const handleCreateGame =
   (socket: Socket, games: { [key: string]: Game }) =>
   (gameID: string, username: string) => {
-    console.log(`Creating game with ID: ${gameID}, username: ${username}`);
-
     // Create a new game object
     const newGame: Game = {
       id: gameID,
       players: [],
+      curLittleBlind: 1,
+      curBigBlind: 2,
+      littleBlindBet: 10,
+      bigBlindBet: 20,
       potSize: 0,
       playerCount: 0, // Will be updated when adding a player
       currentBet: 0,
@@ -26,5 +28,4 @@ export const handleCreateGame =
 
     // Notify the creator that the game has been created successfully
     socket.emit("gameCreated", { gameState: newGame });
-    console.log(`Game created with ID: ${gameID}, by user: ${username}`);
   };

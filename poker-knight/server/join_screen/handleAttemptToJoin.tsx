@@ -22,7 +22,6 @@ export const handleAttemptToJoin =
       createAndAddPlayer(username, socket.id, game);
 
       socket.emit("gameJoined", { gameState: game });
-      console.log("Player Joined");
     } else {
       socket.emit("gameNotFound", { gameID: inputGameID });
     }

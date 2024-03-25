@@ -23,15 +23,14 @@ export const handleStartRound =
       });
 
       // make the player after the big blind the current player
-      game.currentPlayer = 2;
-
-      players[2].currentTurn = true;
+      game.currentPlayer = game.curBigBlind + 1;
+      players[game.currentPlayer - 1].currentTurn = true;
 
       // set players equal to game players
       game.players = players;
 
       // emit the updated game
-      Socket.emit("playersForGameInitialized", game);
+      Socket.emit("startRound", game);
     } else {
       // Start the Game
       handleInitializePlayersforGame(Socket, games);
