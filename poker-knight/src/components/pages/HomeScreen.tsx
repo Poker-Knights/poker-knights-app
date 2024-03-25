@@ -1,8 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "../../../App";
-import { createGame, handleHostGamePress, handleJoinGamePress, handleSettingsPress, handleGameCreated } from "../../utils/Home";
-import { styles} from "../../styles/HomeScreenStyles";
+import {
+  createGame,
+  handleHostGamePress,
+  handleJoinGamePress,
+  handleGameCreated,
+} from "../../utils/Home";
+import { styles } from "../../styles/HomeScreenStyles";
 import {
   StatusBar,
   StyleSheet,
@@ -14,15 +19,14 @@ import {
   LogBox,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import io, { Socket } from 'socket.io-client';
-import {SERVER_URL} from '../../utils/socket';
+import io, { Socket } from "socket.io-client";
+import { SERVER_URL } from "../../utils/socket";
 
 type Props = {
   navigation: StackNavigationProp<StackParamList, "Join">;
 };
 
 import { Game, Player } from "../../types/Game";
-import { PopupMenu } from "./Settings"; // Import PopupMenu
 //import { initializePlayers } from "../../utils/Game";
 
 const Home = ({ navigation }: Props) => {
@@ -36,8 +40,7 @@ const Home = ({ navigation }: Props) => {
   const [gameId, setGameId] = useState("");
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
   const [game, setGame] = useState<Game | null>(null);
-  const socketRef = useRef<Socket | null>(null)
-
+  const socketRef = useRef<Socket | null>(null);
 
   // useEffect is a hook that runs after the first render of the component
   // It is used to perform side effects like data fetching, subscriptions, or manual DOM manipulations
@@ -46,44 +49,37 @@ const Home = ({ navigation }: Props) => {
   // Allows re renders of the component to be skipped if the props or state haven't changed
   // such as when the user is typing in the input field, the component doesn't need to re render
 
-
-
   useEffect(() => {
-      socketRef.current = io(SERVER_URL, { transports: ['websocket'] });
+    socketRef.current = io(SERVER_URL, { transports: ["websocket"] });
 
-      // Use the imported helper function, passing necessary dependencies
-      const gameCreatedHandler = handleGameCreated(setGame, navigation, socketRef);
+    // Use the imported helper function, passing necessary dependencies
+    const gameCreatedHandler = handleGameCreated(
+      setGame,
+      navigation,
+      socketRef
+    );
 
+    if (socketRef.current) {
+      socketRef.current.on("gameCreated", gameCreatedHandler);
+    }
+
+    // Cleanup on component unmount
+    return () => {
       if (socketRef.current) {
-        socketRef.current.on('gameCreated', gameCreatedHandler);
+        socketRef.current.off("gameCreated", gameCreatedHandler);
+        socketRef.current.disconnect();
       }
-
-      // Cleanup on component unmount
-      return () => {
-        if (socketRef.current) {
-          socketRef.current.off('gameCreated', gameCreatedHandler);
-          socketRef.current.disconnect();
-        }
-      };
-    }, [navigation])
-    
+    };
+  }, [navigation]);
 
   // Event emitters & helper functions for buttons
   const onCreateGame = () => createGame(username, socketRef, setGameId);
   const onHostGamePress = () => handleHostGamePress(username, onCreateGame);
   const onJoinGamePress = () => handleJoinGamePress(username, navigation);
-  const onSettingsPress = () => handleSettingsPress(setMenuVisible);
-  
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar hidden={true} />
-
-      <View style={styles.modalView}>
-        <PopupMenu
-          visible={menuVisible}
-          onClose={() => setMenuVisible(false)}
-        />
-      </View>
 
       <View style={styles.knightContainer}>
         <Image
@@ -127,17 +123,6 @@ const Home = ({ navigation }: Props) => {
             resizeMode="contain"
           />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.buttonContainer}
-          onPress={onSettingsPress}
-          activeOpacity={0.7} // Reduce the opacity on press for visual feedback
-        >
-          <Image
-            source={require("../../Graphics/SettingsButton.png")}
-            style={styles.buttonImage}
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -147,4 +132,3 @@ export default Home;
 function setGameId(arg0: string) {
   throw new Error("Function not implemented.");
 }
-
