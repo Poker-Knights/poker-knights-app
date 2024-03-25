@@ -48,9 +48,12 @@ const GameScreen = ({ navigation, route }: Props) => {
   const [currentBet, setCurrentBet] = useState(0); // Initialize current bet state with a default value
   const { Game } = route.params;
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
-  const [cards, setCards] = useState([]);
+  // const [cards, setCards] = useState([]);
   const socketRef = useRef<Socket | null>(null)
-
+  const cards = [
+    { value: 'A', suit: 'spades' },
+    { value: 'T', suit: 'hearts' }
+  ];
 
   useEffect(() => {
     socketRef.current = io(SERVER_URL, { transports: ['websocket'] });
@@ -344,10 +347,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   cardContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  }
+    flexDirection: 'row', // This will lay out the Card components in a row
+    justifyContent: 'space-around', // This adds space between the cards
+    alignItems: 'center', // This centers the cards vertically
+    paddingTop: 20, // Add some padding at the top of the container
+    // Other styling can be added as needed
+  },
 });
 
 export default GameScreen;
