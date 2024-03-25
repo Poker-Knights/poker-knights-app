@@ -7,6 +7,7 @@ export const handleCreateGame =
   (gameID: string, username: string) => {
     // Create a new game object
     const newGame: Game = {
+      hostPlayer: username,
       id: gameID,
       players: [],
       curLittleBlind: 1,
@@ -25,6 +26,9 @@ export const handleCreateGame =
 
     // Store the new game in the games object
     games[gameID] = newGame;
+
+    // Join the creator to the game room
+    socket.join(gameID);
 
     // Notify the creator that the game has been created successfully
     socket.emit("gameCreated", { gameState: newGame });

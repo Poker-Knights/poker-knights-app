@@ -131,10 +131,6 @@ const handleAllInPress = (game: Game) => {
   nextPlayer(game); // Move to next player
 };
 
-const handleServerComm = (game: Game) => {
-  console.log("Handle Server Comms");
-  /* Kevin do your code here */
-};
 
 // Function to handle a player's turn, return player
 const nextPlayer = (game: Game) => {
@@ -142,8 +138,7 @@ const nextPlayer = (game: Game) => {
   game.currentPlayer++;
   if (game.currentPlayer >= game.playerCount) game.currentPlayer = 1;
 
-  // Handle Server Communications
-  handleServerComm(game);
+
 };
 
 const handleExitConfirmPress = (
@@ -181,7 +176,6 @@ export {
   handleExitConfirmPress,
   handleExit,
   createAndAddPlayer,
-  handleServerComm,
   handleAllInPress,
   handleCallPress,
   handleCheckPress,

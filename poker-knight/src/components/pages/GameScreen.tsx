@@ -44,24 +44,27 @@ type Props = {
 };
 
 const GameScreen = ({ navigation, route }: Props) => {
-  const [pot, setPot] = useState(100); // Initialize pot state with a default value
-  const { Game } = route.params;
+  let [pot, setPot] = useState(100); // Initialize pot state with a default value
+  const { Game, username } = route.params;
   const [theGame, setGame] = useState(Game); // this is your client side representation of game object
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
-  const [currentBet, setCurrentBet] = useState(theGame.currentBet); // Initialize current bet state with a default value
+  let [theUsername, setUsername] = useState(username); // this is your client side representation of game object
+  let [currentBet, setCurrentBet] = useState(theGame.currentBet); // Initialize current bet state with a default value
   let [curRaiseVal, setCurRaiseVal] = useState(theGame.currentBet); //Track Raise Value
-  let [callRaiseText, setCallRaiseText] = useState("CALL:"); //Track Raise Value
 
-  const initScreenProps = () => {
-    if (theGame.currentBet === 0) {
-      setCallRaiseText("CHECK:");
-    }
-    if (curRaiseVal <= theGame.players[theGame.playerCount - 1].money) {
-      curRaiseVal = theGame.currentBet;
-    } else {
-      curRaiseVal = theGame.players[theGame.playerCount - 1].money;
-    }
-  };
+  // grab player data of the client side user, the one with the username that was routed from previous screen
+
+  // set the initial state as an empty object
+  let [player, setPlayer] = useState<any>({});
+  let [actionButtonsEnabled, setActionButtonsEnabled] = useState({
+    raise: true,
+    call: true,
+    fold: true,
+    check: true,
+    allIn: true,
+  });
+
+  const socketRef = useRef<Socket | null>(null);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -69,11 +72,116 @@ const GameScreen = ({ navigation, route }: Props) => {
     });
   }, [navigation]);
 
-  const socketRef = useRef<Socket | null>(null);
+  // There needs to be a function to evaluate which buttons you can and cannot press [MUST BE TESTED]
+  function determineAvailableActions(game: typeof Game): {
+    raise: boolean;
+    call: boolean;
+    fold: boolean;
+    check: boolean;
+    allIn: boolean;
+  } {
+    const currentPlayer = game.players[game.currentPlayer - 1];
 
+    // Default actions
+    let actions = {
+      raise: true,
+      call: true,
+      fold: false,
+      check: true,
+      allIn: false,
+    };
+
+    if (!currentPlayer.fold && !currentPlayer.allInFg) {
+      //const isFirstPlayer = game.currentPlayer === (game.players.findIndex((p: { isBigBlind: boolean; }) => p.isBigBlind) + 1) % game.playerCount;
+      // -- RAISE LOGIC --
+      // you cannot raise if your last bet is a not -1, you only have the option to raise if it is -1 and if you  have enough money to bet
+      if (currentPlayer.lastBet === -1) {
+        actions.raise = true;
+      } else {
+        actions.raise = false;
+      }
+
+      // -- CALL LOGIC --
+      // you cannot call if the current bet is equal to the last bet
+      if (game.currentBet === currentPlayer.lastBet) {
+        actions.call = false;
+      }
+
+      // You can call if the current bet is greater than the last bet
+      if (game.currentBet > currentPlayer.lastBet) {
+        actions.call = true;
+      }
+
+      // --CHECK LOGIC--
+      // you can only check if the current bet is equal to the last bet or if current bet is 0
+      if (game.currentBet === currentPlayer.lastBet || game.currentBet === 0) {
+        actions.check = true;
+      }
+
+      // you cannot check if the current bet is greater than the last bet
+      if (game.currentBet > currentPlayer.lastBet) {
+        actions.check = false;
+      }
+
+      // If you do not have enough money, you can only fold or go all in
+      if (currentPlayer.money < game.currentBet) {
+        actions.call = false;
+        actions.raise = false;
+        actions.check = false;
+        actions.fold = true;
+        actions.allIn = true;
+      }
+
+      // if its not your turn, you cannot do anything
+      if (currentPlayer.currentTurn === false) {
+        actions.raise = false;
+        actions.call = false;
+        actions.fold = false;
+        actions.check = false;
+        actions.allIn = false;
+      }
+    }
+
+    return actions;
+  }
+
+  // When compoment mounts, connect to the server, determine available actions
   useEffect(() => {
     socketRef.current = io(SERVER_URL, { transports: ["websocket"] });
 
+    if (socketRef.current) {
+      // emit initialize players event
+      socketRef.current.emit("initializePlayers", Game.id);
+
+      // listen for playersForGameInitialized event
+      socketRef.current.on("playersForGameInitialized", (data: any) => {
+        let initGame = data.gameState;
+
+        let newPlayer = initGame.players.find(
+          (p: { name: string }) => p.name === theUsername
+        );
+
+        // update game state
+        setGame(initGame);
+
+        setPlayer(newPlayer);
+
+        // turn off the event listener
+        if (socketRef.current) {
+          socketRef.current.off("playersForGameInitialized");
+        }
+      });
+
+      // listen for updateGameAfterPlayerButtonPress event
+      socketRef.current.on("updateGameAfterPlayerButtonPress", (data: any) => {
+        let updatedGame = data.gameState;
+        // update game state
+        setGame(updatedGame);
+      });
+
+      let actionButtons = determineAvailableActions(theGame);
+      setActionButtonsEnabled(actionButtons);
+    }
     // Use the imported helper function, passing necessary dependencies
     const exitGameHandler = handleExit(navigation, socketRef, Game.id);
 
@@ -89,7 +197,7 @@ const GameScreen = ({ navigation, route }: Props) => {
         navigation.navigate("Home");
       }
     };
-  }, [navigation, socketRef]);
+  }, [navigation]);
 
   // Bring user to exit confirmation modal
   const handleExitPress = () => {
@@ -97,57 +205,54 @@ const GameScreen = ({ navigation, route }: Props) => {
     setMenuVisible(true);
   };
 
+  // any changes to theGame will trigger this useEffect and update client side player state
+  useEffect(() => {
+    let actionButtons = determineAvailableActions(theGame);
+    setActionButtonsEnabled(actionButtons);
+
+    // grab player object from new game state
+    let newPlayer = theGame.players.find(
+      (p: { name: string }) => p.name === username
+    );
+    newPlayer && setPlayer(newPlayer);
+  }, [theGame]);
+
   const onExitConfirmPress = () => handleExitConfirmPress(socketRef, Game.id);
 
   // Function to handle when buttons are pressed  // export this to utils file for game
-  // you have to update player last bet here as well --> Matthew
+  // Also will need to handle splitting the pot logic, possibly mapping a player to their own pots
   const handleButtonPress = (buttonPressed: string) => {
-    /* TO BE DELETED, ONLY FOR TESTING*/
-    // Handle Bet type
-    if (buttonPressed === "BET") {
-      if (curRaiseVal === 0) {
-        buttonPressed = "CHECK";
-      } else if (curRaiseVal === theGame.currentBet) {
-        buttonPressed = "CALL";
-      } else if (curRaiseVal > theGame.currentBet) {
-        buttonPressed = "RAISE";
-      }
-    }
-
     // Switch to handle the button pressed
-    /* buttonPressed = buttonPressed.split(":)[0];*/
+    // if the button is pressed, disable the button afterwards until its their turn again
+
     switch (buttonPressed) {
       case "CALL":
         handleCallPress(theGame);
+        actionButtonsEnabled.call = false;
         break;
 
       case "FOLD":
         handleFoldPress(theGame);
+        actionButtonsEnabled.fold = false;
         break;
 
       case "CHECK":
         handleCheckPress(theGame);
+        actionButtonsEnabled.check = false;
         break;
 
       case "RAISE":
         handleRaisePress(theGame, curRaiseVal);
+        actionButtonsEnabled.raise = false;
         break;
 
       case "ALL-IN":
         handleAllInPress(theGame);
+        actionButtonsEnabled.allIn = false;
         break;
 
       case "decrementRaise":
-        if (theGame.currentBet === 0 && curRaiseVal === 10) {
-          setCallRaiseText("CHECK:");
-          curRaiseVal -= 10;
-        } else if (curRaiseVal === theGame.currentBet + 10) {
-          setCallRaiseText("CALL:");
-          curRaiseVal -= 10;
-        } else if (theGame.currentBet < curRaiseVal) {
-          setCallRaiseText("RAISE:");
-          curRaiseVal -= 10;
-        }
+        if (theGame.currentBet > 0) curRaiseVal -= 10;
         break;
 
       case "incrementRaise":
@@ -155,10 +260,7 @@ const GameScreen = ({ navigation, route }: Props) => {
           curRaiseVal <
           theGame.players[theGame.currentPlayer - 1].money - 10
         ) {
-          if (curRaiseVal >= theGame.currentBet) {
-            setCallRaiseText("RAISE:");
-            curRaiseVal += 10;
-          }
+          curRaiseVal += 10;
         } else {
           curRaiseVal = theGame.players[theGame.currentPlayer - 1].money;
         }
@@ -168,13 +270,32 @@ const GameScreen = ({ navigation, route }: Props) => {
     //Update Values
     setCurRaiseVal(curRaiseVal);
 
-    // * IMPORTANT*
-    // these values need to be updated on the server side as well
+    // Update these values on server side
     setPot(theGame.potSize);
     setCurrentBet(theGame.currentBet);
+
+    // Send updated game object back to server if button was pressed
+    if (socketRef.current) {
+      socketRef.current.emit(
+        "updateGameAfterPlayerButtonPress",
+        theGame,
+        theGame.id
+      );
+    }
   };
 
   return (
+    // Things to update on UI (not in any particular order)
+    // 1. Player Chip Count
+    // 2. Player Turn Indicator
+    // 3. Big blind & little blind indicator
+    // 4. Indicate if the Player Folded
+    // 5. If the player left the game or is eliminated (gray out the player prpfle picture)
+    // 6. card display
+    // 7. win screen
+    // 8. losing screen
+    // 9. have the UI reflected so that client side user is the main user
+
     <View style={GameScreenStyles.backgroundContainer}>
       <View style={GameScreenStyles.modalExitView}>
         <Modal
@@ -248,73 +369,132 @@ const GameScreen = ({ navigation, route }: Props) => {
         ></ImageBackground>
       </View>
 
+      {/* Restructure screen so only other players avatars get displayed here*/}
       <View style={GameScreenStyles.playersContainer}>
-        {Game.players.map((player, index) => {
-          // Determine the style based on player's index
-          let playerStyle = GameScreenStyles.playerMiddle; // Default to middle player style
-          if (index === 0) playerStyle = GameScreenStyles.playerLeft; // First player
-          if (index === Game.players.length - 1)
-            playerStyle = GameScreenStyles.playerRight; // Last player
+        {Game.players
+          .filter((player) => player.name !== theUsername) // Filter out the main player
+          .map((player, index, filteredArray) => {
+            // Use filtered array for mapping
+            // Determine the style based on player's index in the filtered array
+            let playerStyle = GameScreenStyles.playerMiddle; // Default to middle player style
+            if (index === 0) playerStyle = GameScreenStyles.playerLeft; // First player
+            if (index === filteredArray.length - 1)
+              playerStyle = GameScreenStyles.playerRight; // Last player
 
-          return (
-            <View
-              key={player.id}
-              style={[GameScreenStyles.playerContainer, playerStyle]}
-            >
-              <Image
-                source={{ uri: player.avatarUri }}
-                style={GameScreenStyles.avatar}
-                resizeMode="contain"
-              />
-              <Text style={GameScreenStyles.playerName}>{player.name}</Text>
-              <Text style={GameScreenStyles.playerMoney}>
-                {formatCurrency(
-                  theGame.players[theGame.currentPlayer - 1].money
-                )}
-              </Text>
-              {/*player.currentTurn && <View style={GameScreenStyles.turnIndicator} />*/}
-            </View>
-          );
-        })}
+            return (
+              <View
+                key={player.id}
+                style={[GameScreenStyles.playerContainer, playerStyle]}
+              >
+                <Image
+                  source={{ uri: player.avatarUri }}
+                  style={GameScreenStyles.avatar}
+                  resizeMode="contain"
+                />
+                <Text style={GameScreenStyles.playerName}>{player.name}</Text>
+                <Text style={GameScreenStyles.playerMoney}>
+                  {formatCurrency(player.money)}
+                </Text>
+                {/*player.currentTurn && <View style={GameScreenStyles.turnIndicator} />*/}
+              </View>
+            );
+          })}
       </View>
 
+      <View style={GameScreenStyles.clientChipCountContainer}>
+        <Text style={GameScreenStyles.clientChipCountText}>
+          CHIPS:${player.money}
+        </Text>
+      </View>
       <View style={GameScreenStyles.actionButtonsContainer}>
-        {/* Container for the buttons */}
-        {/* Container for the Call and Fold buttons */}
         {/* ALL-IN Button */}
         <View style={GameScreenStyles.allInButtonContainer}>
-          <TouchableOpacity onPress={() => handleButtonPress("ALL-IN")}>
-            <Text style={GameScreenStyles.allInButtonText}>ALL-IN</Text>
-          </TouchableOpacity>
-        </View>
-        {/* Fold Button Container */}
-        <View style={GameScreenStyles.foldButtonContainer}>
-          <TouchableOpacity onPress={() => handleButtonPress("FOLD")}>
-            <Text style={GameScreenStyles.foldButtonText}>FOLD</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={GameScreenStyles.topButtonsContainer}>
-          {/* Call/Raise Functionality */}
-          <View style={GameScreenStyles.raiseCallButtonContainer}>
-            <TouchableOpacity onPress={() => handleButtonPress("BET")}>
-              <Text style={GameScreenStyles.raiseCallValueText}>
-                {callRaiseText}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => handleButtonPress("decrementRaise")}
+          <TouchableOpacity
+            onPress={() => handleButtonPress("All-in")}
+            disabled={!actionButtonsEnabled.allIn}
+          >
+            <Text
+              style={[
+                GameScreenStyles.allInButtonText,
+                !actionButtonsEnabled.allIn
+                  ? { color: "darkgrey" }
+                  : { color: "yellow" },
+              ]}
             >
-              <Text style={GameScreenStyles.raiseCallValueText}>-</Text>
-            </TouchableOpacity>
-            <Text style={GameScreenStyles.raiseCallValueText}>
-              {curRaiseVal}
+              ALL-IN
             </Text>
-            <TouchableOpacity
-              onPress={() => handleButtonPress("incrementRaise")}
+          </TouchableOpacity>
+        </View>
+
+        {/* Fold Button */}
+        <View style={GameScreenStyles.foldButtonContainer}>
+          <TouchableOpacity
+            onPress={() => handleButtonPress("Fold")}
+            disabled={!actionButtonsEnabled.fold}
+          >
+            <Text
+              style={[
+                GameScreenStyles.foldButtonText,
+                !actionButtonsEnabled.fold
+                  ? { color: "darkgrey" }
+                  : { color: "yellow" },
+              ]}
             >
-              <Text style={GameScreenStyles.raiseCallValueText}>+</Text>
-            </TouchableOpacity>
-          </View>
+              FOLD
+            </Text>
+          </TouchableOpacity>
+        </View>
+        {/* Container for the Raise/Call/Check functionality */}
+
+        <View style={GameScreenStyles.raiseCallButtonContainer}>
+          {/* Label */}
+          <Text style={GameScreenStyles.labelText}>
+            {curRaiseVal > theGame.currentBet
+              ? "RAISE"
+              : curRaiseVal === 0
+              ? "CHECK"
+              : "CALL"}
+            :
+          </Text>
+
+          {/* Decrement button for raise value */}
+          <TouchableOpacity
+            onPress={() => handleButtonPress("decrementRaise")}
+            disabled={!actionButtonsEnabled.raise && !actionButtonsEnabled.call}
+          >
+            <Text
+              style={[
+                GameScreenStyles.raiseCallValueText,
+                !actionButtonsEnabled.raise && !actionButtonsEnabled.call
+                  ? { color: "darkgrey" }
+                  : { color: "yellow" },
+              ]}
+            >
+              -
+            </Text>
+          </TouchableOpacity>
+
+          {/* Current raise value */}
+          <Text style={GameScreenStyles.raiseCallValueText}>
+            {formatCurrency(curRaiseVal)}
+          </Text>
+
+          {/* Increment button for raise value */}
+          <TouchableOpacity
+            onPress={() => handleButtonPress("incrementRaise")}
+            disabled={!actionButtonsEnabled.raise && !actionButtonsEnabled.call}
+          >
+            <Text
+              style={[
+                GameScreenStyles.raiseCallValueText,
+                !actionButtonsEnabled.raise && !actionButtonsEnabled.call
+                  ? { color: "darkgrey" }
+                  : { color: "yellow" },
+              ]}
+            >
+              +
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
