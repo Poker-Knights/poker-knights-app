@@ -5,6 +5,7 @@ import http from 'http';
 import { Game, Player } from '../src/types/Game';
 import { handleCreateGame } from './home_screen/handleCreateGame'; 
 import { handleAttemptToJoin } from './join_screen/handleAttemptToJoin';
+import { handleEndRound } from "./game_screen/handleEndRound";
 import { handleExitGame } from './game_screen/handleExitGame'; 
 import { handleInitializePlayersforGame } from './game_screen/handleInitializePlayers';
 
@@ -43,9 +44,19 @@ io.on('connection', (socket: Socket) => {
     socket.on('updateGameAfterPlayerButtonPress', (game: Game, gameId: string) => {
         // Update the game with the new game state
         games[gameId] = game;
-
         
         // Check if betting round ended
+        let roundEndedFG: number = 1;
+        game.players.forEach((player) => {
+          if(player.lastBet === -1){
+            roundEndedFG = 0; /// Round not over
+          }
+        });
+        // If the round ended
+        if(roundEndedFG){
+          handleEndRound(socket, games, gameId);
+        }
+
             // check if 5 cards on river
                 // enter showdown <--- lots of logic will need to be added here
                   // handle Showdown logic
