@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "../../../App";
 import { GameScreenStyles } from "../../styles/GameScreenStyles";
+import { cardPaths } from "../../utils/Cards";
 
 import {
   View,
@@ -379,11 +380,13 @@ const GameScreen = ({ navigation, route }: Props) => {
           })}
       </View>
 
-      <View style={GameScreenStyles.clientChipCountContainer}>
-        <Text style={GameScreenStyles.clientChipCountText}>
-          {!player.fold ? "CHIPS:$".concat(String(player.money)) : "FOLDED"}
-        </Text>
+      {/* Card render test */}
+      <View style={GameScreenStyles.cardContainer}>
+        <Image source={cardPaths[0]} />
+        <Image source={cardPaths[1]} />
       </View>
+
+
       <View style={GameScreenStyles.actionButtonsContainer}>
         {/* ALL-IN Button */}
         <View style={GameScreenStyles.allInButtonContainer}>

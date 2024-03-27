@@ -276,4 +276,11 @@ export const GameScreenStyles = StyleSheet.create({
     marginHorizontal: 4, // This adds spacing on both sides of the value,// Add some margin to the right of the label
     // Add other styles as necessary
   },
+
+  cardContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
+  },
 });
