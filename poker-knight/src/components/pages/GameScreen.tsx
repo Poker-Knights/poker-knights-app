@@ -266,7 +266,6 @@ const GameScreen = ({ navigation, route }: Props) => {
 
   return (
     // Things to update on UI (not in any particular order)
-    // 1. Player Chip Count
     // 2. Player Turn Indicator
     // 3. Big blind & little blind indicator
     // 4. Indicate if the Player Folded
@@ -359,6 +358,17 @@ const GameScreen = ({ navigation, route }: Props) => {
             if (index === filteredArray.length - 1)
               playerStyle = GameScreenStyles.playerRight; // Last player
 
+            // Determine if player is big blind or little blind
+            // Game.curBigBlind and Game.curLittleBlind are the indexes of the big blind and little blind players respectively
+            
+            // Add a yellow ring around the avatar if it's the player's turn
+            const avatarStyle = player.currentTurn
+            
+            ? [GameScreenStyles.avatar, GameScreenStyles.activeTurnAvatar] 
+            : GameScreenStyles.avatar;
+
+            
+
             return (
               <View
                 key={player.id}
@@ -369,6 +379,21 @@ const GameScreen = ({ navigation, route }: Props) => {
                   style={GameScreenStyles.avatar}
                   resizeMode="contain"
                 />
+                    
+                {/* Conditionally render little blind or big blind icon next to avatar */}
+                {/* {player.isSmallBlind && (
+                  <Image
+                    source={require('../../path/to/little_blind_icon.png')} // Update path to your little blind icon
+                    style={GameScreenStyles.blindIcon} // Define a style for positioning and sizing the icon
+                  />
+                )}
+                {player.isBigBlind && (
+                  <Image
+                    source={require('../../path/to/big_blind_icon.png')} // Update path to your big blind icon
+                    style={GameScreenStyles.blindIcon} // Define a style for positioning and sizing the icon
+                  />
+                )} */}
+
                 <Text style={GameScreenStyles.playerName}>{player.name}</Text>
                 <Text style={GameScreenStyles.playerMoney}>
                   {formatCurrency(player.money)}

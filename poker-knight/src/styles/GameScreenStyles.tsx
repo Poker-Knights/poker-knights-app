@@ -89,6 +89,12 @@ export const GameScreenStyles = StyleSheet.create({
     overflow: "hidden", // Ensures that the image does not spill out of the border radius
   },
 
+  activeTurnAvatar: {
+    borderColor: 'yellow',
+    borderWidth: 2,
+    borderRadius: 40, // Adjust as per your avatar style
+  },
+
   playerName: {
     fontFamily: "PixeloidMono",
     color: "#feeb00", // Assuming a gold color for the player's name text
@@ -276,4 +282,13 @@ export const GameScreenStyles = StyleSheet.create({
     marginHorizontal: 4, // This adds spacing on both sides of the value,// Add some margin to the right of the label
     // Add other styles as necessary
   },
+
+  blindIcon: {
+    width: 10, // Adjust based on your icon size
+    height: 10, // Adjust based on your icon size
+    marginLeft: 5, // Spacing between the avatar and icon, adjust as needed
+    // Add other styling as needed for positioning, etc.
+  }
+  
+
 });

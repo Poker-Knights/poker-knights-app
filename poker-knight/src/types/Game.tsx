@@ -7,6 +7,8 @@ export type Player = {
   allInFg: boolean;
   avatarUri?: string;
   currentTurn: boolean;
+  isBigBlind: boolean;
+  isSmallBlind: boolean;
   lastBet: number;
   foldFG: boolean;
 };
