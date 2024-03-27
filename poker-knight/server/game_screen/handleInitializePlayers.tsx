@@ -1,5 +1,6 @@
 import { Socket } from "socket.io";
 import { Game } from "../../src/types/Game";
+import { handleStartRound } from "./handleStartRound";
 
 export const handleInitializePlayersforGame =
   (Socket: Socket, games: { [key: string]: Game }) => (inputGameID: string) => {
@@ -27,6 +28,8 @@ export const handleInitializePlayersforGame =
         " and last bet: " +
         game.players[game.currentPlayer - 1].lastBet
     );
+
+    handleStartRound(Socket, games);
 
     // emit the updated game
     Socket.emit("playersForGameInitialized", { gameState: game });

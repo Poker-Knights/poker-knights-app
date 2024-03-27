@@ -85,6 +85,8 @@ const GameScreen = ({ navigation, route }: Props) => {
       allIn: false,
     };
 
+    console.log(theGame.players[theGame.currentPlayer - 1]);
+
     if (!currentPlayer.foldFG && !currentPlayer.allInFg) {
       //const isFirstPlayer = game.currentPlayer === (game.players.findIndex((p: { isBigBlind: boolean; }) => p.isBigBlind) + 1) % game.playerCount;
 
@@ -120,7 +122,6 @@ const GameScreen = ({ navigation, route }: Props) => {
 
         // update game state
         setGame(initGame);
-
         setPlayer(newPlayer);
 
         // turn off the event listener
@@ -135,9 +136,6 @@ const GameScreen = ({ navigation, route }: Props) => {
         // update game state
         setGame(updatedGame);
       });
-
-      let actionButtons = determineAvailableActions(theGame);
-      setActionButtonsEnabled(actionButtons);
     }
     // Use the imported helper function, passing necessary dependencies
     const exitGameHandler = handleExit(navigation, socketRef, Game.id);
