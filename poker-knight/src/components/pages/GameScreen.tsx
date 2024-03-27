@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "../../../App";
+import { cardPaths } from "../../utils/Cards";
 
 import {
   View,
@@ -16,7 +17,6 @@ import { PopupMenu } from "./Settings"; // Import PopupMenu, will need to change
 // import { handleSettingsPress } from "../../utils/settingsUtil";
 import { formatCurrency } from "../../utils/Money";
 import {
-  Card,
   initializePlayers,
   handleCallPress,
   handleCheckPress,
@@ -32,7 +32,6 @@ import { RouteProp } from "@react-navigation/native";
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
 
 const userIcon = require("../../Graphics/userIcon.png");
-
 
 const defaultAvatar = require("../../Graphics/userIcon.png"); // Relative path from the current file to the image
 
@@ -152,10 +151,12 @@ const GameScreen = ({ navigation, route }: Props) => {
       </View>
 
       <View style={styles.cardContainer}>
-        {cards.map((card, index) => (
+        {/* {cards.map((card, index) => (
           // Use the Card component to render each card
           <Card key={index} value={card.value} suit={card.suit} />
-        ))}
+        ))} */}
+        <Image source={cardPaths[2]} />;
+        <Image source={cardPaths[3]} />;
       </View>
 
       {/* Action buttons container */}

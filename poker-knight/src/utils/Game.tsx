@@ -26,9 +26,9 @@ const initializePlayers = (): Player[] => {
   ];
 };
 
-type CardImages = {
-  [key: string]: any;
-};
+// type CardImages = {
+//   [key: string]: any;
+// };
 
 // const cardImages: CardImages = {
 //   // Spades
