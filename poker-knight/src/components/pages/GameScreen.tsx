@@ -184,6 +184,8 @@ const GameScreen = ({ navigation, route }: Props) => {
 
     // Current Player
     let curPlayer = theGame.players[theGame.currentPlayer - 1];
+    console.log(curPlayer);
+    console.log(theGame.currentBet);
 
     // Determine BET case
     if (buttonPressed === "BET") {
@@ -233,7 +235,7 @@ const GameScreen = ({ navigation, route }: Props) => {
       case "incrementRaise":
         if (
           curPlayer.lastBet !== -1 &&
-          curPlayer.lastBet !== theGame.currentBet
+          curPlayer.lastBet === theGame.currentBet
         ) {
           curRaiseVal = theGame.currentBet;
         } else if (curRaiseVal < curPlayer.money - 10) {
@@ -246,7 +248,6 @@ const GameScreen = ({ navigation, route }: Props) => {
     }
 
     //Update Values
-    console.log(curRaiseVal);
     setCurRaiseVal(curRaiseVal);
 
     // Update these values on server side
