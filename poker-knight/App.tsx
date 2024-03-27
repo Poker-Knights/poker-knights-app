@@ -7,6 +7,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "./src/components/pages/HomeScreen";
 import JoinScreen from "./src/components/pages/JoinGameScreen";
 import GameScreen from "./src/components/pages/GameScreen";
+import LoadingScreen from "./src/components/pages/LoadingScreen";
 import AppLoading from "expo-app-loading";
 import { useFonts } from "./src/utils/useFonts";
 import { Game } from "./src/types/Game";
@@ -18,6 +19,7 @@ export type StackParamList = {
   Home: undefined;
   Join: { username: string };
   Game: { username: string; Game: Game };
+  Loading: undefined;
 };
 
 const Stack = createStackNavigator<StackParamList>();
@@ -41,6 +43,7 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Join" component={JoinScreen} />
         <Stack.Screen name="Game" component={GameScreen} />
+        <Stack.Screen name="Loading" component={LoadingScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
