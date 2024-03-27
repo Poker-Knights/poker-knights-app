@@ -182,50 +182,65 @@ const GameScreen = ({ navigation, route }: Props) => {
     // Switch to handle the button pressed
     // if the button is pressed, disable the button afterwards until its their turn again
 
+    // Current Player
+    let curPlayer = theGame.players[theGame.currentPlayer - 1];
+
+    // Determine BET case
+    if (buttonPressed === "BET") {
+      if (curRaiseVal === 0) {
+        buttonPressed = "CHECK";
+      } else if (curRaiseVal === theGame.currentBet) {
+        buttonPressed = "CALL";
+      } else if (curRaiseVal > theGame.currentBet) {
+        buttonPressed = "RAISE";
+      }
+    }
+
     switch (buttonPressed) {
       case "CALL":
-        console.log("CALL");
         handleCallPress(theGame);
-        actionButtonsEnabled.betOption = false;
         break;
 
       case "FOLD":
-        console.log("FOLD");
         handleFoldPress(theGame);
-        actionButtonsEnabled.fold = false;
         break;
 
       case "CHECK":
-        console.log("CHECK");
         handleCheckPress(theGame);
-        actionButtonsEnabled.betOption = false;
         break;
 
       case "RAISE":
-        console.log("RAISE");
         handleRaisePress(theGame, curRaiseVal);
-        actionButtonsEnabled.betOption = false;
         break;
 
       case "ALL-IN":
-        console.log("ALL-IN");
         handleAllInPress(theGame);
-        actionButtonsEnabled.allIn = false;
         break;
 
       case "decrementRaise":
-        if (curRaiseVal > 0 && curRaiseVal > theGame.currentBet)
+        if (
+          curPlayer.lastBet !== -1 &&
+          curPlayer.lastBet !== theGame.currentBet
+        ) {
+          curRaiseVal = theGame.currentBet;
+        } else if (curRaiseVal > 0 && curRaiseVal > theGame.currentBet)
           curRaiseVal -= 10;
+        else {
+          // ADD LOGIC TO GREY OUT DECREMENT IF WE CANT GO LOWER
+        }
         break;
 
       case "incrementRaise":
         if (
-          curRaiseVal <
-          theGame.players[theGame.currentPlayer - 1].money - 10
+          curPlayer.lastBet !== -1 &&
+          curPlayer.lastBet !== theGame.currentBet
         ) {
+          curRaiseVal = theGame.currentBet;
+        } else if (curRaiseVal < curPlayer.money - 10) {
           curRaiseVal += 10;
         } else {
           curRaiseVal = theGame.players[theGame.currentPlayer - 1].money;
+          // ADD LOGIC TO GREY OUT DECREMENT IF WE CANT GO HIGHER
         }
         break;
     }
@@ -411,9 +426,16 @@ const GameScreen = ({ navigation, route }: Props) => {
           {/* Label */}
           <TouchableOpacity
             onPress={() => handleButtonPress("BET")}
-            disabled={!actionButtonsEnabled.fold}
+            disabled={!actionButtonsEnabled.betOption}
           >
-            <Text style={GameScreenStyles.labelText}>
+            <Text
+              style={[
+                GameScreenStyles.raiseCallValueText,
+                !actionButtonsEnabled.betOption
+                  ? { color: "darkgrey" }
+                  : { color: "yellow" },
+              ]}
+            >
               {player.lastBet !== -1
                 ? theGame.currentBet === 0
                   ? "CHECK"
@@ -445,7 +467,14 @@ const GameScreen = ({ navigation, route }: Props) => {
           </TouchableOpacity>
 
           {/* Current raise value */}
-          <Text style={GameScreenStyles.raiseCallValueText}>
+          <Text
+            style={[
+              GameScreenStyles.raiseCallValueText,
+              !actionButtonsEnabled.betOption
+                ? { color: "darkgrey" }
+                : { color: "yellow" },
+            ]}
+          >
             {formatCurrency(curRaiseVal)}
           </Text>
 
