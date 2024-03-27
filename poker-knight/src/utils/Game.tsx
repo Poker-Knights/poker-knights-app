@@ -42,7 +42,7 @@ const createAndAddPlayer = (username: string, socketId: string, game: Game) => {
     allInFg: false,
     //avatarUri: generateAvatar(game.players), // Call the generateAvatar function here
     currentTurn: false, // Set initial turn status
-    lastBet: 0,
+    lastBet: -1,
     foldFG: false,
   };
 

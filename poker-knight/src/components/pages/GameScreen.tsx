@@ -80,21 +80,16 @@ const GameScreen = ({ navigation, route }: Props) => {
 
     // Default actions
     let actions = {
-      betOption: false,
-      fold: false,
-      allIn: false,
+      betOption: true,
+      fold: true,
+      allIn: true,
     };
 
-    console.log(theGame.players[theGame.currentPlayer - 1]);
+    console.log(theGame.players);
 
     if (!currentPlayer.foldFG && !currentPlayer.allInFg) {
-      //const isFirstPlayer = game.currentPlayer === (game.players.findIndex((p: { isBigBlind: boolean; }) => p.isBigBlind) + 1) % game.playerCount;
-
       // if its not your turn, you cannot do anything
       if (currentPlayer.currentTurn === false) {
-        actions.betOption = false;
-        actions.fold = false;
-        actions.allIn = false;
       } else {
         actions.betOption = true;
         actions.fold = true;
@@ -161,15 +156,22 @@ const GameScreen = ({ navigation, route }: Props) => {
   };
 
   // any changes to theGame will trigger this useEffect and update client side player state
-  useEffect(() => {
-    let actionButtons = determineAvailableActions(theGame);
-    setActionButtonsEnabled(actionButtons);
+  const isMounted = useRef(false);
 
-    // grab player object from new game state
-    let newPlayer = theGame.players.find(
-      (p: { name: string }) => p.name === username
-    );
-    newPlayer && setPlayer(newPlayer);
+  // any changes to theGame will trigger this useEffect and update client side player state
+  useEffect(() => {
+    // Skip the first invocation (initial render)
+    if (isMounted.current) {
+      // Your existing useEffect logic here, to run on updates after the initial render
+      let actionButtons = determineAvailableActions(theGame);
+      setActionButtonsEnabled(actionButtons);
+
+      let newPlayer = theGame.players.find((p) => p.name === username);
+      newPlayer && setPlayer(newPlayer);
+    } else {
+      // Mark as mounted for subsequent renders
+      isMounted.current = true;
+    }
   }, [theGame]);
 
   const onExitConfirmPress = () => handleExitConfirmPress(socketRef, Game.id);
@@ -182,32 +184,38 @@ const GameScreen = ({ navigation, route }: Props) => {
 
     switch (buttonPressed) {
       case "CALL":
+        console.log("CALL");
         handleCallPress(theGame);
         actionButtonsEnabled.betOption = false;
         break;
 
       case "FOLD":
+        console.log("FOLD");
         handleFoldPress(theGame);
         actionButtonsEnabled.fold = false;
         break;
 
       case "CHECK":
+        console.log("CHECK");
         handleCheckPress(theGame);
         actionButtonsEnabled.betOption = false;
         break;
 
       case "RAISE":
+        console.log("RAISE");
         handleRaisePress(theGame, curRaiseVal);
         actionButtonsEnabled.betOption = false;
         break;
 
       case "ALL-IN":
+        console.log("ALL-IN");
         handleAllInPress(theGame);
         actionButtonsEnabled.allIn = false;
         break;
 
       case "decrementRaise":
-        if (theGame.currentBet > 0) curRaiseVal -= 10;
+        if (curRaiseVal > 0 && curRaiseVal > theGame.currentBet)
+          curRaiseVal -= 10;
         break;
 
       case "incrementRaise":
@@ -223,6 +231,7 @@ const GameScreen = ({ navigation, route }: Props) => {
     }
 
     //Update Values
+    console.log(curRaiseVal);
     setCurRaiseVal(curRaiseVal);
 
     // Update these values on server side
@@ -363,7 +372,7 @@ const GameScreen = ({ navigation, route }: Props) => {
         {/* ALL-IN Button */}
         <View style={GameScreenStyles.allInButtonContainer}>
           <TouchableOpacity
-            onPress={() => handleButtonPress("All-in")}
+            onPress={() => handleButtonPress("ALL-IN")}
             disabled={!actionButtonsEnabled.allIn}
           >
             <Text
@@ -382,7 +391,7 @@ const GameScreen = ({ navigation, route }: Props) => {
         {/* Fold Button */}
         <View style={GameScreenStyles.foldButtonContainer}>
           <TouchableOpacity
-            onPress={() => handleButtonPress("Fold")}
+            onPress={() => handleButtonPress("FOLD")}
             disabled={!actionButtonsEnabled.fold}
           >
             <Text
@@ -398,19 +407,25 @@ const GameScreen = ({ navigation, route }: Props) => {
           </TouchableOpacity>
         </View>
         {/* Container for the Raise/Call/Check functionality */}
-
         <View style={GameScreenStyles.raiseCallButtonContainer}>
           {/* Label */}
-          <Text style={GameScreenStyles.labelText}>
-            {player.lastBet !== -1
-              ? "CALL"
-              : curRaiseVal > theGame.currentBet
-              ? "RAISE"
-              : curRaiseVal === 0
-              ? "CHECK"
-              : "CALL"}
-            :
-          </Text>
+          <TouchableOpacity
+            onPress={() => handleButtonPress("BET")}
+            disabled={!actionButtonsEnabled.fold}
+          >
+            <Text style={GameScreenStyles.labelText}>
+              {player.lastBet !== -1
+                ? theGame.currentBet === 0
+                  ? "CHECK"
+                  : "CALL"
+                : curRaiseVal > theGame.currentBet
+                ? "RAISE"
+                : curRaiseVal === 0
+                ? "CHECK"
+                : "CALL"}
+              :
+            </Text>
+          </TouchableOpacity>
 
           {/* Decrement button for raise value */}
           <TouchableOpacity
