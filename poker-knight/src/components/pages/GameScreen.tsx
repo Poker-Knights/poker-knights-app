@@ -80,12 +80,12 @@ const GameScreen = ({ navigation, route }: Props) => {
 
     // Default actions
     let actions = {
-      betOption: true,
+      betOption: false,
       fold: false,
       allIn: false,
     };
 
-    if (!currentPlayer.fold && !currentPlayer.allInFg) {
+    if (!currentPlayer.foldFG && !currentPlayer.allInFg) {
       //const isFirstPlayer = game.currentPlayer === (game.players.findIndex((p: { isBigBlind: boolean; }) => p.isBigBlind) + 1) % game.playerCount;
 
       // if its not your turn, you cannot do anything
@@ -93,9 +93,12 @@ const GameScreen = ({ navigation, route }: Props) => {
         actions.betOption = false;
         actions.fold = false;
         actions.allIn = false;
+      } else {
+        actions.betOption = true;
+        actions.fold = true;
+        actions.allIn = true;
       }
     }
-
     return actions;
   }
 
@@ -268,7 +271,6 @@ const GameScreen = ({ navigation, route }: Props) => {
               <TouchableOpacity
                 style={[GameScreenStyles.button, GameScreenStyles.buttonClose]}
                 onPress={() => {
-                  console.log("Game was attempted to be exited");
                   onExitConfirmPress();
                 }}
               >
@@ -279,7 +281,6 @@ const GameScreen = ({ navigation, route }: Props) => {
               <TouchableOpacity
                 style={[GameScreenStyles.button, GameScreenStyles.buttonClose]}
                 onPress={() => {
-                  console.log("Game was continued");
                   setMenuVisible(false);
                 }}
               >
@@ -357,7 +358,7 @@ const GameScreen = ({ navigation, route }: Props) => {
 
       <View style={GameScreenStyles.clientChipCountContainer}>
         <Text style={GameScreenStyles.clientChipCountText}>
-          CHIPS:${player.money}
+          {!player.fold ? "CHIPS:$".concat(String(player.money)) : "FOLDED"}
         </Text>
       </View>
       <View style={GameScreenStyles.actionButtonsContainer}>
