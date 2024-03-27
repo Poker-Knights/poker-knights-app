@@ -57,10 +57,8 @@ const GameScreen = ({ navigation, route }: Props) => {
   // set the initial state as an empty object
   let [player, setPlayer] = useState<any>({});
   let [actionButtonsEnabled, setActionButtonsEnabled] = useState({
-    raise: true,
-    call: true,
+    betOption: true,
     fold: true,
-    check: true,
     allIn: true,
   });
 
@@ -74,70 +72,26 @@ const GameScreen = ({ navigation, route }: Props) => {
 
   // There needs to be a function to evaluate which buttons you can and cannot press [MUST BE TESTED]
   function determineAvailableActions(game: typeof Game): {
-    raise: boolean;
-    call: boolean;
+    betOption: boolean;
     fold: boolean;
-    check: boolean;
     allIn: boolean;
   } {
     const currentPlayer = game.players[game.currentPlayer - 1];
 
     // Default actions
     let actions = {
-      raise: true,
-      call: true,
+      betOption: true,
       fold: false,
-      check: true,
       allIn: false,
     };
 
     if (!currentPlayer.fold && !currentPlayer.allInFg) {
       //const isFirstPlayer = game.currentPlayer === (game.players.findIndex((p: { isBigBlind: boolean; }) => p.isBigBlind) + 1) % game.playerCount;
-      // -- RAISE LOGIC --
-      // you cannot raise if your last bet is a not -1, you only have the option to raise if it is -1 and if you  have enough money to bet
-      if (currentPlayer.lastBet === -1) {
-        actions.raise = true;
-      } else {
-        actions.raise = false;
-      }
-
-      // -- CALL LOGIC --
-      // you cannot call if the current bet is equal to the last bet
-      if (game.currentBet === currentPlayer.lastBet) {
-        actions.call = false;
-      }
-
-      // You can call if the current bet is greater than the last bet
-      if (game.currentBet > currentPlayer.lastBet) {
-        actions.call = true;
-      }
-
-      // --CHECK LOGIC--
-      // you can only check if the current bet is equal to the last bet or if current bet is 0
-      if (game.currentBet === currentPlayer.lastBet || game.currentBet === 0) {
-        actions.check = true;
-      }
-
-      // you cannot check if the current bet is greater than the last bet
-      if (game.currentBet > currentPlayer.lastBet) {
-        actions.check = false;
-      }
-
-      // If you do not have enough money, you can only fold or go all in
-      if (currentPlayer.money < game.currentBet) {
-        actions.call = false;
-        actions.raise = false;
-        actions.check = false;
-        actions.fold = true;
-        actions.allIn = true;
-      }
 
       // if its not your turn, you cannot do anything
       if (currentPlayer.currentTurn === false) {
-        actions.raise = false;
-        actions.call = false;
+        actions.betOption = false;
         actions.fold = false;
-        actions.check = false;
         actions.allIn = false;
       }
     }
@@ -228,7 +182,7 @@ const GameScreen = ({ navigation, route }: Props) => {
     switch (buttonPressed) {
       case "CALL":
         handleCallPress(theGame);
-        actionButtonsEnabled.call = false;
+        actionButtonsEnabled.betOption = false;
         break;
 
       case "FOLD":
@@ -238,12 +192,12 @@ const GameScreen = ({ navigation, route }: Props) => {
 
       case "CHECK":
         handleCheckPress(theGame);
-        actionButtonsEnabled.check = false;
+        actionButtonsEnabled.betOption = false;
         break;
 
       case "RAISE":
         handleRaisePress(theGame, curRaiseVal);
-        actionButtonsEnabled.raise = false;
+        actionButtonsEnabled.betOption = false;
         break;
 
       case "ALL-IN":
@@ -449,7 +403,9 @@ const GameScreen = ({ navigation, route }: Props) => {
         <View style={GameScreenStyles.raiseCallButtonContainer}>
           {/* Label */}
           <Text style={GameScreenStyles.labelText}>
-            {curRaiseVal > theGame.currentBet
+            {player.lastBet !== -1
+              ? "CALL"
+              : curRaiseVal > theGame.currentBet
               ? "RAISE"
               : curRaiseVal === 0
               ? "CHECK"
@@ -460,12 +416,12 @@ const GameScreen = ({ navigation, route }: Props) => {
           {/* Decrement button for raise value */}
           <TouchableOpacity
             onPress={() => handleButtonPress("decrementRaise")}
-            disabled={!actionButtonsEnabled.raise && !actionButtonsEnabled.call}
+            disabled={!actionButtonsEnabled.betOption}
           >
             <Text
               style={[
                 GameScreenStyles.raiseCallValueText,
-                !actionButtonsEnabled.raise && !actionButtonsEnabled.call
+                !actionButtonsEnabled.betOption
                   ? { color: "darkgrey" }
                   : { color: "yellow" },
               ]}
@@ -482,12 +438,12 @@ const GameScreen = ({ navigation, route }: Props) => {
           {/* Increment button for raise value */}
           <TouchableOpacity
             onPress={() => handleButtonPress("incrementRaise")}
-            disabled={!actionButtonsEnabled.raise && !actionButtonsEnabled.call}
+            disabled={!actionButtonsEnabled.betOption}
           >
             <Text
               style={[
                 GameScreenStyles.raiseCallValueText,
-                !actionButtonsEnabled.raise && !actionButtonsEnabled.call
+                !actionButtonsEnabled.betOption
                   ? { color: "darkgrey" }
                   : { color: "yellow" },
               ]}

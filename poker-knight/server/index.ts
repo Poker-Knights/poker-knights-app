@@ -54,7 +54,7 @@ io.on('connection', (socket: Socket) => {
         });
         // If the round ended
         if(roundEndedFG){
-          handleEndRound(socket, games, gameId);
+          //handleEndRound(socket, games, gameId);
         }
 
             // check if 5 cards on river
