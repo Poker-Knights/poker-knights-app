@@ -5,6 +5,9 @@ import http from 'http';
 import { Game, Player } from '../src/types/Game';
 import { handleCreateGame } from './home_screen/handleCreateGame'; 
 import { handleAttemptToJoin } from './join_screen/handleAttemptToJoin';
+import { handleExitGame } from './game_screen/handleExitGame'; 
+import { handleInitializePlayersforGame } from './game_screen/handleInitializePlayers';
+
 
 
 
@@ -24,13 +27,21 @@ io.on('connection', (socket: Socket) => {
     console.log(`User connected: ${socket.id}`);
 
     // Register event handlers for this connection
-    socket.on('createGame', handleCreateGame(socket, games));
+    socket.on('createGame', handleCreateGame(socket, games)); 
     socket.on('attemptToJoin', handleAttemptToJoin(socket, games));
+    // socket.on('exitGame', console.log("we made it here"));
+    
+    socket.on("exitGame", (socketID, gameID) => {
+      handleExitGame(socket, games, socketID, gameID);
+    });
+
+
+    // Listen for Intiialize game event for a game
+    socket.on('initializePlayers', handleInitializePlayersforGame(socket, games));
 
     // Example of disconnect event
     socket.on('disconnect', () => {
         console.log(`User disconnected: ${socket.id}`);
-        // Here you could also handle player disconnection, such as removing them from games, etc.
     });
 });
 

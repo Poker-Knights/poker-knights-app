@@ -1,11 +1,12 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { StackNavigationProp } from '@react-navigation/stack';
 import { StackParamList } from '../../../App';
-import { useEffect } from 'react';
-import { useState } from 'react';
-
 import { Dimensions, ImageBackground, Image, StyleSheet, Text, View } from "react-native";
 import { RouteProp } from "@react-navigation/native";
+import io from 'socket.io-client';
+import { SERVER_URL } from "../../utils/socket.js";
+
+const serverURL = SERVER_URL;
 
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
 
@@ -18,13 +19,36 @@ type Props = {
 
 const Loading = ({ navigation, route }: Props) => {
     const { Game } = route.params;
-    const players = Game.players;
+    const [players, setPlayers] = useState(Game.players);
+    // State to manage the display text
+    const [displayText, setDisplayText] = useState("LOADING...");
     const reservedSpace = 200;
     const screenHeight = Dimensions.get('window').height - reservedSpace;
     const playerContainerHeight = screenHeight / (players.length * 2);
-    
-    // State to manage the display text
-    const [displayText, setDisplayText] = useState("LOADING...");
+
+    React.useLayoutEffect(() => {
+      navigation.setOptions({
+        headerShown: false, // Set this to false to hide the navigation bar
+      });
+    }, [navigation]);
+
+    useEffect(() => {
+      const socket = io(serverURL);
+
+      // Join the specific game room upon component mount
+      socket.emit('joinRoom', { gameId: Game.id });
+
+      // Listen for player updates
+      socket.on('playerJoined', (newPlayer) => {
+        setPlayers(prevPlayers => [...prevPlayers, newPlayer]);
+      });
+
+      // Cleanup on component unmount
+      return () => {
+        socket.emit('leaveRoom', { gameId: Game.id });
+        socket.disconnect();
+      };
+    }, []);
 
     useEffect(() => {
       if (players.length === 4) {

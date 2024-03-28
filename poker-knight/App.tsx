@@ -18,8 +18,12 @@ import { Game } from "./src/types/Game";
 export type StackParamList = {
   Home: undefined;
   Join: { username: string };
+<<<<<<< HEAD
   Game: { username: string; Game: Game };
   Loading: { Game: Game };
+=======
+  Game: { Game: Game };
+>>>>>>> 42b3bb95c778a26a5ab9f1d13bb98f2871234be2
 };
 
 const Stack = createStackNavigator<StackParamList>();
