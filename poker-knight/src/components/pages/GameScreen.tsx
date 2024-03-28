@@ -300,8 +300,6 @@ const GameScreen = ({ navigation, route }: Props) => {
     // 4. Indicate if the Player Folded
     // 5. If the player left the game or is eliminated (gray out the player prpfle picture)
     // 6. card display
-    // 7. win screen
-    // 8. losing screen
     // 9. have the UI reflected so that client side user is the main user
 
     <View style={GameScreenStyles.backgroundContainer}>
@@ -626,29 +624,6 @@ const GameScreen = ({ navigation, route }: Props) => {
               +
             </Text>
           </TouchableOpacity>
-        </View>
-        <View style={GameScreenStyles.topButtonsContainer}>
-          {/* Call/Raise Functionality */}
-          <View style={GameScreenStyles.raiseCallButtonContainer}>
-            <TouchableOpacity onPress={() => handleButtonPress("BET")}>
-              <Text style={GameScreenStyles.raiseCallValueText}>
-                {callRaiseText}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => handleButtonPress("decrementRaise")}
-            >
-              <Text style={GameScreenStyles.raiseCallValueText}>-</Text>
-            </TouchableOpacity>
-            <Text style={GameScreenStyles.raiseCallValueText}>
-              {curRaiseVal}
-            </Text>
-            <TouchableOpacity
-              onPress={() => handleButtonPress("incrementRaise")}
-            >
-              <Text style={GameScreenStyles.raiseCallValueText}>+</Text>
-            </TouchableOpacity>
-          </View>
         </View>
       </View>
     </View>
