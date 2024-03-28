@@ -63,9 +63,9 @@ export const handleGameCreated =
       `Game ${newGame.id} has been created with username ${newGame.players[0].name}!`
     );
     setGame(newGame); // Update the game state with the new game information
-    
+
     // Navigate to loading screen until enough players
-    navigation.navigate("Game", {
+    navigation.navigate("Loading", {
       Game: newGame,
       username: newGame.hostPlayer,
     });
