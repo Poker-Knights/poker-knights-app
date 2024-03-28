@@ -42,6 +42,9 @@ const createAndAddPlayer = (username: string, socketId: string, game: Game) => {
     allInFg: false,
     //avatarUri: generateAvatar(game.players), // Call the generateAvatar function here
     currentTurn: false, // Set initial turn status
+    isLittleBlind: false,
+    isBigBlind: false,
+
     lastBet: -1,
     foldFG: false,
   };
@@ -93,6 +96,7 @@ const handleFoldPress = (game: Game) => {
   // Implement the fold action logic here
   const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
   curPlayer.foldFG = true;
+
   nextPlayer(game); // Move to next player
 };
 
@@ -129,6 +133,8 @@ const handleAllInPress = (game: Game) => {
   curPlayer.money = 0; // Empty players money
   game.potSize += game.currentBet; // Update Pot Value
   nextPlayer(game); // Move to next player
+
+
 };
 
 // Function to handle a player's turn, return player
@@ -136,6 +142,7 @@ const nextPlayer = (game: Game) => {
   // Logic to handle player's turn
   game.currentPlayer++;
   if (game.currentPlayer >= game.playerCount) game.currentPlayer = 1;
+
 };
 
 const handleExitConfirmPress = (

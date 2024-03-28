@@ -17,7 +17,9 @@ import { Game } from "./src/types/Game";
 export type StackParamList = {
   Home: undefined;
   Join: { username: string };
+
   Game: { Game: Game, username: string };
+
 };
 
 const Stack = createStackNavigator<StackParamList>();
