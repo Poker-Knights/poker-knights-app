@@ -12,6 +12,7 @@ import {
   SafeAreaView,
   Image,
   ImageBackground,
+  Button,
 } from "react-native";
 
 import { formatCurrency } from "../../utils/Money";
@@ -31,6 +32,8 @@ import io, { Socket } from "socket.io-client";
 import { SERVER_URL } from "../../utils/socket";
 
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
+const loseGIF = require("../../Graphics/lose.gif");
+const winGIF = require("../../Graphics/win.gif");
 
 const userIcon = require("../../Graphics/userIcon.png");
 
@@ -47,7 +50,11 @@ const GameScreen = ({ navigation, route }: Props) => {
   const [pot, setPot] = useState(100); // Initialize pot state with a default value
   const { Game } = route.params;
   const [theGame, setGame] = useState(Game); // this is your client side representation of game object
+  
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
+  const [losePopupVisible, setLosePopupVisible] = useState<boolean>(false);
+  const [winPopupVisible, setWinPopupVisible] = useState<boolean>(false);
+  
   const [currentBet, setCurrentBet] = useState(theGame.currentBet); // Initialize current bet state with a default value
   let [curRaiseVal, setCurRaiseVal] = useState(theGame.currentBet); //Track Raise Value
   let [callRaiseText, setCallRaiseText] = useState("CALL:"); //Track Raise Value
@@ -95,6 +102,16 @@ const GameScreen = ({ navigation, route }: Props) => {
   const handleExitPress = () => {
     console.log("Exit button was pressed");
     setMenuVisible(true);
+  };
+
+  const handleLoseTestPress = () => {
+    console.log("Lose button was pressed");
+    setLosePopupVisible(true);
+  };
+
+  const handleWinTestPress = () => {
+    console.log("Win button was pressed");
+    setWinPopupVisible(true);
   };
 
   const onExitConfirmPress = () => handleExitConfirmPress(socketRef, Game.id);
@@ -176,7 +193,9 @@ const GameScreen = ({ navigation, route }: Props) => {
 
   return (
     <View style={GameScreenStyles.backgroundContainer}>
-      <View style={GameScreenStyles.modalExitView}>
+      
+      {/* Exit button modal */}
+      <View>
         <Modal
           animationType="slide"
           transparent={true}
@@ -184,35 +203,129 @@ const GameScreen = ({ navigation, route }: Props) => {
           onRequestClose={() => setMenuVisible(false)}
         >
           <View style={GameScreenStyles.centeredView}>
-            <View style={GameScreenStyles.modalPopupView}>
+            <View style={GameScreenStyles.exitModalPopupView}>
               <Text style={GameScreenStyles.modalText}>
                 Are you sure you want to exit the game?
               </Text>
 
               {/* Exit game Button */}
               <TouchableOpacity
-                style={[GameScreenStyles.button, GameScreenStyles.buttonClose]}
+                style={GameScreenStyles.exitGameModalButton}
                 onPress={() => {
                   console.log("Game was attempted to be exited");
                   onExitConfirmPress();
                 }}
               >
-                <Text style={GameScreenStyles.textStyle}>Exit game</Text>
+                <Text style={GameScreenStyles.textStyle}>EXIT GAME</Text>
               </TouchableOpacity>
 
               {/* Continue game */}
               <TouchableOpacity
-                style={[GameScreenStyles.button, GameScreenStyles.buttonClose]}
+                style={GameScreenStyles.exitGameModalButton}
                 onPress={() => {
                   console.log("Game was continued");
                   setMenuVisible(false);
                 }}
               >
-                <Text style={GameScreenStyles.textStyle}>Continue game</Text>
+                <Text style={GameScreenStyles.textStyle}>CONTINUE GAME</Text>
               </TouchableOpacity>
             </View>
           </View>
         </Modal>
+      </View>
+
+      {/* Win pop-up modal */}
+      <View>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={winPopupVisible}
+          onRequestClose={() => setWinPopupVisible(false)}
+        >
+          <View style={GameScreenStyles.centeredView}>
+            <View style={GameScreenStyles.winModalPopupView}>
+              <Image
+                source={winGIF}
+                style={GameScreenStyles.gif}
+                resizeMode="contain"
+              />
+              <Text style={GameScreenStyles.modalText}>
+                Woohoo! You won!
+              </Text>
+
+              {/* Exit game Button */}
+              <TouchableOpacity
+                style={GameScreenStyles.exitGameModalButton}
+                onPress={() => {
+                  console.log("Game was attempted to be exited");
+                  onExitConfirmPress();
+                }}
+              >
+                <Text style={GameScreenStyles.textStyle}>EXIT GAME</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </View>
+
+      {/* Lost pop-up modal */}
+      <View>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={losePopupVisible}
+          onRequestClose={() => setLosePopupVisible(false)}
+        >
+          <View style={GameScreenStyles.centeredView}>
+            <View style={GameScreenStyles.loseModalPopupView}>
+              <Image
+                source={loseGIF}
+                style={GameScreenStyles.gif}
+                resizeMode="contain"
+              />
+              <Text style={GameScreenStyles.modalText}>
+                Womp womp. You lost! Better luck next time!
+              </Text>
+
+              {/* Exit game Button */}
+              <TouchableOpacity
+                style={GameScreenStyles.exitGameModalButton}
+                onPress={() => {
+                  console.log("Game was attempted to be exited");
+                  onExitConfirmPress();
+                }}
+              >
+                <Text style={GameScreenStyles.textStyle}>EXIT GAME</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </View>
+
+      {/* Exit Button */}
+      <TouchableOpacity
+        style={GameScreenStyles.exitButton}
+        onPress={handleExitPress}
+      >
+        <Text style={GameScreenStyles.exitText}>EXIT</Text>
+      </TouchableOpacity>
+
+      <View style={GameScreenStyles.testButtonsContainer}>
+        {/* Win Test Button */}
+        <TouchableOpacity
+          style={GameScreenStyles.winButton}
+          onPress={handleWinTestPress}
+        >
+          <Text style={GameScreenStyles.exitText}>WIN</Text>
+        </TouchableOpacity>
+
+        {/* Lose Test Button */}
+        <TouchableOpacity
+          style={GameScreenStyles.loseButton}
+          onPress={handleLoseTestPress}
+        >
+          <Text style={GameScreenStyles.exitText}>LOSE</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Top part of the screen with pot and current bet */}
@@ -227,18 +340,6 @@ const GameScreen = ({ navigation, route }: Props) => {
         {/* White line */}
         <View style={GameScreenStyles.whiteLine} />
       </View>
-
-      {/* Exit Button */}
-      <TouchableOpacity
-        style={GameScreenStyles.exitButton}
-        onPress={handleExitPress}
-      >
-        {/* <Image
-          source={require("../../Graphics/settingwidget.png")}
-          style={GameScreenStyles.settingsIcon}
-        /> */}
-        <Text style={GameScreenStyles.exitText}>EXIT</Text>
-      </TouchableOpacity>
 
       <View style={GameScreenStyles.bottomContainer}>
         <ImageBackground
