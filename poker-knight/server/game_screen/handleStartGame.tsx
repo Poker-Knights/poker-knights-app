@@ -18,17 +18,6 @@ export const handleInitializePlayersforGame =
 
     // set players equal to game players
     game.players = players;
-
-    // print player info for the current player
-    console.log(
-      "Current player: " +
-        game.players[game.currentPlayer - 1].name +
-        " with money: " +
-        game.players[game.currentPlayer - 1].money +
-        " and last bet: " +
-        game.players[game.currentPlayer - 1].lastBet
-    );
-
     handleStartRound(Socket, games);
 
     // emit the updated game
