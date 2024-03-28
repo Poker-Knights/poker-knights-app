@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { Game } from "../../src/types/Game";
-import { createAndAddPlayer } from "../../src/utils/Game";
+import { handleCreateAndAddPlayer } from "../game_screen/handleCreateAndAddPlayer";
 
 export const handleCreateGame =
   (socket: Socket, games: { [key: string]: Game }) =>
@@ -23,7 +23,7 @@ export const handleCreateGame =
     };
 
     // Use the utility function to create and add the new player to the game
-    createAndAddPlayer(username, socket.id, newGame);
+    handleCreateAndAddPlayer(username, socket.id, newGame);
 
     // Store the new game in the games object
     games[gameID] = newGame;

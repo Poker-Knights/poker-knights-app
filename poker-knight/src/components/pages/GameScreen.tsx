@@ -57,9 +57,9 @@ const GameScreen = ({ navigation, route }: Props) => {
   // set the initial state as an empty object
   let [player, setPlayer] = useState<any>({});
   let [actionButtonsEnabled, setActionButtonsEnabled] = useState({
-    betOption: true,
-    fold: true,
-    allIn: true,
+    betOption: false,
+    fold: false,
+    allIn: false,
   });
 
   const socketRef = useRef<Socket | null>(null);
@@ -76,8 +76,6 @@ const GameScreen = ({ navigation, route }: Props) => {
     fold: boolean;
     allIn: boolean;
   } {
-    const currentPlayer = game.players[game.currentPlayer - 1];
-
     // Default actions
     let actions = {
       betOption: false,
@@ -86,15 +84,12 @@ const GameScreen = ({ navigation, route }: Props) => {
     };
 
     if (player.currentTurn) {
-      if (!player.foldFG) {
-        // if its not your turn, you cannot do anything
-        actions.betOption = true;
-        actions.fold = true;
-        actions.allIn = true;
-      }
+      // if its not your turn, you cannot do anything
+      actions.betOption = true;
+      actions.fold = true;
+      actions.allIn = true;
     }
-    console.log(actions);
-    console.log(theGame);
+
     return actions;
   }
 
@@ -104,12 +99,10 @@ const GameScreen = ({ navigation, route }: Props) => {
 
     if (socketRef.current) {
       // emit initialize players event
-      socketRef.current.emit("initializePlayers", Game.id);
-
+      socketRef.current.emit("startGame", Game.id);
       // listen for playersForGameInitialized event
-      socketRef.current.on("playersForGameInitialized", (data: any) => {
-        let initGame = data.gameState;
-
+      socketRef.current.on("gameStarted", (data: any) => {
+        let initGame = data;
         let newPlayer = initGame.players.find(
           (p: { name: string }) => p.name === theUsername
         );
@@ -120,7 +113,7 @@ const GameScreen = ({ navigation, route }: Props) => {
 
         // turn off the event listener
         if (socketRef.current) {
-          socketRef.current.off("playersForGameInitialized");
+          socketRef.current.off("gameStarted");
         }
       });
 
@@ -158,7 +151,7 @@ const GameScreen = ({ navigation, route }: Props) => {
   const isMounted = useRef(false);
 
   // any changes to theGame will trigger this useEffect and update client side player state
-  useEffect(() => {
+  /*useEffect(() => {
     // Skip the first invocation (initial render)
     if (isMounted.current) {
       // Your existing useEffect logic here, to run on updates after the initial render
@@ -171,7 +164,7 @@ const GameScreen = ({ navigation, route }: Props) => {
       // Mark as mounted for subsequent renders
       isMounted.current = true;
     }
-  }, [theGame]);
+  }, [theGame]);*/
 
   const onExitConfirmPress = () => handleExitConfirmPress(socketRef, Game.id);
 
@@ -183,7 +176,6 @@ const GameScreen = ({ navigation, route }: Props) => {
 
     // Current Player
     let curPlayer = theGame.players[theGame.currentPlayer - 1];
-    console.log(theGame);
 
     // Determine BET case
     if (buttonPressed === "BET") {

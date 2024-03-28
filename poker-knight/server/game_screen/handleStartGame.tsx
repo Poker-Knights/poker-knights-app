@@ -1,6 +1,5 @@
 import { Socket } from "socket.io";
 import { Game } from "../../src/types/Game";
-import { handleInitializePlayersforGame } from "./handleInitializePlayers";
 
 export const handleStartGame =
   (Socket: Socket, games: { [key: string]: Game }) => (inputGameID: string) => {

@@ -31,30 +31,6 @@ const generateAvatar = (players: Player[]): string => {
   } else return defaultAvatar;
 };
 
-// Function to create a new player and add to the specified game
-const createAndAddPlayer = (username: string, socketId: string, game: Game) => {
-  // call generateAvatar here
-
-  const newPlayer: Player = {
-    id: socketId,
-    name: username,
-    money: 500, // Default starting money
-    allInFg: false,
-    //avatarUri: generateAvatar(game.players), // Call the generateAvatar function here
-    currentTurn: false, // Set initial turn status
-    lastBet: -1,
-    foldFG: false,
-    isBigBlind: false,
-    isLittleBlind: false,
-  };
-
-  // Add the new player to the game
-  game.players.push(newPlayer);
-  game.playerCount++; // Update player count
-
-  return newPlayer; // Return the new player object for any further use
-};
-
 // Function to remove a player from the specified game
 const removePlayer = (socketId: string, game: Game) => {
   console.log(`Current player count: ${game.playerCount}`);
@@ -174,7 +150,6 @@ export {
   removePlayer,
   handleExitConfirmPress,
   handleExit,
-  createAndAddPlayer,
   handleAllInPress,
   handleCallPress,
   handleCheckPress,
