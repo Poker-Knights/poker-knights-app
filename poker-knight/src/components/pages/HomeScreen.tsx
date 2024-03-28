@@ -67,7 +67,6 @@ const Home = ({ navigation }: Props) => {
     return () => {
       if (socketRef.current) {
         socketRef.current.off("gameCreated", gameCreatedHandler);
-        socketRef.current.disconnect();
       }
     };
   }, [navigation]);

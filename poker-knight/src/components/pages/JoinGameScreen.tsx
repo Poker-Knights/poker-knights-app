@@ -44,7 +44,7 @@ const Join = ({ navigation, route }: Props) => {
     socketRef.current = io(SERVER_URL, { transports: ['websocket'] });
 
     // Bind necessary parameters to the handlers
-    const gameJoinedHandler = handleGameJoined(navigation, username);
+    const gameJoinedHandler = handleGameJoined(navigation, username, socketRef);
     const gameNotFoundHandler = handleGameNotFound();
     const usernameTakenHandler = handleUsernameTaken();
 
@@ -60,10 +60,9 @@ const Join = ({ navigation, route }: Props) => {
         socketRef.current.off('gameJoined', gameJoinedHandler);
         socketRef.current.off('gameNotFound', gameNotFoundHandler);
         socketRef.current.off('usernameTaken', usernameTakenHandler);
-        socketRef.current.disconnect();
       }
     };
-  }, [navigation, username]);
+  }, [navigation]);
 
 
   const onJoinPress = () => handleJoinPress(socketRef, username, gameID);
