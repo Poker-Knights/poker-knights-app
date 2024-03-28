@@ -184,8 +184,6 @@ const GameScreen = ({ navigation, route }: Props) => {
 
     // Current Player
     let curPlayer = theGame.players[theGame.currentPlayer - 1];
-    console.log(curPlayer);
-    console.log(theGame.currentBet);
 
     // Determine BET case
     if (buttonPressed === "BET") {
