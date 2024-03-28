@@ -39,7 +39,6 @@ io.on('connection', (socket: Socket) => {
 
     // Listen for Intiialize game event for a game
     socket.on('initializePlayers', handleInitializePlayersforGame(socket, games));
-
     // Listen for player pressing button, the emitted client is sending the game and the game id
     socket.on('updateGameAfterPlayerButtonPress', (game: Game, gameId: string) => {
         // Update the game with the new game state

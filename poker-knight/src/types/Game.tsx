@@ -11,6 +11,7 @@ export type Player = {
   isSmallBlind: boolean;
   lastBet: number;
   foldFG: boolean;
+
 };
 
 export type Game = {

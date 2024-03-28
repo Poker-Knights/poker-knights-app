@@ -12,6 +12,7 @@ import {
   SafeAreaView,
   Image,
   ImageBackground,
+  Button,
 } from "react-native";
 
 import { formatCurrency } from "../../utils/Money";
@@ -31,6 +32,8 @@ import io, { Socket } from "socket.io-client";
 import { SERVER_URL } from "../../utils/socket";
 
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
+const loseGIF = require("../../Graphics/lose.gif");
+const winGIF = require("../../Graphics/win.gif");
 
 const userIcon = require("../../Graphics/userIcon.png");
 
@@ -44,6 +47,7 @@ type Props = {
 };
 
 const GameScreen = ({ navigation, route }: Props) => {
+
   let [pot, setPot] = useState(100); // Initialize pot state with a default value
   const { Game, username } = route.params;
   const [theGame, setGame] = useState(Game); // this is your client side representation of game object
@@ -51,6 +55,8 @@ const GameScreen = ({ navigation, route }: Props) => {
   let [theUsername, setUsername] = useState(username); // this is your client side representation of game object
   let [currentBet, setCurrentBet] = useState(theGame.currentBet); // Initialize current bet state with a default value
   let [curRaiseVal, setCurRaiseVal] = useState(theGame.currentBet); //Track Raise Value
+  const [losePopupVisible, setLosePopupVisible] = useState<boolean>(false);
+  const [winPopupVisible, setWinPopupVisible] = useState<boolean>(false);
 
   // grab player data of the client side user, the one with the username that was routed from previous screen
 
@@ -64,11 +70,13 @@ const GameScreen = ({ navigation, route }: Props) => {
 
   const socketRef = useRef<Socket | null>(null);
 
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false, // Set this to false to hide the navigation bar
     });
   }, [navigation]);
+
 
   // There needs to be a function to evaluate which buttons you can and cannot press [MUST BE TESTED]
   function determineAvailableActions(game: typeof Game): {
@@ -132,6 +140,7 @@ const GameScreen = ({ navigation, route }: Props) => {
         setGame(updatedGame);
       });
     }
+
     // Use the imported helper function, passing necessary dependencies
     const exitGameHandler = handleExit(navigation, socketRef, Game.id);
 
@@ -147,12 +156,25 @@ const GameScreen = ({ navigation, route }: Props) => {
         navigation.navigate("Home");
       }
     };
+
   }, [navigation]);
+
 
   // Bring user to exit confirmation modal
   const handleExitPress = () => {
     console.log("Exit button was pressed");
     setMenuVisible(true);
+  };
+
+
+  const handleLoseTestPress = () => {
+    console.log("Lose button was pressed");
+    setLosePopupVisible(true);
+  };
+
+  const handleWinTestPress = () => {
+    console.log("Win button was pressed");
+    setWinPopupVisible(true);
   };
 
   // any changes to theGame will trigger this useEffect and update client side player state
@@ -174,9 +196,11 @@ const GameScreen = ({ navigation, route }: Props) => {
     }
   }, [theGame]);
 
+
   const onExitConfirmPress = () => handleExitConfirmPress(socketRef, Game.id);
 
   // Function to handle when buttons are pressed  // export this to utils file for game
+
   // Also will need to handle splitting the pot logic, possibly mapping a player to their own pots
   const handleButtonPress = (buttonPressed: string) => {
     // Switch to handle the button pressed
@@ -197,6 +221,8 @@ const GameScreen = ({ navigation, route }: Props) => {
         buttonPressed = "RAISE";
       }
     }
+
+
 
     switch (buttonPressed) {
       case "CALL":
@@ -220,6 +246,7 @@ const GameScreen = ({ navigation, route }: Props) => {
         break;
 
       case "decrementRaise":
+
         if (
           curPlayer.lastBet !== -1 &&
           curPlayer.lastBet !== theGame.currentBet
@@ -234,6 +261,7 @@ const GameScreen = ({ navigation, route }: Props) => {
 
       case "incrementRaise":
         if (
+
           curPlayer.lastBet !== -1 &&
           curPlayer.lastBet === theGame.currentBet
         ) {
@@ -249,6 +277,7 @@ const GameScreen = ({ navigation, route }: Props) => {
 
     //Update Values
     setCurRaiseVal(curRaiseVal);
+
 
     // Update these values on server side
     setPot(theGame.potSize);
@@ -284,34 +313,122 @@ const GameScreen = ({ navigation, route }: Props) => {
           onRequestClose={() => setMenuVisible(false)}
         >
           <View style={GameScreenStyles.centeredView}>
-            <View style={GameScreenStyles.modalPopupView}>
+
+            <View style={GameScreenStyles.exitModalPopupView}>
+
               <Text style={GameScreenStyles.modalText}>
                 Are you sure you want to exit the game?
               </Text>
 
               {/* Exit game Button */}
               <TouchableOpacity
-                style={[GameScreenStyles.button, GameScreenStyles.buttonClose]}
+
+                style={GameScreenStyles.exitGameModalButton}
                 onPress={() => {
+                  console.log("Game was attempted to be exited");
                   onExitConfirmPress();
                 }}
               >
-                <Text style={GameScreenStyles.textStyle}>Exit game</Text>
+                <Text style={GameScreenStyles.textStyle}>EXIT GAME</Text>
+
               </TouchableOpacity>
 
               {/* Continue game */}
               <TouchableOpacity
-                style={[GameScreenStyles.button, GameScreenStyles.buttonClose]}
+
+                style={GameScreenStyles.exitGameModalButton}
                 onPress={() => {
+                  console.log("Game was continued");
                   setMenuVisible(false);
                 }}
               >
-                <Text style={GameScreenStyles.textStyle}>Continue game</Text>
+                <Text style={GameScreenStyles.textStyle}>CONTINUE GAME</Text>
+
               </TouchableOpacity>
             </View>
           </View>
         </Modal>
       </View>
+
+
+      {/* Win pop-up modal */}
+      <View>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={winPopupVisible}
+          onRequestClose={() => setWinPopupVisible(false)}
+        >
+          <View style={GameScreenStyles.centeredView}>
+            <View style={GameScreenStyles.winModalPopupView}>
+              <Image
+                source={winGIF}
+                style={GameScreenStyles.gif}
+                resizeMode="contain"
+              />
+              <Text style={GameScreenStyles.modalText}>
+                Woohoo! You won!
+              </Text>
+
+              {/* Exit game Button */}
+              <TouchableOpacity
+                style={GameScreenStyles.exitGameModalButton}
+                onPress={() => {
+                  console.log("Game was attempted to be exited");
+                  onExitConfirmPress();
+                }}
+              >
+                <Text style={GameScreenStyles.textStyle}>EXIT GAME</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </View>
+
+      {/* Lost pop-up modal */}
+      <View>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={losePopupVisible}
+          onRequestClose={() => setLosePopupVisible(false)}
+        >
+          <View style={GameScreenStyles.centeredView}>
+            <View style={GameScreenStyles.loseModalPopupView}>
+              <Image
+                source={loseGIF}
+                style={GameScreenStyles.gif}
+                resizeMode="contain"
+              />
+              <Text style={GameScreenStyles.modalText}>
+                Womp womp. You lost! Better luck next time!
+              </Text>
+
+              {/* Exit game Button */}
+              <TouchableOpacity
+                style={GameScreenStyles.exitGameModalButton}
+                onPress={() => {
+                  console.log("Game was attempted to be exited");
+                  onExitConfirmPress();
+                }}
+              >
+                <Text style={GameScreenStyles.textStyle}>EXIT GAME</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </View>
+
+
+      {/* Exit Button */}
+      <TouchableOpacity
+        style={GameScreenStyles.exitButton}
+        onPress={handleExitPress}
+      >
+
+        <Text style={GameScreenStyles.exitText}>EXIT</Text>
+      </TouchableOpacity>
+
 
       {/* Top part of the screen with pot and current bet */}
       <View style={GameScreenStyles.topContainer}>
@@ -326,18 +443,6 @@ const GameScreen = ({ navigation, route }: Props) => {
         <View style={GameScreenStyles.whiteLine} />
       </View>
 
-      {/* Exit Button */}
-      <TouchableOpacity
-        style={GameScreenStyles.exitButton}
-        onPress={handleExitPress}
-      >
-        {/* <Image
-          source={require("../../Graphics/settingwidget.png")}
-          style={GameScreenStyles.settingsIcon}
-        /> */}
-        <Text style={GameScreenStyles.exitText}>EXIT</Text>
-      </TouchableOpacity>
-
       <View style={GameScreenStyles.bottomContainer}>
         <ImageBackground
           source={cardBackgroundImage}
@@ -345,6 +450,7 @@ const GameScreen = ({ navigation, route }: Props) => {
           resizeMode="contain"
         ></ImageBackground>
       </View>
+
 
       {/* Restructure screen so only other players avatars get displayed here*/}
       <View style={GameScreenStyles.playersContainer}>
@@ -520,6 +626,29 @@ const GameScreen = ({ navigation, route }: Props) => {
               +
             </Text>
           </TouchableOpacity>
+        </View>
+        <View style={GameScreenStyles.topButtonsContainer}>
+          {/* Call/Raise Functionality */}
+          <View style={GameScreenStyles.raiseCallButtonContainer}>
+            <TouchableOpacity onPress={() => handleButtonPress("BET")}>
+              <Text style={GameScreenStyles.raiseCallValueText}>
+                {callRaiseText}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleButtonPress("decrementRaise")}
+            >
+              <Text style={GameScreenStyles.raiseCallValueText}>-</Text>
+            </TouchableOpacity>
+            <Text style={GameScreenStyles.raiseCallValueText}>
+              {curRaiseVal}
+            </Text>
+            <TouchableOpacity
+              onPress={() => handleButtonPress("incrementRaise")}
+            >
+              <Text style={GameScreenStyles.raiseCallValueText}>+</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </View>

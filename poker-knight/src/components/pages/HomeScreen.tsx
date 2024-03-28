@@ -17,6 +17,8 @@ import {
   TextInput,
   Alert,
   LogBox,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import io, { Socket } from "socket.io-client";
@@ -76,10 +78,11 @@ const Home = ({ navigation }: Props) => {
   const onHostGamePress = () => handleHostGamePress(username, onCreateGame);
   const onJoinGamePress = () => handleJoinGamePress(username, navigation);
 
-  
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar hidden={true} />
+
 
       <View style={styles.knightContainer}>
         <Image
@@ -88,6 +91,7 @@ const Home = ({ navigation }: Props) => {
           resizeMode="contain" // This will make sure the entire icon is visible
         />
       </View>
+      
       <View style={styles.usernameContainer}>
         <TextInput
           style={styles.usernameInput}

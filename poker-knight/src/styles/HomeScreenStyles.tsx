@@ -16,8 +16,7 @@ export const styles = StyleSheet.create({
     width: 350,
   },
   buttonsContainer: {
-    flex: 1,
-    marginTop: 5,
+    marginTop: 50,
     width: "100%", // Ensure the container takes up the full width
     justifyContent: "center", // Center content vertically
     alignItems: "center", // Center content horizontally
