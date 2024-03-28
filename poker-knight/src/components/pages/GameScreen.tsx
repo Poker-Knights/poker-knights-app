@@ -85,6 +85,8 @@ const GameScreen = ({ navigation, route }: Props) => {
       allIn: true,
     };
 
+    console.log(theGame.players);
+
     if (!currentPlayer.foldFG && !currentPlayer.allInFg) {
       // if its not your turn, you cannot do anything
       if (currentPlayer.currentTurn === false) {
@@ -96,6 +98,7 @@ const GameScreen = ({ navigation, route }: Props) => {
     }
     return actions;
   }
+
   // When compoment mounts, connect to the server, determine available actions
   useEffect(() => {
     socketRef.current = io(SERVER_URL, { transports: ["websocket"] });
@@ -181,7 +184,8 @@ const GameScreen = ({ navigation, route }: Props) => {
 
     // Current Player
     let curPlayer = theGame.players[theGame.currentPlayer - 1];
-    console.log(theGame.players);
+    console.log(curPlayer);
+    console.log(theGame.currentBet);
 
     // Determine BET case
     if (buttonPressed === "BET") {
