@@ -1,30 +1,68 @@
 import React from 'react'
 import { StackNavigationProp } from '@react-navigation/stack';
 import { StackParamList } from '../../../App';
+import { useEffect } from 'react';
+import { useState } from 'react';
 
-import { ImageBackground, Image, StyleSheet, Text, View } from "react-native";
+import { Dimensions, ImageBackground, Image, StyleSheet, Text, View } from "react-native";
+import { RouteProp } from "@react-navigation/native";
+
+const cardBackgroundImage = require("../../Graphics/poker_background.png");
+
+type GameScreenRouteProp = RouteProp<StackParamList, 'Loading'>;
 
 type Props = {
     navigation: StackNavigationProp<StackParamList,'Loading'>;
+    route: GameScreenRouteProp;
 }
 
-const Loading = ({ navigation }: Props) => {
-    const cardBackgroundImage = require("../../Graphics/poker_background.png");
-    const pokerChip = require("../../Graphics/poker_chip.png");
+const Loading = ({ navigation, route }: Props) => {
+    const { Game } = route.params;
+    const players = Game.players;
+    const reservedSpace = 200;
+    const screenHeight = Dimensions.get('window').height - reservedSpace;
+    const playerContainerHeight = screenHeight / (players.length * 2);
+    
+    // State to manage the display text
+    const [displayText, setDisplayText] = useState("LOADING...");
+
+    useEffect(() => {
+      if (players.length === 4) {
+        // Update the text right before setting the timeout
+        setDisplayText("JOINING...");
+
+        const timer = setTimeout(() => {
+          navigation.navigate('Game', { username: Game.players[0].name, Game: Game });
+        }, 1000); // 1000 milliseconds = 1 second
+    
+        return () => clearTimeout(timer); // Cleanup the timer
+      }
+    }, [players, navigation]);
+    
 
     return (
     <View style={styles.backgroundContainer}>
         {/* Top part of the screen with title */}
         <View style={styles.topContainer}>
-            <Text style={styles.header}>LOADING</Text>
+            <Text style={styles.header}>{displayText}</Text>
         </View>
 
-        <View style={styles.midContainer}>
-          <Image
-            style={styles.pokerChipImage}
-            source={pokerChip}
-          ></Image>
-        </View>
+        {Game.players.map((player, index) => (
+          <React.Fragment key={player.id}>
+            <View style={[styles.playerContainer, { height: playerContainerHeight }]}>
+              <Text style={styles.text}>PLAYER {index + 1}: </Text>
+              <Text style={styles.playertext}>{player.name}</Text>
+            </View>
+
+            <View style={styles.midContainer}>
+              <Image
+                source={{ uri: player.avatarUri }}
+                style={styles.avatar}
+                resizeMode="contain" />
+            </View>
+          </React.Fragment>
+        ))}
+            
 
         {/* Bottom of Screen with poker chip background */}
         <View style={styles.bottomContainer}>
@@ -40,6 +78,17 @@ const Loading = ({ navigation }: Props) => {
 
 
 const styles = StyleSheet.create({
+  avatar: {
+    width: 80, // Adjust the size as needed
+    height: 80, // Adjust the size as needed
+    marginBottom: 10, // Add some margin between avatars
+    borderRadius: 40, // Half the width/height to make it a circle
+    borderWidth: 2, // Size of border around the avatar
+    borderColor: "#FFFFFF", // Border color, assuming white is desired
+    backgroundColor: "#C4C4C4", // A placeholder background color in case the image fails to load
+    overflow: "hidden", // Ensures that the image does not spill out of the border radius
+  },
+
   backgroundContainer: {
     flex: 1,
     alignItems: "center",
@@ -53,10 +102,18 @@ const styles = StyleSheet.create({
   },
 
   midContainer: {
-    flexDirection: 'column',
+    flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'flex-start',
+    paddingRight: 220,
+  },
+
+  playerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    height: "80%",
+    paddingHorizontal: 20, // Add some horizontal padding
+    width: '100%', // Take full width to contain both label and name
   },
 
   bottomContainer: {
@@ -74,17 +131,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  pokerChipImage: {
-    width: 200,
-    height: 200,
-  },
-
   text: {
     fontFamily: "PixeloidMono",
     color: "#feeb00", // Gold color for the pot amount
-    fontSize: 12, // Adjust the size as needed
-    paddingBottom: 2,
-    margin: 8,
+    fontSize: 22, // Adjust the size as needed
+    width: '50%',
+    textAlign: 'left',
   },
 
   header: {
@@ -92,8 +144,18 @@ const styles = StyleSheet.create({
     color: "#feeb00", // Gold color for the pot amount
     fontSize: 36, // Adjust the size as needed
     paddingBottom: 2,
+    paddingLeft: 30,
     marginTop: 5,
   },
+
+  playertext: {
+    fontFamily: "PixeloidMono",
+    color: "#feeb00", // Gold color for the pot amount
+    fontSize: 22, // Adjust the size as needed
+    width: '70%',
+    textAlign: 'left',
+  },
+
 });
 
 export default Loading
