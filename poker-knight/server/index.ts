@@ -36,7 +36,6 @@ io.on('connection', (socket: Socket) => {
       handleExitGame(socket, games, socketID, gameID);
     });
 
-
     // Listen for Intiialize game event for a game
     socket.on('initializePlayers', handleInitializePlayersforGame(socket, games));
 

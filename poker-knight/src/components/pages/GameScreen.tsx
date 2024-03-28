@@ -80,22 +80,21 @@ const GameScreen = ({ navigation, route }: Props) => {
 
     // Default actions
     let actions = {
-      betOption: true,
-      fold: true,
-      allIn: true,
+      betOption: false,
+      fold: false,
+      allIn: false,
     };
 
-    console.log(theGame.players);
-
-    if (!currentPlayer.foldFG && !currentPlayer.allInFg) {
-      // if its not your turn, you cannot do anything
-      if (currentPlayer.currentTurn === false) {
-      } else {
+    if (player.currentTurn) {
+      if (!player.foldFG) {
+        // if its not your turn, you cannot do anything
         actions.betOption = true;
         actions.fold = true;
         actions.allIn = true;
       }
     }
+    console.log(actions);
+    console.log(theGame);
     return actions;
   }
 
@@ -184,6 +183,7 @@ const GameScreen = ({ navigation, route }: Props) => {
 
     // Current Player
     let curPlayer = theGame.players[theGame.currentPlayer - 1];
+    console.log(theGame);
 
     // Determine BET case
     if (buttonPressed === "BET") {

@@ -1440,17 +1440,6 @@
     dotenv-expand "~10.0.0"
     getenv "^1.0.0"
 
-"@expo/env@~0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@expo/env/-/env-0.2.2.tgz#49f589f32e9bae279a6509d7a02218c0f4e32a60"
-  integrity sha512-m9nGuaSpzdvMzevQ1H60FWgf4PG5s4J0dfKUzdAGnDu7sMUerY/yUeDaA4+OBo3vBwGVQ+UHcQS9vPSMBNaPcg==
-  dependencies:
-    chalk "^4.0.0"
-    debug "^4.3.4"
-    dotenv "~16.0.3"
-    dotenv-expand "~10.0.0"
-    getenv "^1.0.0"
-
 "@expo/fingerprint@^0.6.0":
   version "0.6.0"
   resolved "https://registry.npmjs.org/@expo/fingerprint/-/fingerprint-0.6.0.tgz"
@@ -3584,10 +3573,10 @@ expo-modules-autolinking@1.10.3:
     find-up "^5.0.0"
     fs-extra "^9.1.0"
 
-expo-modules-core@1.11.10:
-  version "1.11.10"
-  resolved "https://registry.yarnpkg.com/expo-modules-core/-/expo-modules-core-1.11.10.tgz#bef4d753e316f97259b34d9eff01e491fcc8ec19"
-  integrity sha512-L1DSxV3AUnEvR8+G1JHbMPjpwqALv0AF71oREhDJ/ehI2TDX6LkE+up5BUK1/++UjmVu1lviefbUfLut2F5wNQ==
+expo-modules-core@1.11.9:
+  version "1.11.9"
+  resolved "https://registry.yarnpkg.com/expo-modules-core/-/expo-modules-core-1.11.9.tgz#4b95070390fe7e3418aa84580244bcf0540357ca"
+  integrity sha512-GTUb81vcPaF+5MtlBI1u9IjrZbGdF1ZUwz3u8Gc+rOLBblkZ7pYsj2mU/tu+k0khTckI9vcH4ZBksXWvE1ncjQ==
   dependencies:
     invariant "^2.2.4"
 
@@ -4848,6 +4837,13 @@ metro-runtime@0.80.5, metro-runtime@^0.80.3:
   version "0.80.5"
   resolved "https://registry.npmjs.org/metro-runtime/-/metro-runtime-0.80.5.tgz"
   integrity sha512-L0syTWJUdWzfUmKgkScr6fSBVTh6QDr8eKEkRtn40OBd8LPagrJGySBboWSgbyn9eIb4ayW3Y347HxgXBSAjmg==
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+
+metro-runtime@^0.80.7:
+  version "0.80.7"
+  resolved "https://registry.yarnpkg.com/metro-runtime/-/metro-runtime-0.80.7.tgz#fa11c35d5d7307329c0efc0cbbe98280a2a215ea"
+  integrity sha512-gWqzfm9YQw9I08L23hcLmY7XNx48W0c0vLEkVEF5P7ZNIOSfX9CkEv0JvTTJWshRYkbgIqsdtpMAHq13LJJ6iA==
   dependencies:
     "@babel/runtime" "^7.0.0"
 

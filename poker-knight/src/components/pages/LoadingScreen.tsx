@@ -1,81 +1,91 @@
-import React from 'react'
-import { StackNavigationProp } from '@react-navigation/stack';
-import { StackParamList } from '../../../App';
-import { useEffect } from 'react';
-import { useState } from 'react';
+import React from "react";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { StackParamList } from "../../../App";
+import { useEffect } from "react";
+import { useState } from "react";
 
-import { Dimensions, ImageBackground, Image, StyleSheet, Text, View } from "react-native";
+import {
+  Dimensions,
+  ImageBackground,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { RouteProp } from "@react-navigation/native";
 
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
 
-type GameScreenRouteProp = RouteProp<StackParamList, 'Loading'>;
+type GameScreenRouteProp = RouteProp<StackParamList, "Loading">;
 
 type Props = {
-    navigation: StackNavigationProp<StackParamList,'Loading'>;
-    route: GameScreenRouteProp;
-}
-
-const Loading = ({ navigation, route }: Props) => {
-    const { Game } = route.params;
-    const players = Game.players;
-    const reservedSpace = 200;
-    const screenHeight = Dimensions.get('window').height - reservedSpace;
-    const playerContainerHeight = screenHeight / (players.length * 2);
-    
-    // State to manage the display text
-    const [displayText, setDisplayText] = useState("LOADING...");
-
-    useEffect(() => {
-      if (players.length === 4) {
-        // Update the text right before setting the timeout
-        setDisplayText("JOINING...");
-
-        const timer = setTimeout(() => {
-          navigation.navigate('Game', { username: Game.players[0].name, Game: Game });
-        }, 1000); // 1000 milliseconds = 1 second
-    
-        return () => clearTimeout(timer); // Cleanup the timer
-      }
-    }, [players, navigation]);
-    
-
-    return (
-    <View style={styles.backgroundContainer}>
-        {/* Top part of the screen with title */}
-        <View style={styles.topContainer}>
-            <Text style={styles.header}>{displayText}</Text>
-        </View>
-
-        {Game.players.map((player, index) => (
-          <React.Fragment key={player.id}>
-            <View style={[styles.playerContainer, { height: playerContainerHeight }]}>
-              <Text style={styles.text}>PLAYER {index + 1}: </Text>
-              <Text style={styles.playertext}>{player.name}</Text>
-            </View>
-
-            <View style={styles.midContainer}>
-              <Image
-                source={{ uri: player.avatarUri }}
-                style={styles.avatar}
-                resizeMode="contain" />
-            </View>
-          </React.Fragment>
-        ))}
-            
-
-        {/* Bottom of Screen with poker chip background */}
-        <View style={styles.bottomContainer}>
-            <ImageBackground
-              source={cardBackgroundImage}
-              style={styles.cardBackground}
-              resizeMode="contain"
-            ></ImageBackground>
-        </View>
-    </View>
-    );
+  navigation: StackNavigationProp<StackParamList, "Loading">;
+  route: GameScreenRouteProp;
 };
 
+const Loading = ({ navigation, route }: Props) => {
+  const { Game } = route.params;
+  const players = Game.players;
+  const reservedSpace = 200;
+  const screenHeight = Dimensions.get("window").height - reservedSpace;
+  const playerContainerHeight = screenHeight / (players.length * 2);
+
+  // State to manage the display text
+  const [displayText, setDisplayText] = useState("LOADING...");
+
+  useEffect(() => {
+    if (players.length === 4) {
+      // Update the text right before setting the timeout
+      setDisplayText("JOINING...");
+
+      const timer = setTimeout(() => {
+        navigation.navigate("Game", {
+          username: Game.players[0].name,
+          Game: Game,
+        });
+      }, 1000); // 1000 milliseconds = 1 second
+
+      return () => clearTimeout(timer); // Cleanup the timer
+    }
+  }, [players, navigation]);
+
+  return (
+    <View style={styles.backgroundContainer}>
+      {/* Top part of the screen with title */}
+      <View style={styles.topContainer}>
+        <Text style={styles.header}>{displayText}</Text>
+      </View>
+
+      {Game.players.map((player, index) => (
+        <React.Fragment key={player.id}>
+          <View
+            style={[styles.playerContainer, { height: playerContainerHeight }]}
+          >
+            <Text style={styles.text}>PLAYER {index + 1}: </Text>
+            <Text style={styles.playertext}>{player.name}</Text>
+          </View>
+
+          <View style={styles.midContainer}>
+            <Image
+              source={{ uri: player.avatarUri }}
+              style={styles.avatar}
+              resizeMode="contain"
+            />
+          </View>
+        </React.Fragment>
+      ))}
+
+      {/* Bottom of Screen with poker chip background */}
+      <View style={styles.bottomContainer}>
+        <ImageBackground
+          source={cardBackgroundImage}
+          style={styles.cardBackground}
+          resizeMode="contain"
+        ></ImageBackground>
+      </View>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   avatar: {
@@ -102,18 +112,18 @@ const styles = StyleSheet.create({
   },
 
   midContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "flex-start",
     paddingRight: 220,
   },
 
   playerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
     paddingHorizontal: 20, // Add some horizontal padding
-    width: '100%', // Take full width to contain both label and name
+    width: "100%", // Take full width to contain both label and name
   },
 
   bottomContainer: {
@@ -135,8 +145,8 @@ const styles = StyleSheet.create({
     fontFamily: "PixeloidMono",
     color: "#feeb00", // Gold color for the pot amount
     fontSize: 22, // Adjust the size as needed
-    width: '50%',
-    textAlign: 'left',
+    width: "50%",
+    textAlign: "left",
   },
 
   header: {
@@ -152,10 +162,9 @@ const styles = StyleSheet.create({
     fontFamily: "PixeloidMono",
     color: "#feeb00", // Gold color for the pot amount
     fontSize: 22, // Adjust the size as needed
-    width: '70%',
-    textAlign: 'left',
+    width: "70%",
+    textAlign: "left",
   },
-
 });
 
-export default Loading
+export default Loading;

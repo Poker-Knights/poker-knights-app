@@ -42,13 +42,6 @@ export const handleJoinGamePress = (username: string, navigation: any) => {
   }
 };
 
-export const handleSettingsPress = (
-  setMenuVisible: (visible: boolean) => void
-) => {
-  console.log("Settings");
-  setMenuVisible(true);
-};
-
 // Event listeners and their helper functions
 export const handleGameCreated =
   (
@@ -65,7 +58,7 @@ export const handleGameCreated =
     setGame(newGame); // Update the game state with the new game information
 
     // Navigate to loading screen until enough players
-    navigation.navigate("Loading", {
+    navigation.navigate("Game", {
       Game: newGame,
       username: newGame.hostPlayer,
     });
