@@ -38,15 +38,14 @@ const Loading = ({ navigation, route }: Props) => {
       // Join the specific game room upon component mount
       socket.emit('joinRoom', { gameId: Game.id });
 
-      // Listen for player updates
-      socket.on('playerJoined', (newPlayer) => {
-        setPlayers(prevPlayers => [...prevPlayers, newPlayer]);
+      // Listen for player updates broadcast by the server
+      socket.on('updatePlayers', (updatedPlayers) => {
+        setPlayers(updatedPlayers);
       });
 
       // Cleanup on component unmount
       return () => {
         socket.emit('leaveRoom', { gameId: Game.id });
-        socket.disconnect();
       };
     }, []);
 

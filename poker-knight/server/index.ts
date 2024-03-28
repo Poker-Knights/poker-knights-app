@@ -30,6 +30,14 @@ io.on('connection', (socket: Socket) => {
     socket.on('createGame', handleCreateGame(socket, games)); 
     socket.on('attemptToJoin', handleAttemptToJoin(socket, games));
     // socket.on('exitGame', console.log("we made it here"));
+
+    // Handle joining a room
+    socket.on('joinRoom', ({ gameId }) => {
+      socket.join(gameId);
+      
+      // Broadcast the updated player list to all clients in the room
+      io.to(gameId).emit('updatePlayers', games[gameId].players);
+    });
     
     socket.on("exitGame", (socketID, gameID) => {
       handleExitGame(socket, games, socketID, gameID);

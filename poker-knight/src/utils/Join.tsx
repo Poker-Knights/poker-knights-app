@@ -28,7 +28,7 @@ export const handleBackPress = (navigation: any) => {
 export const handleGameJoined =
   (navigation: any, username: string) => (data: any) => {
     const joiningGame: Game = data.gameState;
-    console.log("Attempting to join game, game data: " + joiningGame);
+    console.log(`Attempting to join game, game data: ${joiningGame.players}`);
     navigation.navigate("Loading", { username, Game: joiningGame });
   };
 

@@ -64,12 +64,8 @@ export const handleGameCreated =
     setGame(newGame); // Update the game state with the new game information
 
     // Navigate to loading screen until enough players
-<<<<<<< HEAD
     navigation.navigate("Loading", {
       username: newGame.players[0].name,
-=======
-    navigation.navigate("Game", {
->>>>>>> 42b3bb95c778a26a5ab9f1d13bb98f2871234be2
       Game: newGame,
     });
   };
