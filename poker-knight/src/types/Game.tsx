@@ -9,6 +9,7 @@ export type Player = {
   currentTurn: boolean;
   lastBet: number;
   foldFG: boolean;
+  playerCards: string[];
 };
 
 export type Game = {
@@ -24,4 +25,5 @@ export type Game = {
   currentBet: number;
   currentPlayer: number;
   gameStarted: boolean;
+  riverCards: string[];
 };

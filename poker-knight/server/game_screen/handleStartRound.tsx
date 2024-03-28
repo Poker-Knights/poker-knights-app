@@ -31,6 +31,10 @@ export const handleStartRound =
 
       // emit the updated game
       Socket.emit("startRound", game);
+
+      // test river card hook
+      // game.riverCards = ["spades_2", "hearts_A", "clubs_3", "diamonds_4", "spades_5"];
+      // Socket.emit("updateRiverCards", game.riverCards);
     } else {
       // Start the Game
       handleInitializePlayersforGame(Socket, games);

@@ -19,6 +19,7 @@ export const handleCreateGame =
       currentBet: 0,
       currentPlayer: 1,
       gameStarted: false,
+      riverCards: ["back", "back", "back", "back", "back"],
     };
 
     // Use the utility function to create and add the new player to the game
@@ -32,4 +33,7 @@ export const handleCreateGame =
 
     // Notify the creator that the game has been created successfully
     socket.emit("gameCreated", { gameState: newGame });
+    // test river card hook
+    // game.riverCards = ["spades_2", "hearts_A", "clubs_3", "diamonds_4", "spades_5"];
+    socket.emit("updateRiverCards", ["spades_2", "hearts_A", "clubs_3", "diamonds_4", "spades_5"]);
   };

@@ -277,10 +277,25 @@ export const GameScreenStyles = StyleSheet.create({
     // Add other styles as necessary
   },
 
-  cardContainer: {
+  riverCardContainer: {
+    position: "relative",
+    top: 0,
+    transform: [{ scale: 0.8 }], // Scale down the elements by 20 percent
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 20,
+    zIndex: 2,
+  },
+
+  handCardContainer: {
+    position: "absolute",
+    bottom: 80,
+    right: 30,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    // marginTop: 20,
+    zIndex: 5,
+    // padding: 50, // Add padding to the card container
   },
 });
