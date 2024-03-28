@@ -21,8 +21,11 @@ export const handleAttemptToJoin =
       // Use utility function to create and add a new player
       createAndAddPlayer(username, socket.id, game);
 
+
+      // Join the player to the game room
+      socket.join(inputGameID);
+      
       socket.emit("gameJoined", { gameState: game });
-      console.log("Player Joined");
     } else {
       socket.emit("gameNotFound", { gameID: inputGameID });
     }

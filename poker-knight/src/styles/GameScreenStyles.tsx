@@ -21,6 +21,7 @@ export const GameScreenStyles = StyleSheet.create({
     alignItems: "center",
   },
 
+
   exitModalPopupView: {
     margin: 20,
     backgroundColor: "white",
@@ -161,6 +162,7 @@ export const GameScreenStyles = StyleSheet.create({
   topContainer: {
     backgroundColor: "#292626", // Background color as per your design
     margin: 10,
+
     paddingBottom: 10, // Or any other value that fits your design
     alignItems: "center",
   },
@@ -185,6 +187,8 @@ export const GameScreenStyles = StyleSheet.create({
     marginTop: 4, // Space between the text and the line, adjust as needed
   },
 
+
+
   avatar: {
     width: 80, // Adjust the size as needed
     height: 80, // Adjust the size as needed
@@ -193,6 +197,13 @@ export const GameScreenStyles = StyleSheet.create({
     borderColor: "#FFFFFF", // Border color, assuming white is desired
     backgroundColor: "#C4C4C4", // A placeholder background color in case the image fails to load
     overflow: "hidden", // Ensures that the image does not spill out of the border radius
+  },
+
+
+  activeTurnAvatar: {
+    borderColor: 'yellow',
+    borderWidth: 2,
+    borderRadius: 40, // Adjust as per your avatar style
   },
 
   playerName: {
@@ -247,6 +258,65 @@ export const GameScreenStyles = StyleSheet.create({
     marginTop: 22,
   },
 
+  modalExitView: {
+    right: 12, // Adjust as needed
+    top: 4,
+    marginTop: 20,
+    marginLeft: 20,
+    marginBottom: 8,
+    backgroundColor: "#333",
+    borderRadius: 20,
+    height: 40,
+    alignItems: "center",
+    elevation: 5,
+    marginRight: 275,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
+
+  modalPopupView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginTop: 10,
+  },
+
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+
   actionButtonsContainer: {
     position: "absolute",
     bottom: 0,
@@ -264,6 +334,7 @@ export const GameScreenStyles = StyleSheet.create({
   topButtonsContainer: {
     flexDirection: "row",
   },
+
 
   raiseCallButtonContainer: {
     flexDirection: "row",
@@ -298,4 +369,42 @@ export const GameScreenStyles = StyleSheet.create({
     fontSize: 20,
     marginLeft: 10,
   },
+
+
+  disabledButton: {
+    backgroundColor: "#ccc", // Grey color
+  },
+
+  clientChipCountContainer: {
+    // Position it towards the bottom-left part of the bottomContainer
+    left: 10, // Adjust as needed for padding from the left edge
+    bottom: -200, // Adjust as needed to position above the action buttons
+    backgroundColor: "#292626", // Slightly darker background for readability
+    padding: 5,
+    borderRadius: 5,
+  },
+
+  clientChipCountText: {
+    color: "#feeb00",
+    fontSize: 16,
+    fontFamily: "PixeloidMono",
+  },
+
+  labelText: {
+    // Style for the RAISE/CHECK/CALL label text
+    color: "#feeb00", // Use the same color as your raiseValueText for consistency
+    fontFamily: "PixeloidMono",
+    fontSize: 20, // Adjust the size as needed
+    marginRight: 4,
+    marginHorizontal: 4, // This adds spacing on both sides of the value,// Add some margin to the right of the label
+    // Add other styles as necessary
+  },
+
+  blindIcon: {
+    width: 10, // Adjust based on your icon size
+    height: 10, // Adjust based on your icon size
+    marginLeft: 5, // Spacing between the avatar and icon, adjust as needed
+    // Add other styling as needed for positioning, etc.
+  }
+  
 });

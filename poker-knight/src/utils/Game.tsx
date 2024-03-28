@@ -42,10 +42,11 @@ const createAndAddPlayer = (username: string, socketId: string, game: Game) => {
     allInFg: false,
     //avatarUri: generateAvatar(game.players), // Call the generateAvatar function here
     currentTurn: false, // Set initial turn status
-    lastBet: 0,
-    fold: false,
     isLittleBlind: false,
     isBigBlind: false,
+
+    lastBet: -1,
+    foldFG: false,
   };
 
   // Add the new player to the game
@@ -94,7 +95,8 @@ const handleCallPress = (game: Game) => {
 const handleFoldPress = (game: Game) => {
   // Implement the fold action logic here
   const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
-  curPlayer.fold = true;
+  curPlayer.foldFG = true;
+
   nextPlayer(game); // Move to next player
 };
 
@@ -131,11 +133,8 @@ const handleAllInPress = (game: Game) => {
   curPlayer.money = 0; // Empty players money
   game.potSize += game.currentBet; // Update Pot Value
   nextPlayer(game); // Move to next player
-};
 
-const handleServerComm = (game: Game) => {
-  console.log("Handle Server Comms");
-  /* Kevin do your code here */
+
 };
 
 // Function to handle a player's turn, return player
@@ -144,8 +143,6 @@ const nextPlayer = (game: Game) => {
   game.currentPlayer++;
   if (game.currentPlayer >= game.playerCount) game.currentPlayer = 1;
 
-  // Handle Server Communications
-  handleServerComm(game);
 };
 
 const handleExitConfirmPress = (
@@ -183,7 +180,6 @@ export {
   handleExitConfirmPress,
   handleExit,
   createAndAddPlayer,
-  handleServerComm,
   handleAllInPress,
   handleCallPress,
   handleCheckPress,
