@@ -19,6 +19,7 @@ export const handleCreateGame =
       currentBet: 0,
       currentPlayer: 1,
       gameStarted: false,
+      curBettingRound: 0,
     };
 
     // Use the utility function to create and add the new player to the game

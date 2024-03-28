@@ -44,6 +44,8 @@ const createAndAddPlayer = (username: string, socketId: string, game: Game) => {
     currentTurn: false, // Set initial turn status
     lastBet: -1,
     foldFG: false,
+    isBigBlind: false,
+    isLittleBlind: false,
   };
 
   // Add the new player to the game

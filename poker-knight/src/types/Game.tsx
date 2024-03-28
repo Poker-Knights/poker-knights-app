@@ -9,6 +9,8 @@ export type Player = {
   currentTurn: boolean;
   lastBet: number;
   foldFG: boolean;
+  isBigBlind: boolean;
+  isLittleBlind: boolean;
 };
 
 export type Game = {
@@ -24,4 +26,5 @@ export type Game = {
   currentBet: number;
   currentPlayer: number;
   gameStarted: boolean;
+  curBettingRound: number;
 };
