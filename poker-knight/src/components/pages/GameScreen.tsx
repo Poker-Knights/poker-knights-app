@@ -141,7 +141,7 @@ const GameScreen = ({ navigation, route }: Props) => {
         setRiverCards(updatedRiverCards);
       });
 
-      socketRef.current.on("updatePlayerCards", (data: any) => {
+      socketRef.current.on("updatePlayerCards", (data: any) => { // this needs to be updated so that it can handle individual players
         let updatedPlayerCards = data;
         // update player cards
         setPlayerCards(updatedPlayerCards);

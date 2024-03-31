@@ -1,6 +1,7 @@
 import { Socket } from "socket.io";
 import { Game } from "../../src/types/Game";
 import { handleStartRound } from "./handleStartRound";
+import { dealPlayerCards, dealRiverCards } from "./cardUtils";
 
 export const handleInitializePlayersforGame =
   (Socket: Socket, games: { [key: string]: Game }) => (inputGameID: string) => {
@@ -29,8 +30,11 @@ export const handleInitializePlayersforGame =
         game.players[game.currentPlayer - 1].lastBet
     );
     
-    game.riverCards = ["spades_3", "hearts_A", "clubs_3", "diamonds_4", "spades_5"];
+    // game.riverCards = ["spades_3", "hearts_A", "clubs_3", "diamonds_4", "spades_5"];
+    dealRiverCards(game);
+    dealPlayerCards(game);
     Socket.emit("updateRiverCards", game.riverCards);
+    Socket.emit("updatePlayerCards", game.players);
     handleStartRound(Socket, games);
     // emit the updated game
     Socket.emit("playersForGameInitialized", { gameState: game });
