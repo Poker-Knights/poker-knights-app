@@ -47,6 +47,7 @@ const createAndAddPlayer = (username: string, socketId: string, game: Game) => {
 
     lastBet: -1,
     foldFG: false,
+
   };
 
   // Add the new player to the game

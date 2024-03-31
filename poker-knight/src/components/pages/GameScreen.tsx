@@ -46,118 +46,130 @@ type Props = {
   route: GameScreenRouteProp;
 };
 
-const GameScreen = ({ navigation, route }: Props) => {
+  const GameScreen = ({ navigation, route }: Props) => {
 
-  let [pot, setPot] = useState(100); // Initialize pot state with a default value
-  const { Game, username } = route.params;
-  const [theGame, setGame] = useState(Game); // this is your client side representation of game object
-  const [menuVisible, setMenuVisible] = useState<boolean>(false);
-  let [theUsername, setUsername] = useState(username); // this is your client side representation of game object
-  let [currentBet, setCurrentBet] = useState(theGame.currentBet); // Initialize current bet state with a default value
-  let [curRaiseVal, setCurRaiseVal] = useState(theGame.currentBet); //Track Raise Value
-  const [losePopupVisible, setLosePopupVisible] = useState<boolean>(false);
-  const [winPopupVisible, setWinPopupVisible] = useState<boolean>(false);
-
-  // grab player data of the client side user, the one with the username that was routed from previous screen
-
-  // set the initial state as an empty object
-  let [player, setPlayer] = useState<any>({});
-  let [actionButtonsEnabled, setActionButtonsEnabled] = useState({
-    betOption: true,
-    fold: true,
-    allIn: true,
-  });
-
-  const socketRef = useRef<Socket | null>(null);
+    let [pot, setPot] = useState(100); // Initialize pot state with a default value
+    const { Game, username } = route.params;
+    const [theGame, setGame] = useState(Game); // this is your client side representation of game object
 
 
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerShown: false, // Set this to false to hide the navigation bar
-    });
-  }, [navigation]);
 
+    
+    const [menuVisible, setMenuVisible] = useState<boolean>(false);
+    let [theUsername, setUsername] = useState(username); // this is your client side representation of game object
 
-  // There needs to be a function to evaluate which buttons you can and cannot press [MUST BE TESTED]
-  function determineAvailableActions(game: typeof Game): {
-    betOption: boolean;
-    fold: boolean;
-    allIn: boolean;
-  } {
-    const currentPlayer = game.players[game.currentPlayer - 1];
+    let [currentBet, setCurrentBet] = useState(0); // Track Current Bet
+    let [curRaiseVal, setCurRaiseVal] = useState(0); //Track Raise Value
+    
+    const [losePopupVisible, setLosePopupVisible] = useState<boolean>(false);
+    const [winPopupVisible, setWinPopupVisible] = useState<boolean>(false);
 
-    // Default actions
-    let actions = {
+    // grab player data of the client side user, the one with the username that was routed from previous screen
+
+    // set the initial state as an empty object
+    let [thePlayer, setPlayer] = useState<any>({});
+    
+    let [actionButtonsEnabled, setActionButtonsEnabled] = useState({
       betOption: true,
       fold: true,
       allIn: true,
-    };
+    });
 
-    console.log(theGame.players);
+    React.useLayoutEffect(() => {
+      navigation.setOptions({
+        headerShown: false, // Set this to false to hide the navigation bar
+      });
+    }, [navigation]);
 
-    if (!currentPlayer.foldFG && !currentPlayer.allInFg) {
-      // if its not your turn, you cannot do anything
-      if (currentPlayer.currentTurn === false) {
-      } else {
-        actions.betOption = true;
-        actions.fold = true;
-        actions.allIn = true;
-      }
-    }
-    return actions;
-  }
 
-  // When compoment mounts, connect to the server, determine available actions
-  useEffect(() => {
-    socketRef.current = io(SERVER_URL, { transports: ["websocket"] });
+    // There needs to be a function to evaluate which buttons you can and cannot press [MUST BE TESTED]
+    function determineAvailableActions(game: typeof Game): {
+      betOption: boolean;
+      fold: boolean;
+      allIn: boolean;
+    } {
+      const currentPlayer = game.players[game.currentPlayer - 1];
 
-    if (socketRef.current) {
-      // emit initialize players event
-      socketRef.current.emit("initializePlayers", Game.id);
+      // Default actions
+      let actions = {
+        betOption: true,
+        fold: true,
+        allIn: true,
+      };
 
-      // listen for playersForGameInitialized event
-      socketRef.current.on("playersForGameInitialized", (data: any) => {
-        let initGame = data.gameState;
 
-        let newPlayer = initGame.players.find(
-          (p: { name: string }) => p.name === theUsername
-        );
+      if (!thePlayer.foldFG && !thePlayer.allInFg) {
+        // if its not your turn, you cannot do anything
+        if (thePlayer.currentTurn === false) {
+          
+          actions.betOption = false;
+          actions.allIn = false;
+          actions.fold = false;
 
-        // update game state
-        setGame(initGame);
-        setPlayer(newPlayer);
-
-        // turn off the event listener
-        if (socketRef.current) {
-          socketRef.current.off("playersForGameInitialized");
+        } else {
+          actions.betOption = true;
+          actions.fold = true;
+          actions.allIn = true;
         }
-      });
-
-      // listen for updateGameAfterPlayerButtonPress event
-      socketRef.current.on("updateGameAfterPlayerButtonPress", (data: any) => {
-        let updatedGame = data.gameState;
-        // update game state
-        setGame(updatedGame);
-      });
-    }
-
-    // Use the imported helper function, passing necessary dependencies
-    const exitGameHandler = handleExit(navigation, socketRef, Game.id);
-
-    if (socketRef.current) {
-      socketRef.current.on("gameExited", exitGameHandler);
-    }
-
-    // Cleanup on component unmount
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.off("gameExited", exitGameHandler);
-        socketRef.current.disconnect();
-        navigation.navigate("Home");
       }
-    };
+      return actions;
+    }
 
-  }, [navigation]);
+
+    // create socket reference
+    const socketRef = useRef<Socket | null>(null);
+
+    // When compoment mounts, connect to the server, determine available actions
+    useEffect(() => {
+
+
+      socketRef.current = io(SERVER_URL, { transports: ["websocket"] });
+      if (socketRef.current) {
+  
+        // emit initialize players event
+        socketRef.current.emit("initializePlayers", Game.id); // this will be removed
+
+        // listen for playersForGameInitialized event
+        socketRef.current.on("playersForGameInitialized", (data: any) => {
+          let initGame = data.gameState;
+          
+
+          let newPlayer = initGame.players.find(
+            (p: { name: string }) => p.name === theUsername
+          );  
+          
+          // update game state
+          setPlayer(newPlayer);
+          setGame(initGame);
+          
+
+          console.log(newPlayer)
+
+          // turn off the event listener
+          if (socketRef.current) {
+            socketRef.current.off("playersForGameInitialized");
+          }
+        });
+
+      }
+
+      // Use the imported helper function, passing necessary dependencies
+      const exitGameHandler = handleExit(navigation, socketRef, Game.id);
+
+      if (socketRef.current) {
+        socketRef.current.on("gameExited", exitGameHandler);
+      }
+
+      // Cleanup on component unmount
+      return () => {
+        if (socketRef.current) {
+          socketRef.current.off("gameExited", exitGameHandler);
+          socketRef.current.disconnect();
+          navigation.navigate("Home");
+        }
+      };
+
+    }, [navigation]);
 
 
   // Bring user to exit confirmation modal
@@ -183,7 +195,12 @@ const GameScreen = ({ navigation, route }: Props) => {
   // any changes to theGame will trigger this useEffect and update client side player state
   useEffect(() => {
     // Skip the first invocation (initial render)
+
     if (isMounted.current) {
+
+      setCurrentBet(theGame.currentBet);
+      setCurRaiseVal(theGame.currentBet);
+
       // Your existing useEffect logic here, to run on updates after the initial render
       let actionButtons = determineAvailableActions(theGame);
       setActionButtonsEnabled(actionButtons);
@@ -208,8 +225,6 @@ const GameScreen = ({ navigation, route }: Props) => {
 
     // Current Player
     let curPlayer = theGame.players[theGame.currentPlayer - 1];
-    console.log(curPlayer);
-    console.log(theGame.currentBet);
 
     // Determine BET case
     if (buttonPressed === "BET") {
@@ -303,7 +318,7 @@ const GameScreen = ({ navigation, route }: Props) => {
     // 9. have the UI reflected so that client side user is the main user
 
     <View style={GameScreenStyles.backgroundContainer}>
-      <View style={GameScreenStyles.modalExitView}>
+      
         <Modal
           animationType="slide"
           transparent={true}
@@ -346,7 +361,6 @@ const GameScreen = ({ navigation, route }: Props) => {
             </View>
           </View>
         </Modal>
-      </View>
 
 
       {/* Win pop-up modal */}
@@ -441,19 +455,12 @@ const GameScreen = ({ navigation, route }: Props) => {
         <View style={GameScreenStyles.whiteLine} />
       </View>
 
-      <View style={GameScreenStyles.bottomContainer}>
-        <ImageBackground
-          source={cardBackgroundImage}
-          style={GameScreenStyles.cardBackground}
-          resizeMode="contain"
-        ></ImageBackground>
-      </View>
 
 
       {/* Restructure screen so only other players avatars get displayed here*/}
       <View style={GameScreenStyles.playersContainer}>
         {Game.players
-          .filter((player) => player.name !== theUsername) // Filter out the main player
+          .filter((player) => player.name === thePlayer.name) // Filter out the main player
           .map((player, index, filteredArray) => {
             // Use filtered array for mapping
             // Determine the style based on player's index in the filtered array
@@ -462,14 +469,11 @@ const GameScreen = ({ navigation, route }: Props) => {
             if (index === filteredArray.length - 1)
               playerStyle = GameScreenStyles.playerRight; // Last player
 
-            // Determine if player is big blind or little blind
-            // Game.curBigBlind and Game.curLittleBlind are the indexes of the big blind and little blind players respectively
             
             // Add a yellow ring around the avatar if it's the player's turn
-            const avatarStyle = player.currentTurn
-            
-            ? [GameScreenStyles.avatar, GameScreenStyles.activeTurnAvatar] 
-            : GameScreenStyles.avatar;
+            if (player.currentTurn) {
+              GameScreenStyles.activeTurnAvatar
+            }
 
             
 
@@ -508,11 +512,13 @@ const GameScreen = ({ navigation, route }: Props) => {
           })}
       </View>
 
+      <View style={GameScreenStyles.parentToChipCountAndButtons}>
       <View style={GameScreenStyles.clientChipCountContainer}>
         <Text style={GameScreenStyles.clientChipCountText}>
-          {!player.fold ? "CHIPS:$".concat(String(player.money)) : "FOLDED"}
+          {!thePlayer.fold ? "CHIPS:$".concat(String(thePlayer.money)) : "FOLDED"}
         </Text>
       </View>
+      
       <View style={GameScreenStyles.actionButtonsContainer}>
         {/* ALL-IN Button */}
         <View style={GameScreenStyles.allInButtonContainer}>
@@ -566,7 +572,7 @@ const GameScreen = ({ navigation, route }: Props) => {
                   : { color: "yellow" },
               ]}
             >
-              {player.lastBet !== -1
+              {thePlayer.lastBet !== -1
                 ? theGame.currentBet === 0
                   ? "CHECK"
                   : "CALL"
@@ -626,6 +632,16 @@ const GameScreen = ({ navigation, route }: Props) => {
           </TouchableOpacity>
         </View>
       </View>
+      </View>
+      
+      <View style={GameScreenStyles.bottomContainer}>
+        <ImageBackground
+          source={cardBackgroundImage}
+          style={GameScreenStyles.cardBackground}
+          resizeMode="contain"
+        ></ImageBackground>
+      </View>
+
     </View>
   );
 };

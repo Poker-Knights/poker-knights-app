@@ -18,7 +18,7 @@ export type StackParamList = {
   Home: undefined;
   Join: { username: string };
 
-  Game: { Game: Game, username: string };
+  Game: { Game: Game, username: string};
 
 };
 

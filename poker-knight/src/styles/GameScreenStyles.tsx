@@ -8,7 +8,7 @@ export const GameScreenStyles = StyleSheet.create({
 
   bottomContainer: {
     position: "absolute",
-    bottom: 230,
+    bottom: 140,
     width: "100%",
     alignItems: "center",
     height: "60%",
@@ -199,11 +199,14 @@ export const GameScreenStyles = StyleSheet.create({
     overflow: "hidden", // Ensures that the image does not spill out of the border radius
   },
 
-
-  activeTurnAvatar: {
-    borderColor: 'yellow',
-    borderWidth: 2,
-    borderRadius: 40, // Adjust as per your avatar style
+activeTurnAvatar: {
+    width: 80, // Adjust the size as needed
+    height: 80, // Adjust the size as needed
+    borderRadius: 40, // Half the width/height to make it a circle
+    borderWidth: 2, // Size of border around the avatar
+    borderColor: "#feeb00", // Border color, assuming white is desired
+    backgroundColor: "#C4C4C4", // A placeholder background color in case the image fails to load
+    overflow: "hidden", // Ensures that the image does not spill out of the border radius
   },
 
   playerName: {
@@ -269,7 +272,7 @@ export const GameScreenStyles = StyleSheet.create({
     height: 40,
     alignItems: "center",
     elevation: 5,
-    marginRight: 275,
+    //marginRight: 275,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -306,25 +309,16 @@ export const GameScreenStyles = StyleSheet.create({
     backgroundColor: "#2196F3",
   },
 
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
 
-  modalText: {
-    marginBottom: 15,
-    textAlign: "center",
-  },
+
 
   actionButtonsContainer: {
-    position: "absolute",
     bottom: 0,
     left: 10,
     width: "95%",
-    height: "15%",
+    height: "39%",
     alignItems: "baseline",
-    marginBottom: 30,
+    marginBottom: 10,
     backgroundColor: "#333", // Background color
     borderColor: "#555", // Border color
     borderWidth: 2, // Border width
@@ -376,9 +370,8 @@ export const GameScreenStyles = StyleSheet.create({
   },
 
   clientChipCountContainer: {
-    // Position it towards the bottom-left part of the bottomContainer
     left: 10, // Adjust as needed for padding from the left edge
-    bottom: -200, // Adjust as needed to position above the action buttons
+    marginBottom: 0, // Adjust as needed to position above the action buttons
     backgroundColor: "#292626", // Slightly darker background for readability
     padding: 5,
     borderRadius: 5,
@@ -405,6 +398,15 @@ export const GameScreenStyles = StyleSheet.create({
     height: 10, // Adjust based on your icon size
     marginLeft: 5, // Spacing between the avatar and icon, adjust as needed
     // Add other styling as needed for positioning, etc.
-  }
+  },
+
+  parentToChipCountAndButtons: {
+    flex: 1, 
+    padding: 10, // Or any other value to keep space around the items
+    // To center the children to the left edge
+    alignItems: 'flex-start', // To align the children at the start of the container
+    justifyContent: 'flex-end', // To align the children at the end of the container
+    paddingBottom: 0
+  },
   
 });
