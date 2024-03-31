@@ -28,9 +28,10 @@ export const handleInitializePlayersforGame =
         " and last bet: " +
         game.players[game.currentPlayer - 1].lastBet
     );
-
+    
+    game.riverCards = ["spades_3", "hearts_A", "clubs_3", "diamonds_4", "spades_5"];
+    Socket.emit("updateRiverCards", game.riverCards);
     handleStartRound(Socket, games);
-
     // emit the updated game
     Socket.emit("playersForGameInitialized", { gameState: game });
 

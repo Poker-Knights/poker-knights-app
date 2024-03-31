@@ -52,12 +52,12 @@ const GameScreen = ({ navigation, route }: Props) => {
   let [theUsername, setUsername] = useState(username); // this is your client side representation of game object
   let [currentBet, setCurrentBet] = useState(theGame.currentBet); // Initialize current bet state with a default value
   let [curRaiseVal, setCurRaiseVal] = useState(theGame.currentBet); //Track Raise Value
-  let [riverCards, setRiverCards] = useState<string[]>(["back", "back", "back", "back", "back"]); // Initialize river cards state with cards face down
-  let [playerCards, setPlayerCards] = useState<string[]>(["back", "back"]); // Initialize player cards state with cards face down
+  let [riverCards, setRiverCards] = useState<string[]>(theGame.riverCards); // Initialize river cards state with cards face down
   // grab player data of the client side user, the one with the username that was routed from previous screen
-
+  
   // set the initial state as an empty object
   let [player, setPlayer] = useState<any>({});
+  let [playerCards, setPlayerCards] = useState<string[]>(["back", "back"]); // Initialize player cards state with cards face down
   let [actionButtonsEnabled, setActionButtonsEnabled] = useState({
     betOption: true,
     fold: true,
@@ -137,6 +137,7 @@ const GameScreen = ({ navigation, route }: Props) => {
       socketRef.current.on("updateRiverCards", (data: any) => {
         let updatedRiverCards = data;
         // update river cards
+        console.log("river cards updated");
         setRiverCards(updatedRiverCards);
       });
 
