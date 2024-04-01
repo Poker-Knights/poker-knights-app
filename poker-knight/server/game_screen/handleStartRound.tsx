@@ -11,9 +11,18 @@ export const handleStartRound =
       // Assign the first player as little blind and second player as big blind
       let players = game.players;
 
+      // Assign the first player as little blind and second player as big blind
+      game.curLittleBlind = 1;
+      game.curBigBlind = 2;
+      
+      players[game.curLittleBlind - 1].isLittleBlind = true;
+      players[game.curBigBlind - 1].isBigBlind = true;
+
+
       // Assign Blind Bets
       players[game.curLittleBlind - 1].money -= game.littleBlindBet;
       players[game.curBigBlind - 1].money -= game.bigBlindBet;
+
 
       // call function to 'give' players their cards here
 
@@ -23,7 +32,8 @@ export const handleStartRound =
       });
 
       // make the player after the big blind the current player
-      game.currentPlayer = game.curBigBlind + 1;
+      // game.currentPlayer = game.curBigBlind + 1;
+      game.currentPlayer = 1;
       players[game.currentPlayer - 1].currentTurn = true;
 
       // set players equal to game players
@@ -31,10 +41,6 @@ export const handleStartRound =
 
       // emit the updated game
       Socket.emit("startRound", game);
-
-      // test river card hook
-      // game.riverCards = ["spades_2", "hearts_A", "clubs_3", "diamonds_4", "spades_5"];
-      // Socket.emit("updateRiverCards", game.riverCards);
     } else {
       // Start the Game
       handleInitializePlayersforGame(Socket, games);

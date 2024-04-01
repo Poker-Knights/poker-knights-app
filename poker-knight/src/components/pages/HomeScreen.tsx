@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "../../../App";
 import {
@@ -17,9 +17,12 @@ import {
   TextInput,
   Alert,
   LogBox,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import io, { Socket } from "socket.io-client";
+import { SocketContext } from "../../../App";
 import { SERVER_URL } from "../../utils/socket";
 
 type Props = {
@@ -40,7 +43,7 @@ const Home = ({ navigation }: Props) => {
   const [gameId, setGameId] = useState("");
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
   const [game, setGame] = useState<Game | null>(null);
-  const socketRef = useRef<Socket | null>(null);
+  const socketRef = useContext(SocketContext);
 
   // useEffect is a hook that runs after the first render of the component
   // It is used to perform side effects like data fetching, subscriptions, or manual DOM manipulations
@@ -50,7 +53,7 @@ const Home = ({ navigation }: Props) => {
   // such as when the user is typing in the input field, the component doesn't need to re render
 
   useEffect(() => {
-    socketRef.current = io(SERVER_URL, { transports: ["websocket"] });
+    if (!socketRef) return; // Early return if null
 
     // Use the imported helper function, passing necessary dependencies
     const gameCreatedHandler = handleGameCreated(
@@ -67,17 +70,18 @@ const Home = ({ navigation }: Props) => {
     return () => {
       if (socketRef.current) {
         socketRef.current.off("gameCreated", gameCreatedHandler);
-        socketRef.current.disconnect();
       }
     };
   }, [navigation]);
 
   // Event emitters & helper functions for buttons
-  const onCreateGame = () => createGame(username, socketRef, setGameId);
+  const onCreateGame = () => {
+    if (!socketRef) { return; }
+    createGame(username, socketRef, setGameId);
+  };
   const onHostGamePress = () => handleHostGamePress(username, onCreateGame);
   const onJoinGamePress = () => handleJoinGamePress(username, navigation);
 
-  
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar hidden={true} />

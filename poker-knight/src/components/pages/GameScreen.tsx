@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "../../../App";
 import { GameScreenStyles } from "../../styles/GameScreenStyles";
 import { cardImages, cardPaths } from "../../utils/Cards";
-
+  
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import {
   SafeAreaView,
   Image,
   ImageBackground,
+  Button,
 } from "react-native";
 
 import { formatCurrency } from "../../utils/Money";
@@ -29,9 +30,12 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { RouteProp } from "@react-navigation/native";
 import io, { Socket } from "socket.io-client";
+import { SocketContext } from "../../../App";
 import { SERVER_URL } from "../../utils/socket";
 
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
+const loseGIF = require("../../Graphics/lose.gif");
+const winGIF = require("../../Graphics/win.gif");
 
 const userIcon = require("../../Graphics/userIcon.png");
 
@@ -44,130 +48,160 @@ type Props = {
   route: GameScreenRouteProp;
 };
 
-const GameScreen = ({ navigation, route }: Props) => {
-  let [pot, setPot] = useState(100); // Initialize pot state with a default value
-  const { Game, username } = route.params;
-  const [theGame, setGame] = useState(Game); // this is your client side representation of game object
-  const [menuVisible, setMenuVisible] = useState<boolean>(false);
-  let [theUsername, setUsername] = useState(username); // this is your client side representation of game object
-  let [currentBet, setCurrentBet] = useState(theGame.currentBet); // Initialize current bet state with a default value
-  let [curRaiseVal, setCurRaiseVal] = useState(theGame.currentBet); //Track Raise Value
-  let [riverCards, setRiverCards] = useState<string[]>(theGame.riverCards); // Initialize river cards state with cards face down
-  // grab player data of the client side user, the one with the username that was routed from previous screen
-  
-  // set the initial state as an empty object
-  let [player, setPlayer] = useState<any>({});
-  let [playerCards, setPlayerCards] = useState<string[]>(["back", "back"]); // Initialize player cards state with cards face down
-  let [actionButtonsEnabled, setActionButtonsEnabled] = useState({
-    betOption: true,
-    fold: true,
-    allIn: true,
-  });
+  const GameScreen = ({ navigation, route }: Props) => {
 
-  const socketRef = useRef<Socket | null>(null);
+    let [pot, setPot] = useState(100); // Initialize pot state with a default value
+    const { Game, username } = route.params;
+    const [theGame, setGame] = useState(Game); // this is your client side representation of game object
 
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerShown: false, // Set this to false to hide the navigation bar
-    });
-  }, [navigation]);
 
-  // There needs to be a function to evaluate which buttons you can and cannot press [MUST BE TESTED]
-  function determineAvailableActions(game: typeof Game): {
-    betOption: boolean;
-    fold: boolean;
-    allIn: boolean;
-  } {
-    const currentPlayer = game.players[game.currentPlayer - 1];
 
-    // Default actions
-    let actions = {
+    
+    const [menuVisible, setMenuVisible] = useState<boolean>(false);
+    let [theUsername, setUsername] = useState(username); // this is your client side representation of game object
+
+    let [currentBet, setCurrentBet] = useState(0); // Track Current Bet
+    let [curRaiseVal, setCurRaiseVal] = useState(0); //Track Raise Value
+    
+    const [losePopupVisible, setLosePopupVisible] = useState<boolean>(false);
+    const [winPopupVisible, setWinPopupVisible] = useState<boolean>(false);
+
+    // grab player data of the client side user, the one with the username that was routed from previous screen
+
+    // set the initial state as an empty object
+    let [thePlayer, setPlayer] = useState<any>({});
+    
+    // Set cards
+    let [riverCards, setRiverCards] = useState<string[]>(theGame.riverCards); // Initialize river cards state with cards face down
+    let [playerCards, setPlayerCards] = useState<string[]>(["back", "back"]); // Initialize player cards state with cards face down
+    
+    let [actionButtonsEnabled, setActionButtonsEnabled] = useState({
       betOption: true,
       fold: true,
       allIn: true,
-    };
+    });
 
-    console.log(theGame.players);
+    React.useLayoutEffect(() => {
+      navigation.setOptions({
+        headerShown: false, // Set this to false to hide the navigation bar
+      });
+    }, [navigation]);
 
-    if (!currentPlayer.foldFG && !currentPlayer.allInFg) {
-      // if its not your turn, you cannot do anything
-      if (currentPlayer.currentTurn === false) {
-      } else {
-        actions.betOption = true;
-        actions.fold = true;
-        actions.allIn = true;
-      }
-    }
-    return actions;
-  }
+    // There needs to be a function to evaluate which buttons you can and cannot press [MUST BE TESTED]
+    function determineAvailableActions(game: typeof Game): {
+      betOption: boolean;
+      fold: boolean;
+      allIn: boolean;
+    } {
+      const currentPlayer = game.players[game.currentPlayer - 1];
 
-  // When compoment mounts, connect to the server, determine available actions
-  useEffect(() => {
-    socketRef.current = io(SERVER_URL, { transports: ["websocket"] });
+      // Default actions
+      let actions = {
+        betOption: true,
+        fold: true,
+        allIn: true,
+      };
 
-    if (socketRef.current) {
-      // emit initialize players event
-      socketRef.current.emit("initializePlayers", Game.id);
 
-      // listen for playersForGameInitialized event
-      socketRef.current.on("playersForGameInitialized", (data: any) => {
-        let initGame = data.gameState;
+      if (!thePlayer.foldFG && !thePlayer.allInFg) {
+        // if its not your turn, you cannot do anything
+        if (thePlayer.currentTurn === false) {
+          
+          actions.betOption = false;
+          actions.allIn = false;
+          actions.fold = false;
 
-        let newPlayer = initGame.players.find(
-          (p: { name: string }) => p.name === theUsername
-        );
-
-        // update game state
-        setGame(initGame);
-        setPlayer(newPlayer);
-
-        // turn off the event listener
-        if (socketRef.current) {
-          socketRef.current.off("playersForGameInitialized");
+        } else {
+          actions.betOption = true;
+          actions.fold = true;
+          actions.allIn = true;
         }
-      });
-
-      // listen for updateGameAfterPlayerButtonPress event
-      socketRef.current.on("updateGameAfterPlayerButtonPress", (data: any) => {
-        let updatedGame = data.gameState;
-        // update game state
-        setGame(updatedGame);
-      });
-
-      socketRef.current.on("updateRiverCards", (data: any) => {
-        let updatedRiverCards = data;
-        // update river cards
-        console.log("river cards updated");
-        setRiverCards(updatedRiverCards);
-      });
-
-      socketRef.current.on("updatePlayerCards", (data: any) => { // this needs to be updated so that it can handle individual players
-        let updatedPlayerCards = data;
-        // update player cards
-        setPlayerCards(updatedPlayerCards);
-      });
-    }
-    // Use the imported helper function, passing necessary dependencies
-    const exitGameHandler = handleExit(navigation, socketRef, Game.id);
-
-    if (socketRef.current) {
-      socketRef.current.on("gameExited", exitGameHandler);
-    }
-
-    // Cleanup on component unmount
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.off("gameExited", exitGameHandler);
-        socketRef.current.disconnect();
-        navigation.navigate("Home");
       }
-    };
-  }, [navigation]);
+      return actions;
+    }
+
+    // Access the socket from the context
+    const socketRef = useContext(SocketContext);
+
+    // When compoment mounts, connect to the server, determine available actions
+    useEffect(() => {
+      if (!socketRef) return; // Early return if null
+
+      if (socketRef.current) {
+  
+        // emit initialize players event
+        socketRef.current.emit("initializePlayers", Game.id); // this will be removed
+
+        // listen for playersForGameInitialized event
+        socketRef.current.on("playersForGameInitialized", (data: any) => {
+          let initGame = data.gameState;
+          
+
+          let newPlayer = initGame.players.find(
+            (p: { name: string }) => p.name === theUsername
+          );  
+          
+          // update game state
+          setPlayer(newPlayer);
+          setGame(initGame);
+          
+
+          console.log(newPlayer)
+
+          // turn off the event listener
+          if (socketRef.current) {
+            socketRef.current.off("playersForGameInitialized");
+          }
+        });
+        
+        socketRef.current.on("updateRiverCards", (data: any) => {
+          let updatedRiverCards = data;
+          // update river cards
+          console.log("river cards updated");
+          setRiverCards(updatedRiverCards);
+        });
+
+        socketRef.current.on("updatePlayerCards", (data: any) => { // this needs to be updated so that it can handle individual players
+          let updatedPlayerCards = data;
+          // update player cards
+          setPlayerCards(updatedPlayerCards);
+        });
+      }
+
+      // Use the imported helper function, passing necessary dependencies
+      const exitGameHandler = handleExit(navigation, socketRef, Game.id);
+
+      if (socketRef.current) {
+        socketRef.current.on("gameExited", exitGameHandler);
+      }
+
+      // Cleanup on component unmount
+      return () => {
+        if (socketRef.current) {
+          socketRef.current.off("gameExited", exitGameHandler);
+          socketRef.current.disconnect();
+          navigation.navigate("Home");
+        }
+      };
+
+    }, [navigation]);
+
 
   // Bring user to exit confirmation modal
   const handleExitPress = () => {
     console.log("Exit button was pressed");
     setMenuVisible(true);
+  };
+
+
+  const handleLoseTestPress = () => {
+    console.log("Lose button was pressed");
+    setLosePopupVisible(true);
+  };
+
+  const handleWinTestPress = () => {
+    console.log("Win button was pressed");
+    setWinPopupVisible(true);
   };
 
   // any changes to theGame will trigger this useEffect and update client side player state
@@ -176,7 +210,12 @@ const GameScreen = ({ navigation, route }: Props) => {
   // any changes to theGame will trigger this useEffect and update client side player state
   useEffect(() => {
     // Skip the first invocation (initial render)
+
     if (isMounted.current) {
+
+      setCurrentBet(theGame.currentBet);
+      setCurRaiseVal(theGame.currentBet);
+
       // Your existing useEffect logic here, to run on updates after the initial render
       let actionButtons = determineAvailableActions(theGame);
       setActionButtonsEnabled(actionButtons);
@@ -189,18 +228,23 @@ const GameScreen = ({ navigation, route }: Props) => {
     }
   }, [theGame]);
 
-  const onExitConfirmPress = () => handleExitConfirmPress(socketRef, Game.id);
+
+  const onExitConfirmPress = () => {
+    if (!socketRef) { return; }
+    handleExitConfirmPress(socketRef, Game.id);
+  };
 
   // Function to handle when buttons are pressed  // export this to utils file for game
+
   // Also will need to handle splitting the pot logic, possibly mapping a player to their own pots
   const handleButtonPress = (buttonPressed: string) => {
+    if (!socketRef) return; // Early return if null
+
     // Switch to handle the button pressed
     // if the button is pressed, disable the button afterwards until its their turn again
 
     // Current Player
     let curPlayer = theGame.players[theGame.currentPlayer - 1];
-    console.log(curPlayer);
-    console.log(theGame.currentBet);
 
     // Determine BET case
     if (buttonPressed === "BET") {
@@ -212,6 +256,8 @@ const GameScreen = ({ navigation, route }: Props) => {
         buttonPressed = "RAISE";
       }
     }
+
+
 
     switch (buttonPressed) {
       case "CALL":
@@ -235,6 +281,7 @@ const GameScreen = ({ navigation, route }: Props) => {
         break;
 
       case "decrementRaise":
+
         if (
           curPlayer.lastBet !== -1 &&
           curPlayer.lastBet !== theGame.currentBet
@@ -249,6 +296,7 @@ const GameScreen = ({ navigation, route }: Props) => {
 
       case "incrementRaise":
         if (
+
           curPlayer.lastBet !== -1 &&
           curPlayer.lastBet === theGame.currentBet
         ) {
@@ -264,6 +312,7 @@ const GameScreen = ({ navigation, route }: Props) => {
 
     //Update Values
     setCurRaiseVal(curRaiseVal);
+
 
     // Update these values on server side
     setPot(theGame.potSize);
@@ -281,18 +330,15 @@ const GameScreen = ({ navigation, route }: Props) => {
 
   return (
     // Things to update on UI (not in any particular order)
-    // 1. Player Chip Count
     // 2. Player Turn Indicator
     // 3. Big blind & little blind indicator
     // 4. Indicate if the Player Folded
     // 5. If the player left the game or is eliminated (gray out the player prpfle picture)
     // 6. card display
-    // 7. win screen
-    // 8. losing screen
     // 9. have the UI reflected so that client side user is the main user
 
     <View style={GameScreenStyles.backgroundContainer}>
-      <View style={GameScreenStyles.modalExitView}>
+      
         <Modal
           animationType="slide"
           transparent={true}
@@ -300,34 +346,121 @@ const GameScreen = ({ navigation, route }: Props) => {
           onRequestClose={() => setMenuVisible(false)}
         >
           <View style={GameScreenStyles.centeredView}>
-            <View style={GameScreenStyles.modalPopupView}>
+
+            <View style={GameScreenStyles.exitModalPopupView}>
+
               <Text style={GameScreenStyles.modalText}>
                 Are you sure you want to exit the game?
               </Text>
 
               {/* Exit game Button */}
               <TouchableOpacity
-                style={[GameScreenStyles.button, GameScreenStyles.buttonClose]}
+
+                style={GameScreenStyles.exitGameModalButton}
                 onPress={() => {
+                  console.log("Game was attempted to be exited");
                   onExitConfirmPress();
                 }}
               >
-                <Text style={GameScreenStyles.textStyle}>Exit game</Text>
+                <Text style={GameScreenStyles.textStyle}>EXIT GAME</Text>
+
               </TouchableOpacity>
 
               {/* Continue game */}
               <TouchableOpacity
-                style={[GameScreenStyles.button, GameScreenStyles.buttonClose]}
+
+                style={GameScreenStyles.exitGameModalButton}
                 onPress={() => {
+                  console.log("Game was continued");
                   setMenuVisible(false);
                 }}
               >
-                <Text style={GameScreenStyles.textStyle}>Continue game</Text>
+                <Text style={GameScreenStyles.textStyle}>CONTINUE GAME</Text>
+
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+
+      {/* Win pop-up modal */}
+      <View>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={winPopupVisible}
+          onRequestClose={() => setWinPopupVisible(false)}
+        >
+          <View style={GameScreenStyles.centeredView}>
+            <View style={GameScreenStyles.winModalPopupView}>
+              <Image
+                source={winGIF}
+                style={GameScreenStyles.gif}
+                resizeMode="contain"
+              />
+              <Text style={GameScreenStyles.modalText}>
+                Woohoo! You won!
+              </Text>
+
+              {/* Exit game Button */}
+              <TouchableOpacity
+                style={GameScreenStyles.exitGameModalButton}
+                onPress={() => {
+                  console.log("Game was attempted to be exited");
+                  onExitConfirmPress();
+                }}
+              >
+                <Text style={GameScreenStyles.textStyle}>EXIT GAME</Text>
               </TouchableOpacity>
             </View>
           </View>
         </Modal>
       </View>
+
+      {/* Lost pop-up modal */}
+      <View>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={losePopupVisible}
+          onRequestClose={() => setLosePopupVisible(false)}
+        >
+          <View style={GameScreenStyles.centeredView}>
+            <View style={GameScreenStyles.loseModalPopupView}>
+              <Image
+                source={loseGIF}
+                style={GameScreenStyles.gif}
+                resizeMode="contain"
+              />
+              <Text style={GameScreenStyles.modalText}>
+                Womp womp. You lost! Better luck next time!
+              </Text>
+
+              {/* Exit game Button */}
+              <TouchableOpacity
+                style={GameScreenStyles.exitGameModalButton}
+                onPress={() => {
+                  console.log("Game was attempted to be exited");
+                  onExitConfirmPress();
+                }}
+              >
+                <Text style={GameScreenStyles.textStyle}>EXIT GAME</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </View>
+
+
+      {/* Exit Button */}
+      <TouchableOpacity
+        style={GameScreenStyles.exitButton}
+        onPress={handleExitPress}
+      >
+
+        <Text style={GameScreenStyles.exitText}>EXIT</Text>
+      </TouchableOpacity>
+
 
       {/* Top part of the screen with pot and current bet */}
       <View style={GameScreenStyles.topContainer}>
@@ -342,30 +475,12 @@ const GameScreen = ({ navigation, route }: Props) => {
         <View style={GameScreenStyles.whiteLine} />
       </View>
 
-      {/* Exit Button */}
-      <TouchableOpacity
-        style={GameScreenStyles.exitButton}
-        onPress={handleExitPress}
-      >
-        {/* <Image
-          source={require("../../Graphics/settingwidget.png")}
-          style={GameScreenStyles.settingsIcon}
-        /> */}
-        <Text style={GameScreenStyles.exitText}>EXIT</Text>
-      </TouchableOpacity>
 
-      <View style={GameScreenStyles.bottomContainer}>
-        <ImageBackground
-          source={cardBackgroundImage}
-          style={GameScreenStyles.cardBackground}
-          resizeMode="contain"
-        ></ImageBackground>
-      </View>
 
       {/* Restructure screen so only other players avatars get displayed here*/}
       <View style={GameScreenStyles.playersContainer}>
         {Game.players
-          .filter((player) => player.name !== theUsername) // Filter out the main player
+          .filter((player) => player.name === thePlayer.name) // Filter out the main player
           .map((player, index, filteredArray) => {
             // Use filtered array for mapping
             // Determine the style based on player's index in the filtered array
@@ -373,6 +488,14 @@ const GameScreen = ({ navigation, route }: Props) => {
             if (index === 0) playerStyle = GameScreenStyles.playerLeft; // First player
             if (index === filteredArray.length - 1)
               playerStyle = GameScreenStyles.playerRight; // Last player
+
+            
+            // Add a yellow ring around the avatar if it's the player's turn
+            if (player.currentTurn) {
+              GameScreenStyles.activeTurnAvatar
+            }
+
+            
 
             return (
               <View
@@ -384,6 +507,21 @@ const GameScreen = ({ navigation, route }: Props) => {
                   style={GameScreenStyles.avatar}
                   resizeMode="contain"
                 />
+                    
+                {/* Conditionally render little blind or big blind icon next to avatar */}
+                {/* {player.isSmallBlind && (
+                  <Image
+                    source={require('../../path/to/little_blind_icon.png')} // Update path to your little blind icon
+                    style={GameScreenStyles.blindIcon} // Define a style for positioning and sizing the icon
+                  />
+                )}
+                {player.isBigBlind && (
+                  <Image
+                    source={require('../../path/to/big_blind_icon.png')} // Update path to your big blind icon
+                    style={GameScreenStyles.blindIcon} // Define a style for positioning and sizing the icon
+                  />
+                )} */}
+
                 <Text style={GameScreenStyles.playerName}>{player.name}</Text>
                 <Text style={GameScreenStyles.playerMoney}>
                   {formatCurrency(player.money)}
@@ -406,8 +544,14 @@ const GameScreen = ({ navigation, route }: Props) => {
         <Image source={cardImages[playerCards[0]]} />
         <Image source={cardImages[playerCards[1]]} />
       </View>
-
-
+      
+      <View style={GameScreenStyles.parentToChipCountAndButtons}>
+      <View style={GameScreenStyles.clientChipCountContainer}>
+        <Text style={GameScreenStyles.clientChipCountText}>
+          {!thePlayer.fold ? "CHIPS:$".concat(String(thePlayer.money)) : "FOLDED"}
+        </Text>
+      </View>
+      
       <View style={GameScreenStyles.actionButtonsContainer}>
         {/* ALL-IN Button */}
         <View style={GameScreenStyles.allInButtonContainer}>
@@ -461,7 +605,7 @@ const GameScreen = ({ navigation, route }: Props) => {
                   : { color: "yellow" },
               ]}
             >
-              {player.lastBet !== -1
+              {thePlayer.lastBet !== -1
                 ? theGame.currentBet === 0
                   ? "CHECK"
                   : "CALL"
@@ -521,6 +665,16 @@ const GameScreen = ({ navigation, route }: Props) => {
           </TouchableOpacity>
         </View>
       </View>
+      </View>
+      
+      <View style={GameScreenStyles.bottomContainer}>
+        <ImageBackground
+          source={cardBackgroundImage}
+          style={GameScreenStyles.cardBackground}
+          resizeMode="contain"
+        ></ImageBackground>
+      </View>
+
     </View>
   );
 };

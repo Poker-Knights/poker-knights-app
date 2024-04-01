@@ -4,10 +4,14 @@
     "strict": true,
     "target": "es5",
     "module": "commonjs",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
-    "src/**/*.png" // Include image files
+    "src/**/*.png", // Include image files
+    "src/**/*",
+    "src/index.d.ts"
   ]
 }

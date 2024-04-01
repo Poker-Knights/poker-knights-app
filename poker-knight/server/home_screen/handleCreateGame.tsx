@@ -37,8 +37,8 @@ export const handleCreateGame =
     // Join the creator to the game room
     socket.join(gameID);
 
+    console.log("Server Side Creating Game")
+
     // Notify the creator that the game has been created successfully
     socket.emit("gameCreated", { gameState: newGame });
-
-  
   };

@@ -7,9 +7,13 @@ export type Player = {
   allInFg: boolean;
   avatarUri?: string;
   currentTurn: boolean;
+  isLittleBlind: boolean;
+  isBigBlind: boolean;
   lastBet: number;
+  fold: boolean,
   foldFG: boolean;
   playerCards: string[];
+
 };
 
 export type Game = {
