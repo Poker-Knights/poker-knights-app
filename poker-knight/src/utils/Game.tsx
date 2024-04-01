@@ -4,12 +4,12 @@ import { Player, Game } from "../types/Game";
 // Function to get random but unique avatar and give to player
 const generateAvatar = (players: Player[]): string => {
   // Get the number of players
-  const defaultAvatar: string = require("../Graphics/userIcon.png");
+  const defaultAvatar: string = "https://i.imgur.com/om832wf.png";
   const avatarImages: { [key: string]: any } = {
-    avatar1: require("../Graphics/knight.png"),
-    avatar2: require("../Graphics/PKLogo.png"),
-    avatar3: require("../Graphics/backArrow.png"),
-    avatar4: require("../Graphics/longButton.png"),
+    avatar1: "https://i.imgur.com/3bP0BK0.png",
+    avatar2: "https://i.imgur.com/hUCwjoo.png",
+    avatar3: "https://i.imgur.com/YAldsI9.png",
+    avatar4: "https://i.imgur.com/SS946rP.png",
     // Add all other avatars here
   };
 
@@ -33,14 +33,14 @@ const generateAvatar = (players: Player[]): string => {
 
 // Function to create a new player and add to the specified game
 const createAndAddPlayer = (username: string, socketId: string, game: Game) => {
-  // call generateAvatar here
+  const avatarUri = generateAvatar(game.players); // call generateAvatar here
 
   const newPlayer: Player = {
     id: socketId,
     name: username,
     money: 500, // Default starting money
     allInFg: false,
-    //avatarUri: generateAvatar(game.players), // Call the generateAvatar function here
+    avatarUri: avatarUri, // Call the generateAvatar function here
     currentTurn: false, // Set initial turn status
     lastBet: 0,
     fold: false,
