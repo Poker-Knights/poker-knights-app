@@ -147,11 +147,12 @@ const GameScreen = ({ navigation, route }: Props) => {
     setMenuVisible(true);
   };
 
+  /* 
   // any changes to theGame will trigger this useEffect and update client side player state
   const isMounted = useRef(false);
 
   // any changes to theGame will trigger this useEffect and update client side player state
-  /*useEffect(() => {
+  useEffect(() => {
     // Skip the first invocation (initial render)
     if (isMounted.current) {
       // Your existing useEffect logic here, to run on updates after the initial render
@@ -164,7 +165,8 @@ const GameScreen = ({ navigation, route }: Props) => {
       // Mark as mounted for subsequent renders
       isMounted.current = true;
     }
-  }, [theGame]);*/
+  }, [theGame]);
+  //*/
 
   const onExitConfirmPress = () => handleExitConfirmPress(socketRef, Game.id);
 
