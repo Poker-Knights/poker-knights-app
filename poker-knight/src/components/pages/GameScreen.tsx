@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "../../../App";
 import { GameScreenStyles } from "../../styles/GameScreenStyles";
-
+import { cardImages, cardPaths } from "../../utils/Cards";
+  
 import {
   View,
   Text,
@@ -69,6 +70,10 @@ type Props = {
 
     // set the initial state as an empty object
     let [thePlayer, setPlayer] = useState<any>({});
+    
+    // Set cards
+    let [riverCards, setRiverCards] = useState<string[]>(theGame.riverCards); // Initialize river cards state with cards face down
+    let [playerCards, setPlayerCards] = useState<string[]>(["back", "back"]); // Initialize player cards state with cards face down
     
     let [actionButtonsEnabled, setActionButtonsEnabled] = useState({
       betOption: true,
@@ -148,7 +153,19 @@ type Props = {
             socketRef.current.off("playersForGameInitialized");
           }
         });
+        
+        socketRef.current.on("updateRiverCards", (data: any) => {
+          let updatedRiverCards = data;
+          // update river cards
+          console.log("river cards updated");
+          setRiverCards(updatedRiverCards);
+        });
 
+        socketRef.current.on("updatePlayerCards", (data: any) => { // this needs to be updated so that it can handle individual players
+          let updatedPlayerCards = data;
+          // update player cards
+          setPlayerCards(updatedPlayerCards);
+        });
       }
 
       // Use the imported helper function, passing necessary dependencies
@@ -515,6 +532,19 @@ type Props = {
           })}
       </View>
 
+      <View style={GameScreenStyles.riverCardContainer}>
+        <Image source={cardImages[riverCards[0]]} />
+        <Image source={cardImages[riverCards[1]]} />
+        <Image source={cardImages[riverCards[2]]} />
+        <Image source={cardImages[riverCards[3]]} />
+        <Image source={cardImages[riverCards[4]]} />
+      </View>
+
+      <View style={GameScreenStyles.handCardContainer}>
+        <Image source={cardImages[playerCards[0]]} />
+        <Image source={cardImages[playerCards[1]]} />
+      </View>
+      
       <View style={GameScreenStyles.parentToChipCountAndButtons}>
       <View style={GameScreenStyles.clientChipCountContainer}>
         <Text style={GameScreenStyles.clientChipCountText}>
