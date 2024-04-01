@@ -10,6 +10,7 @@ export type Player = {
   isLittleBlind: boolean;
   isBigBlind: boolean;
   lastBet: number;
+  fold: boolean,
   foldFG: boolean;
 
 };

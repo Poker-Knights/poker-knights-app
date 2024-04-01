@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "../../../App";
 import { GameScreenStyles } from "../../styles/GameScreenStyles";
@@ -212,12 +212,17 @@ type Props = {
   }, [theGame]);
 
 
-  const onExitConfirmPress = () => handleExitConfirmPress(socketRef, Game.id);
+  const onExitConfirmPress = () => {
+    if (!socketRef) { return; }
+    handleExitConfirmPress(socketRef, Game.id);
+  };
 
   // Function to handle when buttons are pressed  // export this to utils file for game
 
   // Also will need to handle splitting the pot logic, possibly mapping a player to their own pots
   const handleButtonPress = (buttonPressed: string) => {
+    if (!socketRef) return; // Early return if null
+
     // Switch to handle the button pressed
     // if the button is pressed, disable the button afterwards until its their turn again
 

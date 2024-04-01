@@ -46,6 +46,7 @@ const createAndAddPlayer = (username: string, socketId: string, game: Game) => {
     fold: false,
     isLittleBlind: false,
     isBigBlind: false,
+    foldFG: false,
   };
 
   // Add the new player to the game
