@@ -41,7 +41,7 @@ export const handleStartBettingRound =
         break;
       default:
         // Deal 1 Card
-        // Burn 1 card\
+        // Burn 1 card
         break;
     }
 
