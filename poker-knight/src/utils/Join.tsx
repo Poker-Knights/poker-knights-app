@@ -32,10 +32,7 @@ export const handleGameJoined =
   (navigation: any, username: string, socketRef: React.RefObject<any>) => (data: any) => {
     const joiningGame: Game = data.gameState;
     console.log("Attempting to join game, game data: " + joiningGame);
-    // navigate to loading screen with game object, username, and socket
-    
-    //navigation.navigate("Loading", {game: joiningGame, username, socketRef})'
-    navigation.navigate("Game", {game: joiningGame, username, socketRef})
+    navigation.navigate("Loading", { username, Game: joiningGame });
   };
 
 // Example event handler for when a game is not found

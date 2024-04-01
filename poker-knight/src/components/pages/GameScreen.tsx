@@ -29,6 +29,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { RouteProp } from "@react-navigation/native";
 import io, { Socket } from "socket.io-client";
+import { SocketContext } from "../../../App";
 import { SERVER_URL } from "../../utils/socket";
 
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
@@ -81,7 +82,6 @@ type Props = {
       });
     }, [navigation]);
 
-
     // There needs to be a function to evaluate which buttons you can and cannot press [MUST BE TESTED]
     function determineAvailableActions(game: typeof Game): {
       betOption: boolean;
@@ -115,15 +115,13 @@ type Props = {
       return actions;
     }
 
-
-    // create socket reference
-    const socketRef = useRef<Socket | null>(null);
+    // Access the socket from the context
+    const socketRef = useContext(SocketContext);
 
     // When compoment mounts, connect to the server, determine available actions
     useEffect(() => {
+      if (!socketRef) return; // Early return if null
 
-
-      socketRef.current = io(SERVER_URL, { transports: ["websocket"] });
       if (socketRef.current) {
   
         // emit initialize players event

@@ -1,6 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import express from 'express';
 import http from 'http';
+import cors from 'cors';
 // Adjust the import path according to your project structure
 import { Game, Player } from '../src/types/Game';
 import { handleCreateGame } from './home_screen/handleCreateGame'; 
@@ -13,6 +14,7 @@ import { handleInitializePlayersforGame } from './game_screen/handleInitializePl
 
 
 const app = express();
+app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
@@ -31,6 +33,14 @@ io.on('connection', (socket: Socket) => {
     socket.on('createGame', handleCreateGame(socket, games)); 
     socket.on('attemptToJoin', handleAttemptToJoin(socket, games));
     // socket.on('exitGame', console.log("we made it here"));
+
+    // Handle joining a room
+    socket.on('joinRoom', ({ gameId }) => {
+      socket.join(gameId);
+      
+      // Broadcast the updated player list to all clients in the room
+      io.to(gameId).emit('updatePlayers', games[gameId].players);
+    });
     
     socket.on("exitGame", (socketID, gameID) => {
       handleExitGame(socket, games, socketID, gameID);
@@ -64,9 +74,6 @@ io.on('connection', (socket: Socket) => {
         // Otherwise move to next player
         io.to(gameId).emit('gameUpdatedAfterPlayerTurn', game);
     });
-
-
-    
     // Example of disconnect event
     socket.on('disconnect', () => {
         console.log(`User disconnected: ${socket.id}`);
