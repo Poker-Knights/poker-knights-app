@@ -11,6 +11,7 @@ export type Player = {
   foldFG: boolean;
   isBigBlind: boolean;
   isLittleBlind: boolean;
+  splitPotVal: number;
 };
 
 export type Game = {

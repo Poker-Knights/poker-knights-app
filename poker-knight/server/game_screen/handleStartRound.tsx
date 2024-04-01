@@ -1,6 +1,5 @@
 import { Socket } from "socket.io";
 import { Game } from "../../src/types/Game";
-import { handleInitializePlayersforGame } from "./handleInitializePlayers";
 
 export const handleStartRound =
   (Socket: Socket, games: { [key: string]: Game }) => (inputGameID: string) => {
@@ -20,6 +19,7 @@ export const handleStartRound =
       player.allInFg = false;
       player.isBigBlind = false;
       player.isLittleBlind = false;
+      player.splitPotVal = 0;
     });
 
     // Assign Blind Bets

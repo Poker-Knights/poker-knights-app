@@ -9,8 +9,13 @@ export const handleStartBettingRound =
     // Increment Betting Round
     game.curBettingRound++;
 
+    // Save current pots
+    game.players.forEach((player) => {
+      player.splitPotVal = game.potSize;
+    });
+
     // emit the updated game
-    Socket.emit("startRound", game);
+    Socket.emit("startBettingRound", game);
 
     return;
   };

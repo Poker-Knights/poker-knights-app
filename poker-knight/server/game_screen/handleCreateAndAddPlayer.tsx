@@ -19,6 +19,7 @@ export const handleCreateAndAddPlayer = (
     foldFG: false,
     isBigBlind: false,
     isLittleBlind: false,
+    splitPotVal: 0,
   };
 
   // Add the new player to the game

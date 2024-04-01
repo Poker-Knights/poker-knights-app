@@ -39,9 +39,16 @@ export const handleStartBettingRound =
         // Deal 3 cards
         // Burn 1 card
         break;
-      default:
+      case 2:
         // Deal 1 Card
         // Burn 1 card
+        break;
+      case 3:
+        // Deal 1 Card
+        // Burn 1 card
+        break;
+      default:
+        // nothing
         break;
     }
 
