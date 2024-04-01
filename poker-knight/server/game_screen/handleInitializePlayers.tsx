@@ -31,7 +31,9 @@ export const handleInitializePlayersforGame =
     );
     
     // game.riverCards = ["spades_3", "hearts_A", "clubs_3", "diamonds_4", "spades_5"];
-    dealRiverCards(game);
+    dealRiverCards(game, 1);
+    console.log(game.riverCards); // Test
+    dealRiverCards(game, 2)
     dealPlayerCards(game);
     Socket.emit("updateRiverCards", game.riverCards);
     Socket.emit("updatePlayerCards", game.players);
