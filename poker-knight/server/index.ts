@@ -1,6 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import express from 'express';
 import http from 'http';
+import cors from 'cors';
 // Adjust the import path according to your project structure
 import { Game, Player } from '../src/types/Game';
 import { handleCreateGame } from './home_screen/handleCreateGame'; 
@@ -12,6 +13,7 @@ import { handleInitializePlayersforGame } from './game_screen/handleInitializePl
 
 
 const app = express();
+app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {

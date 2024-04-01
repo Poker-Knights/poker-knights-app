@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "../../../App";
 import { GameScreenStyles } from "../../styles/GameScreenStyles";
@@ -28,6 +28,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { RouteProp } from "@react-navigation/native";
 import io, { Socket } from "socket.io-client";
+import { SocketContext } from "../../../App";
 import { SERVER_URL } from "../../utils/socket";
 
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
@@ -69,10 +70,11 @@ const GameScreen = ({ navigation, route }: Props) => {
     });
   }, [navigation]);
 
-  const socketRef = useRef<Socket | null>(null);
+  // Access the socket from the context
+  const socketRef = useContext(SocketContext);
 
   useEffect(() => {
-    socketRef.current = io(SERVER_URL, { transports: ["websocket"] });
+    if (!socketRef) return; // Early return if null
 
     // Use the imported helper function, passing necessary dependencies
     const exitGameHandler = handleExit(navigation, socketRef, Game.id);
@@ -97,7 +99,10 @@ const GameScreen = ({ navigation, route }: Props) => {
     setMenuVisible(true);
   };
 
-  const onExitConfirmPress = () => handleExitConfirmPress(socketRef, Game.id);
+  const onExitConfirmPress = () => {
+    if (!socketRef) { return; }
+    handleExitConfirmPress(socketRef, Game.id);
+  };
 
   // Function to handle when buttons are pressed  // export this to utils file for game
   // you have to update player last bet here as well --> Matthew

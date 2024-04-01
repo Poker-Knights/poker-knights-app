@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "../../../App";
 import { Game } from "../../types/Game";
@@ -19,6 +19,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { RouteProp } from "@react-navigation/native";
 //import { addPlayer } from "../../utils/Game";
 import io, { Socket } from 'socket.io-client';
+import { SocketContext } from "../../../App";
 import {SERVER_URL} from '../../utils/socket';
 
 type GameScreenRouteProp = RouteProp<StackParamList, "Join">;
@@ -36,12 +37,13 @@ const Join = ({ navigation, route }: Props) => {
     });
   }, [navigation]);
 
-  const socketRef = useRef<Socket | null>(null)
+  // Access the socket from the context
+  const socketRef = useContext(SocketContext);
   const [gameID, setGameID] = useState("");
 
    // Set up socket connection and event listeners
    useEffect(() => {
-    socketRef.current = io(SERVER_URL, { transports: ['websocket'] });
+    if (!socketRef) return; // Early return if null
 
     // Bind necessary parameters to the handlers
     const gameJoinedHandler = handleGameJoined(navigation, username);
@@ -66,7 +68,10 @@ const Join = ({ navigation, route }: Props) => {
   }, [navigation, username]);
 
 
-  const onJoinPress = () => handleJoinPress(socketRef, username, gameID);
+  const onJoinPress = () => {
+    if (!socketRef) { return; }
+    handleJoinPress(socketRef, username, gameID); 
+  };
   const onBackPress = () => handleBackPress(navigation);
 
 
