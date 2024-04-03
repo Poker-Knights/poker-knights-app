@@ -46,7 +46,7 @@ const Join = ({ navigation, route }: Props) => {
     if (!socketRef) return; // Early return if null
 
     // Bind necessary parameters to the handlers
-    const gameJoinedHandler = handleGameJoined(navigation, username);
+    const gameJoinedHandler = handleGameJoined(navigation, username, socketRef);
     const gameNotFoundHandler = handleGameNotFound();
     const usernameTakenHandler = handleUsernameTaken();
 
@@ -62,10 +62,9 @@ const Join = ({ navigation, route }: Props) => {
         socketRef.current.off('gameJoined', gameJoinedHandler);
         socketRef.current.off('gameNotFound', gameNotFoundHandler);
         socketRef.current.off('usernameTaken', usernameTakenHandler);
-        socketRef.current.disconnect();
       }
     };
-  }, [navigation, username]);
+  }, [navigation]);
 
 
   const onJoinPress = () => {

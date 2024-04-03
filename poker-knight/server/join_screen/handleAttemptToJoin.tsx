@@ -20,9 +20,8 @@ export const handleAttemptToJoin =
     if (game.playerCount < 4) {
       // Use utility function to create and add a new player
       createAndAddPlayer(username, socket.id, game);
-
+      
       socket.emit("gameJoined", { gameState: game });
-      console.log("Player Joined");
     } else {
       socket.emit("gameNotFound", { gameID: inputGameID });
     }

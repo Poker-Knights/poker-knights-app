@@ -17,6 +17,8 @@ import {
   TextInput,
   Alert,
   LogBox,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import io, { Socket } from "socket.io-client";

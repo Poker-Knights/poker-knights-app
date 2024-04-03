@@ -1,29 +1,37 @@
-import React, { useEffect, useState, useContext } from 'react'
-import { StackNavigationProp } from '@react-navigation/stack';
-import { StackParamList } from '../../../App';
-import { styles } from '../../styles/LoadingScreenStyles';
-import { Dimensions, ImageBackground, Image, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState, useContext } from "react";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { StackParamList } from "../../../App";
+import { styles } from "../../styles/LoadingScreenStyles";
+import {
+  Dimensions,
+  ImageBackground,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 import { RouteProp } from "@react-navigation/native";
-import io from 'socket.io-client';
+import io from "socket.io-client";
 import { SocketContext } from "../../../App";
 import { SERVER_URL } from "../../utils/socket.js";
-import { Player } from '../../types/Game';
+import { Player } from "../../types/Game";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
 
-type GameScreenRouteProp = RouteProp<StackParamList, 'Loading'>;
+type GameScreenRouteProp = RouteProp<StackParamList, "Loading">;
 
 type Props = {
-    navigation: StackNavigationProp<StackParamList,'Loading'>;
-    route: GameScreenRouteProp;
-}
+  navigation: StackNavigationProp<StackParamList, "Loading">;
+  route: GameScreenRouteProp;
+};
 
 const Loading = ({ navigation, route }: Props) => {
     const { Game, username } = route.params;
     const [players, setPlayers] = useState<Player[]>(Game.players);
     // State to manage the display text
-    const [displayText, setDisplayText] = useState("LOADING...");
+    const [displayText, setDisplayText] = useState("WAITING...");
     const reservedSpace = 200;
     const screenHeight = Dimensions.get('window').height - reservedSpace;
     const playerContainerHeight = screenHeight / (players.length * 2);
@@ -70,43 +78,62 @@ const Loading = ({ navigation, route }: Props) => {
     
         return () => clearTimeout(timer); // Cleanup the timer
       }
-    }, [players, navigation]);
-    
+    };
+  }, []);
 
-    return (
-    <View style={styles.backgroundContainer}>
-        {/* Top part of the screen with title */}
-        <View style={styles.topContainer}>
-            <Text style={styles.header}>{displayText}</Text>
-        </View>
+  useEffect(() => {
+    if (players.length === 4) {
+      // Update the text right before setting the timeout
+      setDisplayText("JOINING...");
 
-        {players.map((player, index) => (
-          <React.Fragment key={player.id}>
-            <View style={[styles.playerContainer, { height: playerContainerHeight }]}>
-              <Text style={styles.text}>PLAYER {index + 1}: </Text>
-              <Text style={styles.playertext}>{player.name}</Text>
-            </View>
+      const timer = setTimeout(() => {
+        navigation.navigate("Game", {
+          username: Game.players[0].name,
+          Game: Game,
+        });
+      }, 3000); // 3000 milliseconds = 3 seconds
 
-            <View style={styles.midContainer}>
-              <Image
-                source={{ uri: player.avatarUri }}
-                style={styles.avatar}
-                resizeMode="contain" />
-            </View>
-          </React.Fragment>
-        ))}
-            
+      return () => clearTimeout(timer); // Cleanup the timer
+    }
+  }, [players, navigation]);
 
-        {/* Bottom of Screen with poker chip background */}
-        <View style={styles.bottomContainer}>
-            <ImageBackground
-              source={cardBackgroundImage}
-              style={styles.cardBackground}
+  return (
+    <SafeAreaView style={styles.backgroundContainer}>
+      {/* Top part of the screen with title */}
+      <View style={styles.topContainer}>
+        <Text style={styles.header}>{displayText}</Text>
+        <Text style={styles.gameIDText}>Game ID: {Game.id}</Text>
+      </View>
+
+      {players.map((player, index) => (
+        <React.Fragment key={player.id}>
+          <View
+            style={[styles.playerContainer, { height: playerContainerHeight }]}
+          >
+            <Text style={styles.text}>PLAYER {index + 1}: </Text>
+            <Text style={styles.playertext}>{player.name}</Text>
+          </View>
+
+          <View style={styles.midContainer}>
+            <Image
+              source={{ uri: player.avatarUri }}
+              style={styles.avatar}
               resizeMode="contain"
-            ></ImageBackground>
-        </View>
-    </View>
-    );
+            />
+          </View>
+        </React.Fragment>
+      ))}
+
+      {/* Bottom of Screen with poker chip background */}
+      <View style={styles.bottomContainer}>
+        <ImageBackground
+          source={cardBackgroundImage}
+          style={styles.cardBackground}
+          resizeMode="contain"
+        ></ImageBackground>
+      </View>
+    </SafeAreaView>
+  );
 };
 
-export default Loading
+export default Loading;

@@ -42,10 +42,11 @@ const createAndAddPlayer = (username: string, socketId: string, game: Game) => {
     allInFg: false,
     avatarUri: avatarUri, // Call the generateAvatar function here
     currentTurn: false, // Set initial turn status
-    lastBet: 0,
+    lastBet: -1,
     foldFG: false,
     isLittleBlind: false,
     isBigBlind: false,
+    playerCards: [],
   };
 
   // Add the new player to the game
@@ -133,19 +134,12 @@ const handleAllInPress = (game: Game) => {
   nextPlayer(game); // Move to next player
 };
 
-const handleServerComm = (game: Game) => {
-  console.log("Handle Server Comms");
-  /* Kevin do your code here */
-};
-
 // Function to handle a player's turn, return player
 const nextPlayer = (game: Game) => {
   // Logic to handle player's turn
   game.currentPlayer++;
   if (game.currentPlayer >= game.playerCount) game.currentPlayer = 1;
-
-  // Handle Server Communications
-  handleServerComm(game);
+    
 };
 
 const handleExitConfirmPress = (
@@ -183,7 +177,6 @@ export {
   handleExitConfirmPress,
   handleExit,
   createAndAddPlayer,
-  handleServerComm,
   handleAllInPress,
   handleCallPress,
   handleCheckPress,
