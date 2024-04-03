@@ -28,41 +28,55 @@ type Props = {
 };
 
 const Loading = ({ navigation, route }: Props) => {
-  const { Game } = route.params;
-  const [players, setPlayers] = useState<Player[]>(Game.players);
-  // State to manage the display text
-  const [displayText, setDisplayText] = useState("WAITING...");
-  const reservedSpace = 200;
-  const screenHeight = Dimensions.get("window").height - reservedSpace;
-  const playerContainerHeight = screenHeight / (players.length * 2);
+    const { Game, username } = route.params;
+    const [players, setPlayers] = useState<Player[]>(Game.players);
+    // State to manage the display text
+    const [displayText, setDisplayText] = useState("WAITING...");
+    const reservedSpace = 200;
+    const screenHeight = Dimensions.get('window').height - reservedSpace;
+    const playerContainerHeight = screenHeight / (players.length * 2);
 
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerShown: false, // Set this to false to hide the navigation bar
-    });
-  }, [navigation]);
+    React.useLayoutEffect(() => {
+      navigation.setOptions({
+        headerShown: false, // Set this to false to hide the navigation bar
+      });
+    }, [navigation]);
 
-  // Access the socket from the context
-  const socketRef = useContext(SocketContext);
+    // Access the socket from the context
+    const socketRef = useContext(SocketContext);
 
-  useEffect(() => {
-    if (!socketRef || !socketRef.current) return; // Early return if null
+    useEffect(() => {
+      if (!socketRef || !socketRef.current) return; // Early return if null
 
-    // Join the specific game room upon component mount
-    socketRef.current.emit("joinRoom", { gameId: Game.id });
+      // Join the specific game room upon component mount
+      socketRef.current.emit('joinRoom', { gameId: Game.id });
 
-    // Define the function inside useEffect to use its closure advantage
-    const updatePlayersListener = (updatedPlayers: Player[]) => {
-      setPlayers(updatedPlayers);
-    };
+      // Define the function inside useEffect to use its closure advantage
+      const updatePlayersListener = (updatedPlayers: Player[]) => {
+        setPlayers(updatedPlayers);
+      };
+      
+      // Listen for player updates broadcast by the server
+      socketRef.current.on('updatePlayers', updatePlayersListener);
+      
+      // Cleanup on component unmount
+      return () => {
+        if (socketRef.current) {
+          socketRef.current.off('updatePlayers', updatePlayersListener);
+        }
+      };
+    }, []);
 
-    // Listen for player updates broadcast by the server
-    socketRef.current.on("updatePlayers", updatePlayersListener);
+    useEffect(() => {
+      if (players.length === 4) {
+        // Update the text right before setting the timeout
+        setDisplayText("JOINING...");
 
-    // Cleanup on component unmount
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.off("updatePlayers", updatePlayersListener);
+        const timer = setTimeout(() => {
+          navigation.navigate('Game', { username: username, Game: Game });
+        }, 3000); // 3000 milliseconds = 3 seconds
+    
+        return () => clearTimeout(timer); // Cleanup the timer
       }
     };
   }, []);

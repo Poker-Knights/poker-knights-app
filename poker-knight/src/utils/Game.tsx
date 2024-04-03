@@ -4,12 +4,12 @@ import { Player, Game } from "../types/Game";
 // Function to get random but unique avatar and give to player
 const generateAvatar = (players: Player[]): string => {
   // Get the number of players
-  const defaultAvatar: string = require("../Graphics/userIcon.png");
+  const defaultAvatar: string = "https://i.imgur.com/om832wf.png";
   const avatarImages: { [key: string]: any } = {
-    avatar1: require("../Graphics/knight.png"),
-    avatar2: require("../Graphics/PKLogo.png"),
-    avatar3: require("../Graphics/backArrow.png"),
-    avatar4: require("../Graphics/longButton.png"),
+    avatar1: "https://i.imgur.com/3bP0BK0.png",
+    avatar2: "https://i.imgur.com/hUCwjoo.png",
+    avatar3: "https://i.imgur.com/YAldsI9.png",
+    avatar4: "https://i.imgur.com/SS946rP.png",
     // Add all other avatars here
   };
 
@@ -33,22 +33,20 @@ const generateAvatar = (players: Player[]): string => {
 
 // Function to create a new player and add to the specified game
 const createAndAddPlayer = (username: string, socketId: string, game: Game) => {
-  // call generateAvatar here
+  const avatarUri = generateAvatar(game.players); // call generateAvatar here
 
   const newPlayer: Player = {
     id: socketId,
     name: username,
     money: 500, // Default starting money
     allInFg: false,
+    avatarUri: avatarUri, // Call the generateAvatar function here
     currentTurn: false, // Set initial turn status
-    isLittleBlind: false,
-    isBigBlind: false,
     lastBet: -1,
     foldFG: false,
+    isLittleBlind: false,
+    isBigBlind: false,
     playerCards: [],
-    
-
-
   };
 
   // Add the new player to the game
@@ -98,7 +96,6 @@ const handleFoldPress = (game: Game) => {
   // Implement the fold action logic here
   const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
   curPlayer.foldFG = true;
-
   nextPlayer(game); // Move to next player
 };
 
@@ -135,8 +132,6 @@ const handleAllInPress = (game: Game) => {
   curPlayer.money = 0; // Empty players money
   game.potSize += game.currentBet; // Update Pot Value
   nextPlayer(game); // Move to next player
-
-
 };
 
 // Function to handle a player's turn, return player
@@ -144,7 +139,7 @@ const nextPlayer = (game: Game) => {
   // Logic to handle player's turn
   game.currentPlayer++;
   if (game.currentPlayer >= game.playerCount) game.currentPlayer = 1;
-
+    
 };
 
 const handleExitConfirmPress = (
