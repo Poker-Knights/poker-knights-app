@@ -55,8 +55,6 @@ type Props = {
     const [theGame, setGame] = useState(Game); // this is your client side representation of game object
 
 
-
-    
     const [menuVisible, setMenuVisible] = useState<boolean>(false);
     let [theUsername, setUsername] = useState(username); // this is your client side representation of game object
 
@@ -87,7 +85,7 @@ type Props = {
       });
     }, [navigation]);
 
-    // There needs to be a function to evaluate which buttons you can and cannot press [MUST BE TESTED]
+    // There needs to be a function to evaluate which buttons you can and cannot press
     function determineAvailableActions(game: typeof Game): {
       betOption: boolean;
       fold: boolean;
@@ -126,46 +124,16 @@ type Props = {
     // When compoment mounts, connect to the server, determine available actions
     useEffect(() => {
       if (!socketRef) return; // Early return if null
-
+      
       if (socketRef.current) {
-  
-        // emit initialize players event
-        socketRef.current.emit("initializePlayers", Game.id); // this will be removed
-
-        // listen for playersForGameInitialized event
-        socketRef.current.on("playersForGameInitialized", (data: any) => {
-          let initGame = data.gameState;
-          
-
-          let newPlayer = initGame.players.find(
-            (p: { name: string }) => p.name === theUsername
-          );  
-          
-          // update game state
-          setPlayer(newPlayer);
-          setGame(initGame);
-          
-
-          console.log(newPlayer)
-
-          // turn off the event listener
-          if (socketRef.current) {
-            socketRef.current.off("playersForGameInitialized");
-          }
-        });
         
-        socketRef.current.on("updateRiverCards", (data: any) => {
-          let updatedRiverCards = data;
-          // update river cards
-          console.log("river cards updated");
-          setRiverCards(updatedRiverCards);
-        });
 
         socketRef.current.on("updatePlayerCards", (data: any) => { // this needs to be updated so that it can handle individual players
           let updatedPlayerCards = data;
           // update player cards
           setPlayerCards(updatedPlayerCards);
         });
+        
       }
 
       // Use the imported helper function, passing necessary dependencies
@@ -321,7 +289,7 @@ type Props = {
     // Send updated game object back to server if button was pressed
     if (socketRef.current) {
       socketRef.current.emit(
-        "updateGameAfterPlayerButtonPress",
+        'playerTurnComplete',
         theGame,
         theGame.id
       );
@@ -330,12 +298,9 @@ type Props = {
 
   return (
     // Things to update on UI (not in any particular order)
-    // 2. Player Turn Indicator
     // 3. Big blind & little blind indicator
     // 4. Indicate if the Player Folded
     // 5. If the player left the game or is eliminated (gray out the player prpfle picture)
-    // 6. card display
-    // 9. have the UI reflected so that client side user is the main user
 
     <View style={GameScreenStyles.backgroundContainer}>
       
@@ -480,7 +445,7 @@ type Props = {
       {/* Restructure screen so only other players avatars get displayed here*/}
       <View style={GameScreenStyles.playersContainer}>
         {Game.players
-          .filter((player) => player.name === thePlayer.name) // Filter out the main player
+          .filter((player) => player.name !== thePlayer.name) // Filter out the main player
           .map((player, index, filteredArray) => {
             // Use filtered array for mapping
             // Determine the style based on player's index in the filtered array
@@ -526,7 +491,6 @@ type Props = {
                 <Text style={GameScreenStyles.playerMoney}>
                   {formatCurrency(player.money)}
                 </Text>
-                {/*player.currentTurn && <View style={GameScreenStyles.turnIndicator} />*/}
               </View>
             );
           })}

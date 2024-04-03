@@ -34,9 +34,6 @@ export const handleCreateGame =
     // Store the new game in the games object
     games[gameID] = newGame;
 
-    // Join the creator to the game room
-    socket.join(gameID);
-
     console.log("Server Side Creating Game")
 
     // Notify the creator that the game has been created successfully

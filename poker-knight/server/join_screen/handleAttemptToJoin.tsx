@@ -20,10 +20,6 @@ export const handleAttemptToJoin =
     if (game.playerCount < 4) {
       // Use utility function to create and add a new player
       createAndAddPlayer(username, socket.id, game);
-
-
-      // Join the player to the game room
-      socket.join(inputGameID);
       
       socket.emit("gameJoined", { gameState: game });
     } else {

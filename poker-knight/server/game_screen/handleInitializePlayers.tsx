@@ -7,7 +7,6 @@ export const handleInitializePlayersforGame =
   (Socket: Socket, games: { [key: string]: Game }) => (inputGameID: string) => {
 
 
-    console.log("Server Side Initializing Players");
     // Find the game with the given ID
     const game = games[inputGameID];
     game.gameStarted = true;
@@ -27,18 +26,17 @@ export const handleInitializePlayersforGame =
     game.currentPlayer = 1;
     
 
-    //handleStartRound(Socket, games);
     
+    // this will be reworked with matts implementation
     dealRiverCards(game, 1);
-    console.log(game.riverCards); // Test
+    console.log(game.riverCards);
     dealRiverCards(game, 2)
     dealPlayerCards(game);
     Socket.emit("updateRiverCards", game.riverCards);
     Socket.emit("updatePlayerCards", game.players);
     
     console.log(game.players)
-    // emit the updated game
-    Socket.emit("playersForGameInitialized", { gameState: game });
+
 
     return;
   };
