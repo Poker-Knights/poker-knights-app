@@ -43,7 +43,7 @@ const createAndAddPlayer = (username: string, socketId: string, game: Game) => {
     avatarUri: avatarUri, // Call the generateAvatar function here
     currentTurn: false, // Set initial turn status
     lastBet: 0,
-    fold: false,
+    foldFG: false,
     isLittleBlind: false,
     isBigBlind: false,
   };
@@ -94,7 +94,7 @@ const handleCallPress = (game: Game) => {
 const handleFoldPress = (game: Game) => {
   // Implement the fold action logic here
   const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
-  curPlayer.fold = true;
+  curPlayer.foldFG = true;
   nextPlayer(game); // Move to next player
 };
 

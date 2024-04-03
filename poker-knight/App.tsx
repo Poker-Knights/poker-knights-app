@@ -27,7 +27,7 @@ export type StackParamList = {
   Home: undefined;
   Join: { username: string };
   Game: { username: string; Game: Game };
-  Loading: { Game: Game };
+  Loading: { Game: Game, username: string };
 };
 
 const Stack = createStackNavigator<StackParamList>();

@@ -8,7 +8,7 @@ export type Player = {
   avatarUri?: string;
   currentTurn: boolean;
   lastBet: number;
-  fold: boolean;
+  foldFG: boolean;
   isLittleBlind: boolean;
   isBigBlind: boolean;
 };

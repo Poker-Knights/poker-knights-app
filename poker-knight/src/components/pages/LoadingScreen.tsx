@@ -20,7 +20,7 @@ type Props = {
 }
 
 const Loading = ({ navigation, route }: Props) => {
-    const { Game } = route.params;
+    const { Game, username } = route.params;
     const [players, setPlayers] = useState<Player[]>(Game.players);
     // State to manage the display text
     const [displayText, setDisplayText] = useState("LOADING...");
@@ -65,7 +65,7 @@ const Loading = ({ navigation, route }: Props) => {
         setDisplayText("JOINING...");
 
         const timer = setTimeout(() => {
-          navigation.navigate('Game', { username: Game.players[0].name, Game: Game });
+          navigation.navigate('Game', { username: username, Game: Game });
         }, 3000); // 3000 milliseconds = 3 seconds
     
         return () => clearTimeout(timer); // Cleanup the timer
