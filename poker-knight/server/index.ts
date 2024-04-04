@@ -8,10 +8,7 @@ import { handleCreateGame } from './home_screen/handleCreateGame';
 import { handleAttemptToJoin } from './join_screen/handleAttemptToJoin';
 import { handleEndRound } from "./game_screen/handleEndRound";
 import { handleExitGame } from './game_screen/handleExitGame'; 
-import { handleInitializePlayersforGame } from './game_screen/handleInitializePlayers';
-
-
-
+import { handleStartGame } from './game_screen/handleStartGame';
 
 const app = express();
 app.use(cors());
@@ -37,10 +34,11 @@ io.on('connection', (socket: Socket) => {
     // Handle joining a room
     socket.on('joinRoom', ({ gameId }) => {
       socket.join(gameId);
-      
       // Broadcast the updated player list to all clients in the room
       io.to(gameId).emit('updatePlayers', games[gameId]);
     });
+
+    socket.on("startGame", handleStartGame(socket, games));
 
     
     socket.on("exitGame", (socketID, gameID) => {

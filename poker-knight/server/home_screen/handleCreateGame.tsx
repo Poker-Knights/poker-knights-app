@@ -5,7 +5,7 @@ import { handleCreateAndAddPlayer } from "../game_screen/handleCreateAndAddPlaye
 export const handleCreateGame =
   (socket: Socket, games: { [key: string]: Game }) =>
   (gameID: string, username: string) => {
-    // Create a new game object
+    // Create a new game object\
     const newGame: Game = {
       hostPlayer: username,
       id: gameID,

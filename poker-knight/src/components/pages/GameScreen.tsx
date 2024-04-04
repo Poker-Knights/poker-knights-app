@@ -117,8 +117,6 @@ const GameScreen = ({ navigation, route }: Props) => {
 
   // When compoment mounts, connect to the server, determine available actions
   useEffect(() => {
-    console.log("GAME SCREEN CLIENT USER " + username);
-
     let initPlayer = theGame.players.find(
       (p: { name: string }) => p.name === theUsername
     );
@@ -129,30 +127,12 @@ const GameScreen = ({ navigation, route }: Props) => {
 
     if (socketRef.current) {
       // emit initialize players event
-      socketRef.current.emit("startGame", Game.id);
-      // listen for playersForGameInitialized event
 
       socketRef.current.on("updatePlayerCards", (data: any) => {
         // this needs to be updated so that it can handle individual players
         let updatedPlayerCards = data;
         // update player cards
         setPlayerCards(updatedPlayerCards);
-      });
-
-      socketRef.current.on("gameStarted", (data: any) => {
-        let initGame = data;
-        let newPlayer = initGame.players.find(
-          (p: { name: string }) => p.name === theUsername
-        );
-
-        // update game state
-        setGame(initGame);
-        setPlayer(newPlayer);
-
-        // turn off the event listener
-        if (socketRef.current) {
-          socketRef.current.off("gameStarted");
-        }
       });
 
       // listen for updateGameAfterPlayerButtonPress event

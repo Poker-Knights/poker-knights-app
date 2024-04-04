@@ -54,7 +54,6 @@ const Loading = ({ navigation, route }: Props) => {
 
     // Define the function inside useEffect to use its closure advantage
     const updatePlayersListener = (updatedGame: typeof Game) => {
-      console.log(updatedGame);
       setUpdatedGame(updatedGame);
       setPlayers(updatedGame.players);
     };
@@ -74,10 +73,25 @@ const Loading = ({ navigation, route }: Props) => {
     if (updatedGame.players.length === 2) {
       // Update the text right before setting the timeout
       setDisplayText("JOINING...");
+      // emit to server that players are in the game
+      if (!socketRef || !socketRef.current) return;
+      socketRef.current.emit("startGame", updatedGame);
+      socketRef.current.on("gameStarted", (data: any) => {
+        let initGame = data;
 
+        // update game state
+        setUpdatedGame(initGame);
+
+        // turn off the event listener
+        if (socketRef.current) {
+          socketRef.current.off("gameStarted");
+        }
+      });
       const timer = setTimeout(() => {
-        // emit to server that players are in the game
-        navigation.navigate("Game", { Game: updatedGame, username: username });
+        navigation.navigate("Game", {
+          Game: updatedGame,
+          username: username,
+        });
       }, 1000); // 3000 milliseconds = 3 seconds
 
       return () => clearTimeout(timer); // Cleanup the timer
