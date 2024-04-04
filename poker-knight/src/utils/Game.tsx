@@ -31,30 +31,6 @@ const generateAvatar = (players: Player[]): string => {
   } else return defaultAvatar;
 };
 
-// Function to create a new player and add to the specified game
-const createAndAddPlayer = (username: string, socketId: string, game: Game) => {
-  // call generateAvatar here
-
-  const newPlayer: Player = {
-    id: socketId,
-    name: username,
-    money: 500, // Default starting money
-    allInFg: false,
-    //avatarUri: generateAvatar(game.players), // Call the generateAvatar function here
-    currentTurn: false, // Set initial turn status
-    lastBet: 0,
-    fold: false,
-    isLittleBlind: false,
-    isBigBlind: false,
-  };
-
-  // Add the new player to the game
-  game.players.push(newPlayer);
-  game.playerCount++; // Update player count
-
-  return newPlayer; // Return the new player object for any further use
-};
-
 // Function to remove a player from the specified game
 const removePlayer = (socketId: string, game: Game) => {
   console.log(`Current player count: ${game.playerCount}`);
@@ -94,7 +70,7 @@ const handleCallPress = (game: Game) => {
 const handleFoldPress = (game: Game) => {
   // Implement the fold action logic here
   const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
-  curPlayer.fold = true;
+  curPlayer.foldFG = true;
   nextPlayer(game); // Move to next player
 };
 
@@ -133,19 +109,11 @@ const handleAllInPress = (game: Game) => {
   nextPlayer(game); // Move to next player
 };
 
-const handleServerComm = (game: Game) => {
-  console.log("Handle Server Comms");
-  /* Kevin do your code here */
-};
-
 // Function to handle a player's turn, return player
 const nextPlayer = (game: Game) => {
   // Logic to handle player's turn
   game.currentPlayer++;
   if (game.currentPlayer >= game.playerCount) game.currentPlayer = 1;
-
-  // Handle Server Communications
-  handleServerComm(game);
 };
 
 const handleExitConfirmPress = (
@@ -182,8 +150,6 @@ export {
   removePlayer,
   handleExitConfirmPress,
   handleExit,
-  createAndAddPlayer,
-  handleServerComm,
   handleAllInPress,
   handleCallPress,
   handleCheckPress,

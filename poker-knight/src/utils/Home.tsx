@@ -1,5 +1,6 @@
 import { Alert } from "react-native";
 import { Game } from "../types/Game";
+import { NavigationHelpersContext } from "@react-navigation/native";
 
 // Event emitters, helper functions, button presses
 export const createGame = (
@@ -58,13 +59,10 @@ export const handleGameCreated =
   ) =>
   (data: any) => {
     const newGame: Game = data.gameState;
-    console.log(
-      `Game ${newGame.id} has been created with username ${newGame.players[0].name}!`
-    );
     setGame(newGame); // Update the game state with the new game information
-
     // Navigate to loading screen until enough players
-    navigation.navigate("Game", {
+    navigation.navigate("Loading", {
       Game: newGame,
+      username: newGame.players[0].name,
     });
   };

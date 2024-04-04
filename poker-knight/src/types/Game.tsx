@@ -7,18 +7,28 @@ export type Player = {
   allInFg: boolean;
   avatarUri?: string;
   currentTurn: boolean;
-  lastBet: number;
-  fold: boolean;
   isLittleBlind: boolean;
   isBigBlind: boolean;
+  lastBet: number;
+  foldFG: boolean;
+  playerCards: string[];
+  splitPotVal: number;
 };
 
 export type Game = {
   id: string;
+  hostPlayer: string;
   players: Player[];
+  curLittleBlind: number;
+  curBigBlind: number;
+  littleBlindBet: number;
+  bigBlindBet: number;
   potSize: number;
   playerCount: number;
   currentBet: number;
   currentPlayer: number;
   gameStarted: boolean;
+  riverCards: string[];
+  deckCards: string[];
+  curBettingRound: number;
 };

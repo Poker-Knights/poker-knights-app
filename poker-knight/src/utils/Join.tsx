@@ -1,6 +1,8 @@
 // Functions to help with the Join component
 
+import { Socket } from "socket.io-client";
 import { Game } from "../types/Game";
+import { NavigationHelpersContext } from "@react-navigation/native";
 
 // Event emitters, helper functions, button presses
 export const handleJoinPress = (
@@ -19,6 +21,7 @@ export const handleJoinPress = (
 
 export const handleBackPress = (navigation: any) => {
   console.log("Back Arrow Pressed");
+  // disconnect from the socket
   navigation.navigate("Home");
 };
 
@@ -26,10 +29,11 @@ export const handleBackPress = (navigation: any) => {
 
 // Example event handler for when a game is successfully joined
 export const handleGameJoined =
-  (navigation: any, username: string) => (data: any) => {
+  (navigation: any, username: string, socketRef: React.RefObject<any>) =>
+  (data: any) => {
     const joiningGame: Game = data.gameState;
     console.log("Attempting to join game, game data: " + joiningGame);
-    navigation.navigate("Game", { username, Game: joiningGame });
+    navigation.navigate("Loading", { username, Game: joiningGame });
   };
 
 // Example event handler for when a game is not found
