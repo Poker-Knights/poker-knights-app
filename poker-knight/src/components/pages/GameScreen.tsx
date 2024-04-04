@@ -72,9 +72,9 @@ const GameScreen = ({ navigation, route }: Props) => {
   let [playerCards, setPlayerCards] = useState<string[]>(["back", "back"]); // Initialize player cards state with cards face down
 
   let [actionButtonsEnabled, setActionButtonsEnabled] = useState({
-    betOption: true,
-    fold: true,
-    allIn: true,
+    betOption: false,
+    fold: false,
+    allIn: false,
   });
 
   React.useLayoutEffect(() => {
@@ -89,13 +89,11 @@ const GameScreen = ({ navigation, route }: Props) => {
     fold: boolean;
     allIn: boolean;
   } {
-    const currentPlayer = game.players[game.currentPlayer - 1];
-
     // Default actions
     let actions = {
-      betOption: true,
-      fold: true,
-      allIn: true,
+      betOption: false,
+      fold: false,
+      allIn: false,
     };
 
     if (!thePlayer.foldFG && !thePlayer.allInFg) {
@@ -110,6 +108,7 @@ const GameScreen = ({ navigation, route }: Props) => {
         actions.allIn = true;
       }
     }
+
     return actions;
   }
 
@@ -129,11 +128,38 @@ const GameScreen = ({ navigation, route }: Props) => {
     if (!socketRef) return; // Early return if null
 
     if (socketRef.current) {
+      // emit initialize players event
+      socketRef.current.emit("startGame", Game.id);
+      // listen for playersForGameInitialized event
+
       socketRef.current.on("updatePlayerCards", (data: any) => {
         // this needs to be updated so that it can handle individual players
         let updatedPlayerCards = data;
         // update player cards
         setPlayerCards(updatedPlayerCards);
+      });
+
+      socketRef.current.on("gameStarted", (data: any) => {
+        let initGame = data;
+        let newPlayer = initGame.players.find(
+          (p: { name: string }) => p.name === theUsername
+        );
+
+        // update game state
+        setGame(initGame);
+        setPlayer(newPlayer);
+
+        // turn off the event listener
+        if (socketRef.current) {
+          socketRef.current.off("gameStarted");
+        }
+      });
+
+      // listen for updateGameAfterPlayerButtonPress event
+      socketRef.current.on("updateGameAfterPlayerButtonPress", (data: any) => {
+        let updatedGame = data.gameState;
+        // update game state
+        setGame(updatedGame);
       });
     }
 
@@ -192,6 +218,7 @@ const GameScreen = ({ navigation, route }: Props) => {
       isMounted.current = true;
     }
   }, [theGame]);
+  //*/
 
   const onExitConfirmPress = () => {
     if (!socketRef) {

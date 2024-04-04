@@ -12,7 +12,7 @@ export type Player = {
   lastBet: number;
   foldFG: boolean;
   playerCards: string[];
-
+  splitPotVal: number;
 };
 
 export type Game = {
@@ -30,4 +30,5 @@ export type Game = {
   gameStarted: boolean;
   riverCards: string[];
   deckCards: string[];
+  curBettingRound: number;
 };

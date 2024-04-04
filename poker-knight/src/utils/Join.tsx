@@ -29,7 +29,8 @@ export const handleBackPress = (navigation: any) => {
 
 // Example event handler for when a game is successfully joined
 export const handleGameJoined =
-  (navigation: any, username: string, socketRef: React.RefObject<any>) => (data: any) => {
+  (navigation: any, username: string, socketRef: React.RefObject<any>) =>
+  (data: any) => {
     const joiningGame: Game = data.gameState;
     console.log("Attempting to join game, game data: " + joiningGame);
     navigation.navigate("Loading", { username, Game: joiningGame });

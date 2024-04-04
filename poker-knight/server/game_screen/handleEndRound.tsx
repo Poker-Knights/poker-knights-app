@@ -1,6 +1,5 @@
 import { Socket } from "socket.io";
 import { Game } from "../../src/types/Game";
-import { handleInitializePlayersforGame } from "./handleInitializePlayers";
 
 export const handleEndRound =
   (Socket: Socket, games: { [key: string]: Game }) => (inputGameID: string) => {
@@ -10,18 +9,9 @@ export const handleEndRound =
     // Perform Hand Analysis
 
     // Perform Chip adjustments
+    // Round winner chips += potSize
 
-    // Increment Blinds
-    if (game.curLittleBlind === game.playerCount) {
-      game.curLittleBlind = 1;
-    } else {
-      game.curLittleBlind++;
-    }
-    if (game.curBigBlind === game.playerCount) {
-      game.curBigBlind = 1;
-    } else {
-      game.curBigBlind++;
-    }
+    // Undeal/remove Cards
 
     // emit the updated game
     Socket.emit("roundEnded", game);
