@@ -39,8 +39,9 @@ io.on('connection', (socket: Socket) => {
       socket.join(gameId);
       
       // Broadcast the updated player list to all clients in the room
-      io.to(gameId).emit('updatePlayers', games[gameId].players);
+      io.to(gameId).emit('updatePlayers', games[gameId]);
     });
+
     
     socket.on("exitGame", (socketID, gameID) => {
       handleExitGame(socket, games, socketID, gameID);
