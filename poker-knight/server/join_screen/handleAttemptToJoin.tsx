@@ -1,6 +1,7 @@
 import { Socket } from "socket.io";
 import { Game } from "../../src/types/Game";
 import { handleCreateAndAddPlayer } from "../game_screen/handleCreateAndAddPlayer";
+import { amntOfPlayers } from "../../src/components/pages/LoadingScreen";
 
 export const handleAttemptToJoin =
   (socket: Socket, games: { [key: string]: Game }) =>
@@ -17,7 +18,7 @@ export const handleAttemptToJoin =
       return;
     }
 
-    if (game.playerCount < 1) { // sync this with number of players we want to allow to loading screen
+    if (game.playerCount < amntOfPlayers) { // sync this with number of players we want to allow to loading screen
       // Use utility function to create and add a new player
       handleCreateAndAddPlayer(username, socket.id, game);
 

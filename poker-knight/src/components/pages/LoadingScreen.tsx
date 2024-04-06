@@ -20,6 +20,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
 
+export const amntOfPlayers = 2; // sync this with number of players we want to allow to loading screen
+
 type GameScreenRouteProp = RouteProp<StackParamList, "Loading">;
 
 type Props = {
@@ -71,7 +73,7 @@ const Loading = ({ navigation, route }: Props) => {
 
 
   useEffect(() => {
-    if (players.length !== 1) return;
+    if (players.length !== amntOfPlayers) return;
   
     setDisplayText("JOINING...");
   
@@ -82,15 +84,11 @@ const Loading = ({ navigation, route }: Props) => {
     let timer : any; // Declare timer here for broader scope
   
     const handleGameStarted = (initGame: any) => {
-      console.log("STARTING GAME" + players.length);
-      console.log(JSON.stringify(initGame));
-  
       // Update game state
       setUpdatedGame(initGame);
   
       // Set a delay before navigating
       timer = setTimeout(() => {
-        console.log("ABOUT TO NAVIGATE");
         navigation.navigate("Game", {
           Game: initGame,
           username: username,
