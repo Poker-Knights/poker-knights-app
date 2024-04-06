@@ -10,7 +10,7 @@ export const handleStartGame =
     curGame.curLittleBlind = 1;
     curGame.curBigBlind = 2;
     curGame.currentPlayer = 1;
-    curGame.playerCount = 4;
+    curGame.playerCount = 1; // change this
     curGame.gameStarted = true;
 
     // give default starting amount of money

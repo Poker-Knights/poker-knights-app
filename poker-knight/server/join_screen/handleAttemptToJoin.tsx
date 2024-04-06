@@ -17,7 +17,7 @@ export const handleAttemptToJoin =
       return;
     }
 
-    if (game.playerCount < 4) {
+    if (game.playerCount < 1) { // sync this with number of players we want to allow to loading screen
       // Use utility function to create and add a new player
       handleCreateAndAddPlayer(username, socket.id, game);
 
