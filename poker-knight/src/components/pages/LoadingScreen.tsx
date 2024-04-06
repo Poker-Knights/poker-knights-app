@@ -20,6 +20,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
 
+export const amntOfPlayers = 2; // sync this with number of players we want to allow to loading screen
+
 type GameScreenRouteProp = RouteProp<StackParamList, "Loading">;
 
 type Props = {
@@ -67,36 +69,47 @@ const Loading = ({ navigation, route }: Props) => {
         socketRef.current.off("updatePlayers", updatePlayersListener);
       }
     };
-  }, [navigation]);
+  }, []);  // removed navigation dependency, only occurs when component mounts and unmounts
+
 
   useEffect(() => {
-    if (updatedGame.players.length === 2) {
-      // Update the text right before setting the timeout
-      setDisplayText("JOINING...");
-      // emit to server that players are in the game
-      if (!socketRef || !socketRef.current) return;
-      socketRef.current.emit("startGame", updatedGame);
-      socketRef.current.on("gameStarted", (data: any) => {
-        let initGame = data;
-
-        // update game state
-        setUpdatedGame(initGame);
-
-        // turn off the event listener
-        if (socketRef.current) {
-          socketRef.current.off("gameStarted");
-        }
-      });
-      const timer = setTimeout(() => {
+    if (players.length !== amntOfPlayers) return;
+  
+    setDisplayText("JOINING...");
+  
+    if (!socketRef || !socketRef.current) return;
+  
+    socketRef.current.emit("startGame", updatedGame);
+  
+    let timer : any; // Declare timer here for broader scope
+  
+    const handleGameStarted = (initGame: any) => {
+      // Update game state
+      setUpdatedGame(initGame);
+  
+      // Set a delay before navigating
+      timer = setTimeout(() => {
         navigation.navigate("Game", {
-          Game: updatedGame,
+          Game: initGame,
           username: username,
         });
-      }, 1000); // 3000 milliseconds = 3 seconds
-
-      return () => clearTimeout(timer); // Cleanup the timer
-    }
-  }, [updatedGame]);
+      }, 1000); // Delay of 1 second
+    };
+  
+    // Register the event listener
+    socketRef.current.once("gameStarted", handleGameStarted);
+  
+    // Cleanup function to remove listener and clear timeout if the component unmounts
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.off("gameStarted", handleGameStarted);
+      }
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [players.length]);
+  
 
   return (
     <SafeAreaView style={styles.backgroundContainer}>
