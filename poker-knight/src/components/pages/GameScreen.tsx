@@ -67,6 +67,7 @@ const GameScreen = ({ navigation, route }: Props) => {
   // set the initial state as an empty object
   let [thePlayer, setPlayer] = useState<any>({});
 
+  let [playerIndex, setPlayerIndex] = useState<number>(0); // Initialize player index state with a default value
   // Set cards
   let [riverCards, setRiverCards] = useState<string[]>(theGame.riverCards); // Initialize river cards state with cards face down
   let [playerCards, setPlayerCards] = useState<string[]>(["back", "back"]); // Initialize player cards state with cards face down
@@ -121,13 +122,25 @@ const GameScreen = ({ navigation, route }: Props) => {
       (p: { name: string }) => p.name === theUsername
     );
 
+    let playerIndex = theGame.players.findIndex(
+      (p: { name: string }) => p.name === theUsername
+    );
+
     setPlayer(initPlayer);
+    setPlayerIndex(playerIndex);
 
     if (!socketRef) return; // Early return if null
 
     if (socketRef.current) {
       // Upon navigation to the game screen, start the round
       socketRef.current.emit("startRound", theGame.id, theGame);
+
+      socketRef.current.on("updatePlayerCards", (data: any) => {
+        // this needs to be updated so that it can handle individual players
+        let updatedPlayerCards = data.playerCards[playerIndex];
+        // update player cards
+        setPlayerCards(updatedPlayerCards);
+      });
     }
 
     // Use the imported helper function, passing necessary dependencies
@@ -151,17 +164,27 @@ const GameScreen = ({ navigation, route }: Props) => {
   useEffect(() => {
     if (!socketRef || !socketRef.current) return; // Early return if null
 
-    const updateGameListener = (updatedGame: typeof Game) => {
+    const roundStartedListener = (updatedGame: typeof Game) => {
       setGame(updatedGame);
+      setRiverCards(updatedGame.riverCards);
+
+      // Update player cards for the client player
+      let playerIndex = updatedGame.players.findIndex(
+        (p: { name: string }) => p.name === theUsername
+      );
+
+      let updatedPlayer = updatedGame.players[playerIndex];
+
+      setPlayer(updatedPlayer);
     };
 
     // Listen for game updates broadcast by the server
-    socketRef.current.on("roundStarted", updateGameListener);
+    socketRef.current.on("roundStarted", roundStartedListener);
 
     // Cleanup on component unmount
     return () => {
       if (socketRef.current) {
-        socketRef.current.off("roundStarted", updateGameListener);
+        socketRef.current.off("roundStarted", roundStartedListener);
       }
     };
   }, [theGame]);

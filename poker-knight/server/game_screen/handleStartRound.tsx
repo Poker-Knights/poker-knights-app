@@ -77,6 +77,8 @@ export const handleStartRound =
     game.currentPlayer = curPlayerInd; // Set new player index
     players[game.currentPlayer - 1].currentTurn = true;
 
+    game.currentBet = game.bigBlindBet;
+
     // call function to 'give' players their cards here, preset river
     dealRiverCards(game, 1);
     dealPlayerCards(game);

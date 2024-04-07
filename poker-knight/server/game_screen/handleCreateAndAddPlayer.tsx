@@ -21,6 +21,7 @@ export const handleCreateAndAddPlayer = (
     isBigBlind: false,
     playerCards: [],
     splitPotVal: 0,
+    eliminated: false,
   };
 
   // Add the new player to the game
