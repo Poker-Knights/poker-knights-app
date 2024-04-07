@@ -3,15 +3,8 @@ import { Game } from "../../src/types/Game";
 import { dealRiverCards, dealPlayerCards } from "./cardUtils";
 
 export const handleStartRound =
-  (Socket: Socket, games: { [key: string]: Game }) =>
-  (inputGameID: string, gameClient: Game) => {
+  (game: Game) => {
     // Find the game with the given ID
-
-    let gameServer = games[inputGameID];
-
-    gameServer = gameClient;
-    let game = gameServer;
-
     // Assign the first player as little blind and second player as big blind
     let players = game.players;
 
@@ -83,10 +76,18 @@ export const handleStartRound =
     dealRiverCards(game, 1);
     dealPlayerCards(game);
 
+    // if the round count is 0, we need to return the game
+    if (game.roundCount === 0) {
+      console.log("FIRST ROUND STARTED");
+      game.roundCount += 1;
+      return game;
+    }
+
     // increment round count
     game.roundCount += 1;
 
+
     // Emit the updated game state to all clients in the room
-    Socket.to(inputGameID).emit("roundStarted", game);
-    return;
+    // Socket.to(inputGameID).emit("roundStarted", game); // UNTESTED
+    return game;
   };

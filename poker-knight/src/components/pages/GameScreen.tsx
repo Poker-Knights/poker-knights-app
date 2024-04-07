@@ -132,9 +132,6 @@ const GameScreen = ({ navigation, route }: Props) => {
     if (!socketRef) return; // Early return if null
 
     if (socketRef.current) {
-      // Upon navigation to the game screen, start the round
-      socketRef.current.emit("startRound", theGame.id, theGame);
-
       socketRef.current.on("updatePlayerCards", (data: any) => {
         // this needs to be updated so that it can handle individual players
         let updatedPlayerCards = data.playerCards[playerIndex];
@@ -465,7 +462,9 @@ const GameScreen = ({ navigation, route }: Props) => {
               playerStyle = GameScreenStyles.playerRight; // Last player
 
             // Add a yellow ring around the avatar if it's the player's turn
-            if (player.currentTurn) {
+            console.log(player.name + ": " + player.currentTurn);
+            if (player.currentTurn === true) {
+              console.log("It's the player's turn " + thePlayer.name);
               GameScreenStyles.activeTurnAvatar;
             }
 
@@ -476,7 +475,7 @@ const GameScreen = ({ navigation, route }: Props) => {
               >
                 <Image
                   source={{ uri: player.avatarUri }}
-                  style={GameScreenStyles.avatar}
+                  style={GameScreenStyles.avatar} 
                   resizeMode="contain"
                 />
 

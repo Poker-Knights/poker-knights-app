@@ -10,6 +10,7 @@ import { handleEndRound } from "./game_screen/handleEndRound";
 import { handleExitGame } from "./game_screen/handleExitGame";
 import { handleStartGame } from "./game_screen/handleStartGame";
 import { handleStartRound } from "./game_screen/handleStartRound";
+import { PLAYER_COUNT } from "../src/utils/socket";
 
 const app = express();
 app.use(cors());
@@ -37,10 +38,17 @@ io.on("connection", (socket: Socket) => {
     socket.join(gameId);
     // Broadcast the updated player list to all clients in the room
     io.to(gameId).emit("updatePlayers", games[gameId]);
+
+    if (games[gameId].players.length === PLAYER_COUNT) {
+      // Start the game, pass the game id to get the game you need to start
+      let game = games[gameId];
+      game = handleStartGame(game); // game configure to start
+      games[gameId] = game;
+      io.to(gameId).emit("gameStarted", games[gameId]);
+    }
   });
 
-  socket.on("startGame", handleStartGame(socket, games));
-  socket.on("startRound", handleStartRound(socket, games));
+ 
 
   socket.on("exitGame", (socketID, gameID) => {
     handleExitGame(socket, games, socketID, gameID);
