@@ -13,6 +13,7 @@ export type Player = {
   foldFG: boolean;
   playerCards: string[];
   splitPotVal: number;
+  eliminated: boolean;
 };
 
 export type Game = {
@@ -31,4 +32,5 @@ export type Game = {
   riverCards: string[];
   deckCards: string[];
   curBettingRound: number;
+  roundCount: number;
 };

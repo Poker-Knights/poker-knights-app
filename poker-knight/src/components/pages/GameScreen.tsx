@@ -126,21 +126,8 @@ const GameScreen = ({ navigation, route }: Props) => {
     if (!socketRef) return; // Early return if null
 
     if (socketRef.current) {
-      // emit initialize players event
-
-      socketRef.current.on("updatePlayerCards", (data: any) => {
-        // this needs to be updated so that it can handle individual players
-        let updatedPlayerCards = data;
-        // update player cards
-        setPlayerCards(updatedPlayerCards);
-      });
-
-      // listen for updateGameAfterPlayerButtonPress event
-      socketRef.current.on("updateGameAfterPlayerButtonPress", (data: any) => {
-        let updatedGame = data.gameState;
-        // update game state
-        setGame(updatedGame);
-      });
+      // Upon navigation to the game screen, start the round
+      socketRef.current.emit("startRound", theGame.id, theGame);
     }
 
     // Use the imported helper function, passing necessary dependencies
@@ -159,6 +146,25 @@ const GameScreen = ({ navigation, route }: Props) => {
       }
     };
   }, [navigation]);
+
+  // Have a useEffect to listen for the game state and update the client side game state
+  useEffect(() => {
+    if (!socketRef || !socketRef.current) return; // Early return if null
+
+    const updateGameListener = (updatedGame: typeof Game) => {
+      setGame(updatedGame);
+    };
+
+    // Listen for game updates broadcast by the server
+    socketRef.current.on("roundStarted", updateGameListener);
+
+    // Cleanup on component unmount
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.off("roundStarted", updateGameListener);
+      }
+    };
+  }, [theGame]);
 
   // Bring user to exit confirmation modal
   const handleExitPress = () => {
