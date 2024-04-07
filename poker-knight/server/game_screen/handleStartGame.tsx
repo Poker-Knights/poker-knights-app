@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { Game } from "../../src/types/Game";
-import { amntOfPlayers } from "../../src/components/pages/LoadingScreen";
+import { PLAYER_COUNT } from "../../src/utils/socket.js";
 
 export const handleStartGame =
   (Socket: Socket, games: { [key: string]: Game }) => (game: Game) => {
@@ -11,7 +11,7 @@ export const handleStartGame =
     curGame.curLittleBlind = 1;
     curGame.curBigBlind = 2;
     curGame.currentPlayer = 1;
-    curGame.playerCount = amntOfPlayers;
+    curGame.playerCount = PLAYER_COUNT;
     curGame.gameStarted = true;
 
     // give default starting amount of money

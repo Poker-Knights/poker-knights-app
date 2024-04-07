@@ -14,13 +14,11 @@ import {
 import { RouteProp } from "@react-navigation/native";
 import io from "socket.io-client";
 import { SocketContext } from "../../../App";
-import { SERVER_URL } from "../../utils/socket.js";
+import { PLAYER_COUNT } from "../../utils/socket.js";
 import { Player } from "../../types/Game";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
-
-export const amntOfPlayers = 2; // sync this with number of players we want to allow to loading screen
 
 type GameScreenRouteProp = RouteProp<StackParamList, "Loading">;
 
@@ -73,7 +71,7 @@ const Loading = ({ navigation, route }: Props) => {
 
 
   useEffect(() => {
-    if (players.length !== amntOfPlayers) return;
+    if (players.length !== PLAYER_COUNT) return;
   
     setDisplayText("JOINING...");
   
@@ -150,4 +148,5 @@ const Loading = ({ navigation, route }: Props) => {
   );
 };
 
+export { PLAYER_COUNT };
 export default Loading;
