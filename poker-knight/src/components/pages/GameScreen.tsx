@@ -67,6 +67,7 @@ const GameScreen = ({ navigation, route }: Props) => {
   // set the initial state as an empty object
   let [thePlayer, setPlayer] = useState<any>({});
 
+  let [playerIndex, setPlayerIndex] = useState<number>(0); // Initialize player index state with a default value
   // Set cards
   let [riverCards, setRiverCards] = useState<string[]>(theGame.riverCards); // Initialize river cards state with cards face down
   let [playerCards, setPlayerCards] = useState<string[]>(["back", "back"]); // Initialize player cards state with cards face down
@@ -121,16 +122,20 @@ const GameScreen = ({ navigation, route }: Props) => {
       (p: { name: string }) => p.name === theUsername
     );
 
+    let playerIndex = theGame.players.findIndex(
+      (p: { name: string }) => p.name === theUsername
+    );
+
     setPlayer(initPlayer);
+    setPlayerIndex(playerIndex);
 
     if (!socketRef) return; // Early return if null
 
     if (socketRef.current) {
-      // emit initialize players event
 
       socketRef.current.on("updatePlayerCards", (data: any) => {
         // this needs to be updated so that it can handle individual players
-        let updatedPlayerCards = data;
+        let updatedPlayerCards = data.playerCards[playerIndex];
         // update player cards
         setPlayerCards(updatedPlayerCards);
       });
