@@ -170,43 +170,6 @@ const GameScreen = ({ navigation, route }: Props) => {
     };
   }, [navigation]);
 
-  // Have a useEffect to listen for the game state and update the client side game state
-  // useEffect(() => {
-  //   console.log("This useEffect is listening for updates to the game");
-  //   if (!socketRef || !socketRef.current) return; // Early return if null
-
-  //   const roundStartedListener = (updatedGame: typeof Game) => {
-  //     setGame(updatedGame);
-  //     setRiverCards(updatedGame.riverCards);
-
-  //     setCurrentBet(theGame.currentBet);
-  //     setCurRaiseVal(theGame.currentBet);
-
-  //     // Your existing useEffect logic here, to run on updates after the initial render
-  //     let actionButtons = determineAvailableActions(theGame);
-  //     setActionButtonsEnabled(actionButtons);
-
-  //     // Update player cards for the client player
-  //     let playerIndex = updatedGame.players.findIndex(
-  //       (p: { name: string }) => p.name === theUsername
-  //     );
-
-  //     let updatedPlayer = updatedGame.players[playerIndex];
-
-  //     setPlayer(updatedPlayer);
-  //   };
-
-  //   // Listen for game updates broadcast by the server
-  //   socketRef.current.on("roundStarted", roundStartedListener);
-
-  //   // Cleanup on component unmount
-  //   return () => {
-  //     if (socketRef.current) {
-  //       socketRef.current.off("roundStarted", roundStartedListener);
-  //     }
-  //   };
-  // }, [theGame]);
-
   // Bring user to exit confirmation modal
   const handleExitPress = () => {
     console.log("Exit button was pressed");
@@ -476,10 +439,9 @@ const GameScreen = ({ navigation, route }: Props) => {
               playerStyle = GameScreenStyles.playerRight; // Last player
 
             // Add a yellow ring around the avatar if it's the player's turn
-            if (player.currentTurn === true) {
-              GameScreenStyles.activeTurnAvatar;
-            }
-
+            const avatarStyle = player.currentTurn
+              ? GameScreenStyles.activeTurnAvatar
+              : GameScreenStyles.avatar;
             return (
               <View
                 key={player.id}
@@ -487,7 +449,7 @@ const GameScreen = ({ navigation, route }: Props) => {
               >
                 <Image
                   source={{ uri: player.avatarUri }}
-                  style={GameScreenStyles.avatar}
+                  style={avatarStyle}
                   resizeMode="contain"
                 />
 

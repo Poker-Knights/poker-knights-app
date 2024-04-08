@@ -33,22 +33,26 @@ io.on("connection", (socket: Socket) => {
   socket.on("attemptToJoin", handleAttemptToJoin(socket, games));
   // socket.on('exitGame', console.log("we made it here"));
 
-  // Handle joining a room
   socket.on("joinRoom", ({ gameId }) => {
     socket.join(gameId);
-    // Broadcast the updated player list to all clients in the room
-    io.to(gameId).emit("updatePlayers", games[gameId]);
+    console.log(games[gameId].players.length);
 
+    // Broadcast the updated player list to all clients in the room if its less than the player count
+    if (games[gameId].players.length <= PLAYER_COUNT) {
+      io.to(gameId).emit("updatePlayers", games[gameId]);
+    }
+    // if enough players joined the game, have the game ready to start
     if (games[gameId].players.length === PLAYER_COUNT) {
       // Start the game, pass the game id to get the game you need to start
       let game = games[gameId];
       game = handleStartGame(game); // game configure to start
       games[gameId] = game;
-      io.to(gameId).emit("gameStarted", games[gameId]);
+
+      setTimeout(() => {
+        io.to(gameId).emit("gameStarted", games[gameId]);
+      }, 3000);
     }
   });
-
- 
 
   socket.on("exitGame", (socketID, gameID) => {
     handleExitGame(socket, games, socketID, gameID);

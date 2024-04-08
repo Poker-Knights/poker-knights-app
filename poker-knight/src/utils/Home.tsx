@@ -8,7 +8,7 @@ export const createGame = (
   socketRef: React.RefObject<any>,
   setGameId: (id: string) => void
 ) => {
-  const newGameID = Math.floor(100000 + Math.random() * 900000).toString();
+  const newGameID = Math.floor(10 + Math.random() * 90).toString();
   setGameId(newGameID);
 
   if (socketRef.current) {
