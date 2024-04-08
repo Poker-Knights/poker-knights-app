@@ -17,15 +17,7 @@ import {
 } from "react-native";
 
 import { formatCurrency } from "../../utils/Money";
-import {
-  handleCallPress,
-  handleCheckPress,
-  handleFoldPress,
-  handleRaisePress,
-  handleAllInPress,
-  handleExit,
-  handleExitConfirmPress,
-} from "../../utils/Game";
+import { handleExit, handleExitConfirmPress } from "../../utils/Game";
 
 import { Ionicons } from "@expo/vector-icons";
 import { RouteProp } from "@react-navigation/native";
@@ -170,6 +162,32 @@ const GameScreen = ({ navigation, route }: Props) => {
     };
   }, [navigation]);
 
+  useEffect(() => {
+    console.log(" A player just pressed a button ");
+
+    if (!socketRef || !socketRef.current) return; // Early return if null
+
+    // Listen for buttonPressed event
+    socketRef.current.on("handleButtonPressed", (data: typeof Game) => {
+      console.log("Heard Event");
+
+      let updatedGame: typeof Game = data;
+      setGame(updatedGame);
+
+      let actionButtons = determineAvailableActions(updatedGame);
+      setActionButtonsEnabled(actionButtons);
+
+      setPot(updatedGame.potSize);
+      setCurrentBet(updatedGame.currentBet);
+      setCurRaiseVal(updatedGame.currentBet);
+
+      let updatedPlayer: Player = updatedGame.players.find(
+        (p) => p.name === theUsername
+      )!;
+      setPlayer(updatedPlayer);
+    });
+  }, [theGame.currentPlayer]);
+
   // Bring user to exit confirmation modal
   const handleExitPress = () => {
     console.log("Exit button was pressed");
@@ -185,23 +203,6 @@ const GameScreen = ({ navigation, route }: Props) => {
     console.log("Win button was pressed");
     setWinPopupVisible(true);
   };
-
-  // any changes to theGame will trigger this useEffect and update client side player state
-  const isMounted = useRef(false);
-
-  // any changes to theGame will trigger this useEffect and update client side player state
-  useEffect(() => {
-    // Skip the first invocation (initial render)
-
-    if (isMounted.current) {
-      let newPlayer = theGame.players.find((p) => p.name === username);
-      newPlayer && setPlayer(newPlayer);
-    } else {
-      // Mark as mounted for subsequent renders
-      isMounted.current = true;
-    }
-  }, [theGame]);
-  //*/
 
   const onExitConfirmPress = () => {
     if (!socketRef) {
@@ -235,23 +236,53 @@ const GameScreen = ({ navigation, route }: Props) => {
 
     switch (buttonPressed) {
       case "CALL":
-        handleCallPress(theGame);
+        socketRef.current?.emit(
+          "buttonPressed",
+          theGame,
+          theGame.id,
+          "call",
+          curRaiseVal
+        );
         break;
 
       case "FOLD":
-        handleFoldPress(theGame);
+        socketRef.current?.emit(
+          "buttonPressed",
+          theGame,
+          theGame.id,
+          "fold",
+          curRaiseVal
+        );
         break;
 
       case "CHECK":
-        handleCheckPress(theGame);
+        socketRef.current?.emit(
+          "buttonPressed",
+          theGame,
+          theGame.id,
+          "check",
+          curRaiseVal
+        );
         break;
 
       case "RAISE":
-        handleRaisePress(theGame, curRaiseVal);
+        socketRef.current?.emit(
+          "buttonPressed",
+          theGame,
+          theGame.id,
+          "raise",
+          curRaiseVal
+        );
         break;
 
       case "ALL-IN":
-        handleAllInPress(theGame);
+        socketRef.current?.emit(
+          "buttonPressed",
+          theGame,
+          theGame.id,
+          "all-in",
+          curRaiseVal
+        );
         break;
 
       case "decrementRaise":

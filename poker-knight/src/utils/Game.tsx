@@ -1,4 +1,5 @@
 // util/Game.tsx
+import { Socket } from "socket.io-client";
 import { Player, Game } from "../types/Game";
 
 // Function to get random but unique avatar and give to player
@@ -50,72 +51,6 @@ const removePlayer = (socketId: string, game: Game) => {
 
   return game.players; // Return players left in the game for any further use
 };
-
-// Handle button presses
-const handleCallPress = (game: Game) => {
-  const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
-
-  if (curPlayer.money >= game.currentBet) {
-    curPlayer.money -= game.currentBet; // Reflect bet
-    curPlayer.lastBet = game.currentBet; // Update last bet
-    game.potSize += game.currentBet; // Update Pot Value
-  } else {
-    curPlayer.allInFg = true; // Player is all in
-    // All in logic
-  }
-
-  nextPlayer(game); // Move to next player
-};
-
-const handleFoldPress = (game: Game) => {
-  // Implement the fold action logic here
-  const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
-  curPlayer.foldFG = true;
-  nextPlayer(game); // Move to next player
-};
-
-const handleCheckPress = (game: Game) => {
-  // Implement the check action logic here
-  nextPlayer(game); // Move to next player
-};
-
-const handleRaisePress = (game: Game, betValue: number) => {
-  // Implement the raise action logic here
-  const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
-
-  if (curPlayer.money >= betValue) {
-    curPlayer.money -= betValue; // Reflect bet
-    curPlayer.lastBet = betValue; // Update last bet
-    game.currentBet = betValue; // Update current game bet to new value
-    game.potSize += game.currentBet; // Update Pot Value
-    if (curPlayer.money === betValue) {
-      curPlayer.allInFg = true; // Player is all in
-      // All in logic
-    }
-  } else {
-    // Logic for player doesnt have enough to bet
-  }
-
-  nextPlayer(game); // Move to next player
-};
-
-const handleAllInPress = (game: Game) => {
-  // Implement the all-in action logic here
-  const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
-  game.currentBet = curPlayer.money; // Set current bet to players worth
-  curPlayer.lastBet = curPlayer.money; // Update last bet
-  curPlayer.money = 0; // Empty players money
-  game.potSize += game.currentBet; // Update Pot Value
-  nextPlayer(game); // Move to next player
-};
-
-// Function to handle a player's turn, return player
-const nextPlayer = (game: Game) => {
-  // Logic to handle player's turn
-  game.currentPlayer++;
-  if (game.currentPlayer >= game.playerCount) game.currentPlayer = 1;
-};
-
 const handleExitConfirmPress = (
   socketRef: React.RefObject<any>,
   gameID: string
@@ -146,13 +81,4 @@ const handleExit =
   };
 
 // Export each function separately
-export {
-  removePlayer,
-  handleExitConfirmPress,
-  handleExit,
-  handleAllInPress,
-  handleCallPress,
-  handleCheckPress,
-  handleFoldPress,
-  handleRaisePress,
-};
+export { removePlayer, handleExitConfirmPress, handleExit };

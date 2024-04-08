@@ -11,6 +11,7 @@ import { handleExitGame } from "./game_screen/handleExitGame";
 import { handleStartGame } from "./game_screen/handleStartGame";
 import { handleStartRound } from "./game_screen/handleStartRound";
 import { PLAYER_COUNT } from "../src/utils/socket";
+import { handleButtonPress } from "./game_screen/handleButtonPress";
 
 const app = express();
 app.use(cors());
@@ -54,9 +55,14 @@ io.on("connection", (socket: Socket) => {
     }
   });
 
-  socket.on("exitGame", (socketID, gameID) => {
-    handleExitGame(socket, games, socketID, gameID);
+  socket.on("buttonPressed", (game, gameID, buttonPressed, betValue) => {
+    games[gameID] = handleButtonPress(games[gameID], buttonPressed, betValue);
+
+  setTimeout(() => {
+        io.to(gameID).emit("handledButtonPressed", games[gameID]);
+      }, 3000);
   });
+
 
   // Listen for player pressing button, the emitted client is sending the game and the game id
   socket.on("playerTurnComplete", (game: Game, gameId: string) => {
