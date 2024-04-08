@@ -32,6 +32,7 @@ import { RouteProp } from "@react-navigation/native";
 import io, { Socket } from "socket.io-client";
 import { SocketContext } from "../../../App";
 import { SERVER_URL } from "../../utils/socket";
+import { Player } from "../../types/Game";
 
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
 const loseGIF = require("../../Graphics/lose.gif");
@@ -56,16 +57,19 @@ const GameScreen = ({ navigation, route }: Props) => {
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
   let [theUsername, setUsername] = useState(username); // this is your client side representation of game object
 
-  let [currentBet, setCurrentBet] = useState(0); // Track Current Bet
-  let [curRaiseVal, setCurRaiseVal] = useState(0); //Track Raise Value
+  let [currentBet, setCurrentBet] = useState(theGame.currentBet); // Track Current Bet
+  let [curRaiseVal, setCurRaiseVal] = useState(theGame.currentBet); //Track Raise Value
 
   const [losePopupVisible, setLosePopupVisible] = useState<boolean>(false);
   const [winPopupVisible, setWinPopupVisible] = useState<boolean>(false);
 
   // grab player data of the client side user, the one with the username that was routed from previous screen
 
-  // set the initial state as an empty object
-  let [thePlayer, setPlayer] = useState<any>({});
+  // set the initial state as the player object with the username that was passed in
+  // search for the username in the player array and set the player object to that
+  let [thePlayer, setPlayer] = useState<Player>(
+    theGame.players.find((p) => p.name === theUsername)!
+  );
 
   let [playerIndex, setPlayerIndex] = useState<number>(0); // Initialize player index state with a default value
   // Set cards
@@ -98,12 +102,13 @@ const GameScreen = ({ navigation, route }: Props) => {
     };
 
     if (!thePlayer.foldFG && !thePlayer.allInFg) {
+      console.log("Reached inside fold flag and all in flag iff");
       // if its not your turn, you cannot do anything
       if (thePlayer.currentTurn === false) {
         actions.betOption = false;
         actions.allIn = false;
         actions.fold = false;
-      } else {
+      } else if (thePlayer.currentTurn === true) {
         actions.betOption = true;
         actions.fold = true;
         actions.allIn = true;
@@ -118,33 +123,33 @@ const GameScreen = ({ navigation, route }: Props) => {
 
   // When compoment mounts, connect to the server, determine available actions
   useEffect(() => {
-    let initPlayer = theGame.players.find(
-      (p: { name: string }) => p.name === theUsername
+    console.log(
+      "This use effect is listening for updates once the comp. mounts"
     );
 
     let playerIndex = theGame.players.findIndex(
       (p: { name: string }) => p.name === theUsername
     );
 
-    setPlayer(initPlayer);
     setPlayerIndex(playerIndex);
+
+    //setCurrentBet(theGame.currentBet);
+    //setCurRaiseVal(theGame.currentBet);
+
+    setRiverCards(theGame.riverCards);
+    //setPot(theGame.potSize);
+
+    let actionButtons = determineAvailableActions(theGame);
+    setActionButtonsEnabled(actionButtons);
 
     if (!socketRef) return; // Early return if null
 
     if (socketRef.current) {
-
       socketRef.current.on("updatePlayerCards", (data: any) => {
         // this needs to be updated so that it can handle individual players
         let updatedPlayerCards = data.playerCards[playerIndex];
         // update player cards
         setPlayerCards(updatedPlayerCards);
-      });
-
-      // listen for updateGameAfterPlayerButtonPress event
-      socketRef.current.on("updateGameAfterPlayerButtonPress", (data: any) => {
-        let updatedGame = data.gameState;
-        // update game state
-        setGame(updatedGame);
       });
     }
 
@@ -189,13 +194,6 @@ const GameScreen = ({ navigation, route }: Props) => {
     // Skip the first invocation (initial render)
 
     if (isMounted.current) {
-      setCurrentBet(theGame.currentBet);
-      setCurRaiseVal(theGame.currentBet);
-
-      // Your existing useEffect logic here, to run on updates after the initial render
-      let actionButtons = determineAvailableActions(theGame);
-      setActionButtonsEnabled(actionButtons);
-
       let newPlayer = theGame.players.find((p) => p.name === username);
       newPlayer && setPlayer(newPlayer);
     } else {
@@ -441,10 +439,9 @@ const GameScreen = ({ navigation, route }: Props) => {
               playerStyle = GameScreenStyles.playerRight; // Last player
 
             // Add a yellow ring around the avatar if it's the player's turn
-            if (player.currentTurn) {
-              GameScreenStyles.activeTurnAvatar;
-            }
-
+            const avatarStyle = player.currentTurn
+              ? GameScreenStyles.activeTurnAvatar
+              : GameScreenStyles.avatar;
             return (
               <View
                 key={player.id}
@@ -452,7 +449,7 @@ const GameScreen = ({ navigation, route }: Props) => {
               >
                 <Image
                   source={{ uri: player.avatarUri }}
-                  style={GameScreenStyles.avatar}
+                  style={avatarStyle}
                   resizeMode="contain"
                 />
 
@@ -495,7 +492,7 @@ const GameScreen = ({ navigation, route }: Props) => {
       <View style={GameScreenStyles.parentToChipCountAndButtons}>
         <View style={GameScreenStyles.clientChipCountContainer}>
           <Text style={GameScreenStyles.clientChipCountText}>
-            {!thePlayer.fold
+            {!thePlayer.foldFG
               ? "CHIPS:$".concat(String(thePlayer.money))
               : "FOLDED"}
           </Text>

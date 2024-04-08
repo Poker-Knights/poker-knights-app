@@ -19,6 +19,7 @@ export const handleCreateGame =
       currentBet: 0,
       currentPlayer: 1,
       gameStarted: false,
+      roundCount: 0,
       riverCards: ["back", "back", "back", "back", "back"],
       deckCards: [
         "spades_2",

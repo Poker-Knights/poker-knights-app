@@ -67,36 +67,31 @@ const Loading = ({ navigation, route }: Props) => {
         socketRef.current.off("updatePlayers", updatePlayersListener);
       }
     };
-  }, []);  // removed navigation dependency, only occurs when component mounts and unmounts
-
+  }, []); // removed navigation dependency, only occurs when component mounts and unmounts
 
   useEffect(() => {
     if (players.length !== PLAYER_COUNT) return;
-  
-    setDisplayText("JOINING...");
-  
     if (!socketRef || !socketRef.current) return;
-  
-    socketRef.current.emit("startGame", updatedGame);
-  
-    let timer : any; // Declare timer here for broader scope
-  
+    setDisplayText("JOINING...");
+    let timer: any; // Declare timer here for broader scope
+
     const handleGameStarted = (initGame: any) => {
-      // Update game state
+      console.log("Game Started Event Recieved");
       setUpdatedGame(initGame);
-  
-      // Set a delay before navigating
+
       timer = setTimeout(() => {
+        console.log("Navigating to Game Screen");
         navigation.navigate("Game", {
           Game: initGame,
           username: username,
         });
       }, 1000); // Delay of 1 second
     };
-  
+
     // Register the event listener
+    console.log("Registering gameStarted listener");
     socketRef.current.once("gameStarted", handleGameStarted);
-  
+
     // Cleanup function to remove listener and clear timeout if the component unmounts
     return () => {
       if (socketRef.current) {
@@ -107,7 +102,6 @@ const Loading = ({ navigation, route }: Props) => {
       }
     };
   }, [players.length]);
-  
 
   return (
     <SafeAreaView style={styles.backgroundContainer}>
