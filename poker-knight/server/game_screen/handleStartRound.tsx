@@ -1,6 +1,7 @@
 import { Socket } from "socket.io";
 import { Game } from "../../src/types/Game";
 import { dealRiverCards, dealPlayerCards } from "./cardUtils";
+import { handleStartBettingRound } from "./handleStartBettingRound";
 
 export const handleStartRound = (game: Game) => {
   // Find the game with the given ID
@@ -36,15 +37,12 @@ export const handleStartRound = (game: Game) => {
   players[game.curLittleBlind - 1].money -= game.littleBlindBet;
   players[game.curLittleBlind - 1].isLittleBlind = true;
   players[game.curLittleBlind - 1].lastBet = game.littleBlindBet;
-  players[game.curLittleBlind - 1].currentTurn = false;
-  players[game.curLittleBlind - 1].splitPotVal =
-    game.potSize + game.littleBlindBet;
 
   game.potSize += players[game.curLittleBlind - 1].lastBet;
 
   if (game.roundCount !== 0) {
     let curBigInd = game.curLittleBlind + 1;
-    while (game.players[curBigInd - 1].foldFG) {
+    while (game.players[curBigInd - 1].eliminated) {
       curBigInd = (curBigInd + 1) % 5;
       if (curBigInd === 0) curBigInd = 1;
     }
@@ -54,8 +52,6 @@ export const handleStartRound = (game: Game) => {
   players[game.curBigBlind - 1].money -= game.bigBlindBet;
   players[game.curBigBlind - 1].isBigBlind = true;
   players[game.curBigBlind - 1].lastBet = game.bigBlindBet;
-  players[game.curBigBlind - 1].currentTurn = false;
-  players[game.curBigBlind - 1].splitPotVal = game.potSize + game.bigBlindBet;
 
   game.potSize += players[game.curBigBlind - 1].lastBet;
 
@@ -75,13 +71,6 @@ export const handleStartRound = (game: Game) => {
   dealRiverCards(game, 1);
   dealPlayerCards(game);
 
-  // if the round count is 0, we need to return the game
-  if (game.roundCount === 0) {
-    console.log("FIRST ROUND STARTED");
-    return game;
-  }
-
-  // Emit the updated game state to all clients in the room
-  // Socket.to(inputGameID).emit("roundStarted", game); // UNTESTED
-  return game;
+  // Start betting round
+  return handleStartBettingRound(game);
 };

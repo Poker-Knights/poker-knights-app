@@ -299,10 +299,7 @@ const GameScreen = ({ navigation, route }: Props) => {
         break;
 
       case "incrementRaise":
-        if (
-          curPlayer.lastBet !== -1 &&
-          curPlayer.lastBet === theGame.currentBet
-        ) {
+        if (curPlayer.lastBet !== 0 && curPlayer.lastBet < theGame.currentBet) {
           curRaiseVal = theGame.currentBet;
         } else if (curRaiseVal < curPlayer.money - 10) {
           curRaiseVal += 10;

@@ -12,6 +12,8 @@ import { handleStartGame } from "./game_screen/handleStartGame";
 import { handleStartRound } from "./game_screen/handleStartRound";
 import { PLAYER_COUNT } from "../src/utils/socket";
 import { handleButtonPress } from "./game_screen/handleButtonPress";
+import { handleEndBettingRound } from "./game_screen/handleEndBettingRound";
+import { handleStartBettingRound } from "./game_screen/handleStartBettingRound";
 
 const app = express();
 app.use(cors());
@@ -55,40 +57,42 @@ io.on("connection", (socket: Socket) => {
     }
   });
 
+  // Button Pressed Check
   socket.on("buttonPressed", (game, gameID, buttonPressed, betValue) => {
+
+    // Handle button pressed
     games[gameID] = handleButtonPress(games[gameID], buttonPressed, betValue);
 
+    // Check if betting round ended
+    // If all players have non zero for last bet
+     // every players current bet is -1
+     let players = games[gameID].players;
+     let endBettingRoundFG = true;
+     players.forEach((player) => {
+      if(!player.foldFG && (player.lastBet === 0 || player.lastBet < games[gameID].currentBet)){
+        endBettingRoundFG = false;
+      }
+    });
+
+    // If the betting round is over
+    if(endBettingRoundFG){
+      games[gameID] = handleEndBettingRound(game);
+      // If the round is over
+      if(games[gameID].curBettingRound === 4){
+        games[gameID] = handleEndRound(game);
+        // Emit game results to client
+        games[gameID] = handleStartRound(game);
+      // else just start next betting round
+      }else{
+        games[gameID] = handleStartBettingRound(game);
+      }
+    }
+    
   setTimeout(() => {
         io.to(gameID).emit("handledButtonPressed", games[gameID]);
       }, 3000);
   });
 
-
-  // Listen for player pressing button, the emitted client is sending the game and the game id
-  socket.on("playerTurnComplete", (game: Game, gameId: string) => {
-    // Update the game with the new game state
-    games[gameId] = game;
-
-    // Check if betting round ended
-    let roundEndedFG: number = 1;
-    game.players.forEach((player) => {
-      if (player.lastBet === -1) {
-        roundEndedFG = 0; /// Round not over
-      }
-    });
-    // If the round ended
-    if (roundEndedFG) {
-      //handleEndRound(socket, games, gameId);
-    }
-
-    // check if 5 cards on river
-    // enter showdown <--- lots of logic will need to be added here
-    // handle Showdown logic
-    // else add card to river and reset current bet and possibly current player and emit game updated
-
-    // Otherwise move to next player
-    io.to(gameId).emit("gameUpdatedAfterPlayerTurn", game);
-  });
   // Example of disconnect event
   socket.on("disconnect", () => {
     console.log(`User disconnected: ${socket.id}`);
