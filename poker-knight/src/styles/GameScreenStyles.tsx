@@ -211,7 +211,7 @@ export const GameScreenStyles = StyleSheet.create({
     height: 80, // Adjust the size as needed
     borderRadius: 40, // Half the width/height to make it a circle
     borderWidth: 2, // Size of border around the avatar
-    borderColor: "FF0000", // Border color, assuming white is desired
+    borderColor: "#FF0000", // Border color, assuming white is desired
     backgroundColor: "#C4C4C4", // A placeholder background color in case the image fails to load
     opacity: 0.35,
     overflow: "hidden", // Ensures that the image does not spill out of the border radius

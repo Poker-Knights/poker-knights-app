@@ -76,11 +76,12 @@ export const handleButtonPress = (
 };
 
 // Function to handle a player's turn, return player
-const nextPlayer = (game: Game) => {
+export const nextPlayer = (game: Game) => {
   // Logic to handle player's turn
   game.players[game.currentPlayer - 1].currentTurn = false; // Set current player turn to true
 
   let curPlayer = game.currentPlayer + 1;
+  if (curPlayer === 5) curPlayer = 1;
   while (game.players[curPlayer - 1].foldFG) {
     curPlayer = (curPlayer + 1) % (game.playerCount + 1);
     if (curPlayer === 0) curPlayer = 1;

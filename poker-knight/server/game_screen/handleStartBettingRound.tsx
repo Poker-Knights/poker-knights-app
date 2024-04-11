@@ -1,6 +1,7 @@
 import { Socket } from "socket.io";
 import { Game } from "../../src/types/Game";
 import { dealRiverCards } from "./cardUtils";
+import { nextPlayer } from "./handleButtonPress";
 
 export const handleStartBettingRound = (game: Game) => {
   console.log("Starting betting round: " + game.curBettingRound);
@@ -18,12 +19,8 @@ export const handleStartBettingRound = (game: Game) => {
   });
 
   // make the player after the big blind the current player
-  let curPlayerInd = game.curBigBlind + 1;
-  while (game.players[curPlayerInd - 1].foldFG) {
-    curPlayerInd = (curPlayerInd + 1) % (game.playerCount + 1);
-    if (curPlayerInd === 0) curPlayerInd = 1;
-  }
-  game.currentPlayer = curPlayerInd; // Set new player index
+  game.currentPlayer = game.curBigBlind;
+  game = nextPlayer(game); // Set new player index
   players[game.currentPlayer - 1].currentTurn = true;
 
   // set players equal to game players
