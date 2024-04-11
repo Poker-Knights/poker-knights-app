@@ -1,3 +1,4 @@
+
 import { Game } from "../../src/types/Game";
 
 export const dealRiverCards = (game: Game, caseNumber: number) => {
@@ -111,3 +112,29 @@ export const resetCards = (game: Game) => {
     "diamonds_A",
   ];
 };
+
+export const parseCardNames = (cardNames: string[]): string[] => {
+  const parsedCardNames: string[] = [];
+  cardNames.forEach((cardName) => {
+    const [suit, number] = cardName.split("_");
+    let parsedNumber: string;
+    const parsedCardName = number + suit.charAt(0);
+    parsedCardNames.push(parsedCardName);
+  });
+  return parsedCardNames;
+};
+
+export const returnWinners = (game: Game) => {
+  var Hand = require('pokersolver').Hand;
+  var playerRanks: { username: string, rank: number }[] = [];
+  game.players.forEach((player) => {
+    var concatArray: string[] = player.playerCards.concat(game.riverCards);
+    var parsedArray: string[] = parseCardNames(concatArray);
+    var rank = Hand.solve(parsedArray).rank;
+    playerRanks.push({ username: player.name, rank: rank });
+  });
+  playerRanks.sort((a, b) => a.rank - b.rank);
+  var winners = playerRanks.map((player) => player.username);
+  return winners;
+};
+
