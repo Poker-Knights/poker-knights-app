@@ -90,7 +90,6 @@ io.on("connection", (socket: Socket) => {
     io.to(gameID).emit("handledButtonPressed", games[gameID]);
     }, 250);
   });
-    
 
   // Example of disconnect event
   socket.on("disconnect", () => {
