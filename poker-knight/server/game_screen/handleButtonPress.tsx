@@ -7,8 +7,10 @@ export const handleButtonPress = (
 ) => {
   // Handle button presses
   // CallLogic
+  
   if (buttonPressed === "call") {
     const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
+
     if (curPlayer.money >= game.currentBet) {
       curPlayer.money -= game.currentBet; // Reflect bet
       curPlayer.lastBet = game.currentBet; // Update last bet
@@ -17,7 +19,8 @@ export const handleButtonPress = (
       curPlayer.allInFg = true; // Player is all in
       // All in logic
     }
-    nextPlayer(game); // Move to next player
+
+    game = nextPlayer(game); // Move to next player
 
     return game;
 
@@ -26,12 +29,12 @@ export const handleButtonPress = (
     // Implement the fold action logic here
     const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
     curPlayer.foldFG = true;
-    nextPlayer(game); // Move to next player
+    game = nextPlayer(game); // Move to next player
 
     // Check Logic
   } else if (buttonPressed === "check") {
     // Implement the check action logic here
-    nextPlayer(game); // Move to next player
+    game = nextPlayer(game); // Move to next player
 
     // Raise logic
   } else if (buttonPressed == "raise") {
@@ -51,7 +54,7 @@ export const handleButtonPress = (
       // Logic for player doesnt have enough to bet
     }
 
-    nextPlayer(game); // Move to next player
+    game = nextPlayer(game); // Move to next player
   }
 
   // All-in logic
@@ -62,7 +65,7 @@ export const handleButtonPress = (
     curPlayer.lastBet = curPlayer.money; // Update last bet
     curPlayer.money = 0; // Empty players money
     game.potSize += game.currentBet; // Update Pot Value
-    nextPlayer(game); // Move to next player
+    game = nextPlayer(game); // Move to next player
   }
   return game;
 };
@@ -70,6 +73,18 @@ export const handleButtonPress = (
 // Function to handle a player's turn, return player
 const nextPlayer = (game: Game) => {
   // Logic to handle player's turn
-  game.currentPlayer++;
-  if (game.currentPlayer > game.playerCount) game.currentPlayer = 1;
+  game.players[game.currentPlayer - 1].currentTurn = false; // Set current player turn to true
+
+  const curPlayer = game.currentPlayer + 1;
+
+  if (curPlayer <= game.playerCount) {
+    game.currentPlayer++;
+    game.players[game.currentPlayer - 1].currentTurn = true; // Set current player turn to true
+  }
+  else {
+    game.currentPlayer = 1;
+    game.players[game.currentPlayer - 1].currentTurn = true; // Reset last bet
+  }
+
+  return game;
 };

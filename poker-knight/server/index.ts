@@ -55,12 +55,12 @@ io.on("connection", (socket: Socket) => {
     }
   });
 
-  socket.on("buttonPressed", (game, gameID, buttonPressed, betValue) => {
+  socket.on("buttonPressed", ({ game, gameID, buttonPressed, betValue }) => {
     games[gameID] = handleButtonPress(games[gameID], buttonPressed, betValue);
 
-  setTimeout(() => {
-        io.to(gameID).emit("handledButtonPressed", games[gameID]);
-      }, 3000);
+    setTimeout(() => {
+    io.to(gameID).emit("handleButtonPressed", games[gameID]);
+    }, 250);
   });
 
 
