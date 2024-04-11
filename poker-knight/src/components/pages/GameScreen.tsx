@@ -186,6 +186,7 @@ const GameScreen = ({ navigation, route }: Props) => {
       console.log("Current player before: ", theGame.currentPlayer);
       let updatedGame: typeof Game = data;
       setGame(updatedGame);
+      setRiverCards(updatedGame.riverCards);
 
       //setCurrentPlayer(updatedGame.players[updatedGame.currentPlayer - 1]);
 
@@ -195,6 +196,7 @@ const GameScreen = ({ navigation, route }: Props) => {
         (p) => p.name === theUsername
       )!;
       setPlayer(updatedPlayer);
+      setPlayerCards(updatedPlayer.playerCards);
 
       let actionButtons = determineAvailableActions(updatedGame, updatedPlayer);
       setActionButtonsEnabled(actionButtons);
