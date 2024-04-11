@@ -17,7 +17,7 @@ export const handleStartBettingRound = (game: Game) => {
   // make the player after the big blind the current player
   let curPlayerInd = game.curBigBlind + 1;
   while (game.players[curPlayerInd - 1].foldFG) {
-    curPlayerInd = (curPlayerInd + 1) % 5;
+    curPlayerInd = (curPlayerInd + 1) % (game.playerCount + 1);
     if (curPlayerInd === 0) curPlayerInd = 1;
   }
   game.currentPlayer = curPlayerInd; // Set new player index

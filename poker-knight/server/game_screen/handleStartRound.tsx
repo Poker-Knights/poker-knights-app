@@ -28,7 +28,7 @@ export const handleStartRound = (game: Game) => {
     let currLittleBlind = game.curLittleBlind + 1;
     // if the the next little blind is eliminated, find the next player who hasn't been eliminated
     while (game.players[currLittleBlind - 1].eliminated) {
-      currLittleBlind = (currLittleBlind + 1) % 5;
+      currLittleBlind = (currLittleBlind + 1) % (game.playerCount + 1);
       if (currLittleBlind === 0) currLittleBlind = 1;
     }
     game.curLittleBlind = currLittleBlind;
@@ -43,7 +43,7 @@ export const handleStartRound = (game: Game) => {
   if (game.roundCount !== 0) {
     let curBigInd = game.curLittleBlind + 1;
     while (game.players[curBigInd - 1].eliminated) {
-      curBigInd = (curBigInd + 1) % 5;
+      curBigInd = (curBigInd + 1) % (game.playerCount + 1);
       if (curBigInd === 0) curBigInd = 1;
     }
     game.curBigBlind = curBigInd;
@@ -58,7 +58,7 @@ export const handleStartRound = (game: Game) => {
   // make the player after the big blind the current player
   let curPlayerInd = game.curBigBlind + 1;
   while (game.players[curPlayerInd - 1].eliminated) {
-    curPlayerInd = (curPlayerInd + 1) % 5;
+    curPlayerInd = (curPlayerInd + 1) % (game.playerCount + 1);
     if (curPlayerInd === 0) curPlayerInd = 1;
   }
 
