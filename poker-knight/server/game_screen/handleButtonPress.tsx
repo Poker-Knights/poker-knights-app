@@ -80,15 +80,13 @@ const nextPlayer = (game: Game) => {
   // Logic to handle player's turn
   game.players[game.currentPlayer - 1].currentTurn = false; // Set current player turn to true
 
-  const curPlayer = game.currentPlayer + 1;
-
-  if (curPlayer <= game.playerCount) {
-    game.currentPlayer++;
-    game.players[game.currentPlayer - 1].currentTurn = true; // Set current player turn to true
-  } else {
-    game.currentPlayer = 1;
-    game.players[game.currentPlayer - 1].currentTurn = true; // Reset last bet
+  let curPlayer = game.currentPlayer + 1;
+  while (game.players[curPlayer - 1].foldFG) {
+    curPlayer = (curPlayer + 1) % (game.playerCount + 1);
+    if (curPlayer === 0) curPlayer = 1;
   }
+  game.currentPlayer = curPlayer;
+  game.players[game.currentPlayer - 1].currentTurn = true; // Set current player turn to true
 
   return game;
 };
