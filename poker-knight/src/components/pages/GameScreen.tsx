@@ -64,8 +64,9 @@ const GameScreen = ({ navigation, route }: Props) => {
     theGame.players.find((p) => p.name === theUsername)!
   );
 
-
-  let [theCurrentPlayer, setCurrentPlayer] = useState<Player>(theGame.players[theGame.currentPlayer - 1]); // Initialize current player state with the first player in the game object
+  let [theCurrentPlayer, setCurrentPlayer] = useState<Player>(
+    theGame.players[theGame.currentPlayer - 1]
+  ); // Initialize current player state with the first player in the game object
 
   let [playerIndex, setPlayerIndex] = useState<number>(0); // Initialize player index state with a default value
   // Set cards
@@ -85,7 +86,10 @@ const GameScreen = ({ navigation, route }: Props) => {
   }, [navigation]);
 
   // There needs to be a function to evaluate which buttons you can and cannot press
-  function determineAvailableActions(game: typeof Game, player: Player): {
+  function determineAvailableActions(
+    game: typeof Game,
+    player: Player
+  ): {
     betOption: boolean;
     fold: boolean;
     allIn: boolean;
@@ -258,28 +262,53 @@ const GameScreen = ({ navigation, route }: Props) => {
 
     switch (buttonPressed) {
       case "CALL":
-        socketRef.current?.emit("buttonPressed", { game: theGame, gameID: theGame.id, buttonPressed: "call", betValue: curRaiseVal });
+        socketRef.current?.emit("buttonPressed", {
+          game: theGame,
+          gameID: theGame.id,
+          buttonPressed: "call",
+          betValue: curRaiseVal,
+        });
         break;
 
       case "FOLD":
-        socketRef.current?.emit("buttonPressed", { game: theGame, gameID: theGame.id, buttonPressed: "fold", betValue: curRaiseVal });
+        socketRef.current?.emit("buttonPressed", {
+          game: theGame,
+          gameID: theGame.id,
+          buttonPressed: "fold",
+          betValue: curRaiseVal,
+        });
         break;
 
       case "CHECK":
-        socketRef.current?.emit("buttonPressed", {game: theGame, gameID: theGame.id, buttonPressed: "check", betValue: curRaiseVal });
+        socketRef.current?.emit("buttonPressed", {
+          game: theGame,
+          gameID: theGame.id,
+          buttonPressed: "check",
+          betValue: curRaiseVal,
+        });
         break;
 
       case "RAISE":
-        socketRef.current?.emit("buttonPressed", {game: theGame, gameID: theGame.id, buttonPressed: "raise", betValue: curRaiseVal });
+        socketRef.current?.emit("buttonPressed", {
+          game: theGame,
+          gameID: theGame.id,
+          buttonPressed: "raise",
+          betValue: curRaiseVal,
+        });
         break;
 
       case "ALL-IN":
-        socketRef.current?.emit("buttonPressed", {game: theGame, gameID: theGame.id, buttonPressed: "all-in", betValue: curRaiseVal });
+        socketRef.current?.emit("buttonPressed", {
+          game: theGame,
+          gameID: theGame.id,
+          buttonPressed: "all-in",
+          betValue: curRaiseVal,
+        });
         break;
 
       case "decrementRaise":
         if (
-          curPlayer.lastBet !== -1 &&
+          curPlayer.lastBet !== 0 &&
           curPlayer.lastBet !== theGame.currentBet
         ) {
           curRaiseVal = theGame.currentBet;
@@ -292,7 +321,7 @@ const GameScreen = ({ navigation, route }: Props) => {
 
       case "incrementRaise":
         if (
-          curPlayer.lastBet !== -1 &&
+          curPlayer.lastBet !== 0 &&
           curPlayer.lastBet === theGame.currentBet
         ) {
           curRaiseVal = theGame.currentBet;
@@ -569,7 +598,7 @@ const GameScreen = ({ navigation, route }: Props) => {
                     : { color: "yellow" },
                 ]}
               >
-                {thePlayer.lastBet !== -1
+                {thePlayer.lastBet !== 0
                   ? theGame.currentBet === 0
                     ? "CHECK"
                     : "CALL"

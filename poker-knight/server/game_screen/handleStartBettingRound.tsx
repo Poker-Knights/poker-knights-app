@@ -6,7 +6,7 @@ export const handleStartBettingRound = (game: Game) => {
   let players = game.players;
 
   // Assign Game Updates
-  game.currentBet = 0;
+  if (game.curBettingRound !== 0) game.currentBet = 0;
 
   // every players current bet is -1
   players.forEach((player) => {
