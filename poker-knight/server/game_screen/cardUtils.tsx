@@ -111,3 +111,28 @@ export const resetCards = (game: Game) => {
     "diamonds_A",
   ];
 };
+
+export const parseCardNames = (cardNames: string[]): string[] => {
+  const parsedCardNames: string[] = [];
+  cardNames.forEach((cardName) => {
+    const [suit, number] = cardName.split("_");
+    let parsedNumber: string;
+    const parsedCardName = number + suit.charAt(0);
+    parsedCardNames.push(parsedCardName);
+  });
+  return parsedCardNames;
+};
+
+export const returnWinners = (game: Game) => { // still unfinished.. need to test and also implement card name parsing
+  var Hand = require('pokersolver').Hand;
+  var cardArray: Array<Array<string>> = [];
+  var concatArray: string[] = [];
+  var parsedArray: string[] = [];
+  game.players.forEach((player) => {
+    concatArray = player.playerCards.concat(game.riverCards);
+    parsedArray = parseCardNames(concatArray);
+    cardArray.push(Hand.solve(parsedArray));
+  });
+  const winners = Hand.winners(cardArray);
+  return winners;
+};
