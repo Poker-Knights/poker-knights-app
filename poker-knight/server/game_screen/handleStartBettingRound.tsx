@@ -1,5 +1,6 @@
 import { Socket } from "socket.io";
 import { Game } from "../../src/types/Game";
+import { dealRiverCards } from "./cardUtils";
 
 export const handleStartBettingRound = (game: Game) => {
   // Assign the first player as little blind and second player as big blind
@@ -8,7 +9,7 @@ export const handleStartBettingRound = (game: Game) => {
   // Assign Game Updates
   if (game.curBettingRound !== 0) game.currentBet = 0;
 
-  // every players current bet is -1
+  // every players current bet is 0
   players.forEach((player) => {
     player.lastBet = 0;
     player.currentTurn = false;
@@ -33,16 +34,17 @@ export const handleStartBettingRound = (game: Game) => {
       break;
     case 1:
       // Deal 3 cards
-      // Burn 1 card
+      dealRiverCards(game, 1);
+
       break;
     case 2:
-      // Deal 1 Card
-      // Burn 1 card
+      dealRiverCards(game, 1);
+
       break;
     case 3:
-      // Deal 1 Card
-      // Burn 1 card
+      dealRiverCards(game, 1);
       break;
+
     default:
       // nothing
       break;

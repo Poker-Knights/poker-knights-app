@@ -21,7 +21,6 @@ export const GameScreenStyles = StyleSheet.create({
     alignItems: "center",
   },
 
-
   exitModalPopupView: {
     margin: 20,
     backgroundColor: "white",
@@ -91,7 +90,7 @@ export const GameScreenStyles = StyleSheet.create({
     backgroundColor: "#feeb00",
     borderColor: "black",
     borderStyle: "solid",
-    borderWidth: 5
+    borderWidth: 5,
   },
 
   textStyle: {
@@ -108,7 +107,7 @@ export const GameScreenStyles = StyleSheet.create({
   },
 
   exitButton: {
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     position: "relative",
     margin: 15, // This makes the button outer space '15' in each direction
     borderRadius: 20,
@@ -123,7 +122,7 @@ export const GameScreenStyles = StyleSheet.create({
   },
 
   loseButton: {
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     position: "relative",
     margin: 15, // This makes the button outer space '15' in each direction
     borderRadius: 20,
@@ -138,7 +137,7 @@ export const GameScreenStyles = StyleSheet.create({
   },
 
   winButton: {
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     position: "relative",
     margin: 15, // This makes the button outer space '15' in each direction
     borderRadius: 20,
@@ -187,8 +186,6 @@ export const GameScreenStyles = StyleSheet.create({
     marginTop: 4, // Space between the text and the line, adjust as needed
   },
 
-
-
   avatar: {
     width: 80, // Adjust the size as needed
     height: 80, // Adjust the size as needed
@@ -199,13 +196,24 @@ export const GameScreenStyles = StyleSheet.create({
     overflow: "hidden", // Ensures that the image does not spill out of the border radius
   },
 
-activeTurnAvatar: {
+  activeTurnAvatar: {
     width: 80, // Adjust the size as needed
     height: 80, // Adjust the size as needed
     borderRadius: 40, // Half the width/height to make it a circle
     borderWidth: 2, // Size of border around the avatar
     borderColor: "#feeb00", // Border color, assuming white is desired
     backgroundColor: "#C4C4C4", // A placeholder background color in case the image fails to load
+    overflow: "hidden", // Ensures that the image does not spill out of the border radius
+  },
+
+  foldedAvatar: {
+    width: 80, // Adjust the size as needed
+    height: 80, // Adjust the size as needed
+    borderRadius: 40, // Half the width/height to make it a circle
+    borderWidth: 2, // Size of border around the avatar
+    borderColor: "#feeb00", // Border color, assuming white is desired
+    backgroundColor: "#C4C4C4", // A placeholder background color in case the image fails to load
+    opacity: 0.5,
     overflow: "hidden", // Ensures that the image does not spill out of the border radius
   },
 
@@ -309,9 +317,6 @@ activeTurnAvatar: {
     backgroundColor: "#2196F3",
   },
 
-
-
-
   actionButtonsContainer: {
     bottom: 0,
     left: 10,
@@ -328,7 +333,6 @@ activeTurnAvatar: {
   topButtonsContainer: {
     flexDirection: "row",
   },
-
 
   raiseCallButtonContainer: {
     flexDirection: "row",
@@ -363,7 +367,6 @@ activeTurnAvatar: {
     fontSize: 20,
     marginLeft: 10,
   },
-
 
   disabledButton: {
     backgroundColor: "#ccc", // Grey color
@@ -401,12 +404,12 @@ activeTurnAvatar: {
   },
 
   parentToChipCountAndButtons: {
-    flex: 1, 
+    flex: 1,
     padding: 10, // Or any other value to keep space around the items
     // To center the children to the left edge
-    alignItems: 'flex-start', // To align the children at the start of the container
-    justifyContent: 'flex-end', // To align the children at the end of the container
-    paddingBottom: 0
+    alignItems: "flex-start", // To align the children at the start of the container
+    justifyContent: "flex-end", // To align the children at the end of the container
+    paddingBottom: 0,
   },
   riverCardContainer: {
     position: "relative",
@@ -428,5 +431,4 @@ activeTurnAvatar: {
     zIndex: 5,
     // padding: 50, // Add padding to the card container
   },
-  
 });

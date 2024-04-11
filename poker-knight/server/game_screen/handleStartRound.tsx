@@ -67,8 +67,7 @@ export const handleStartRound = (game: Game) => {
 
   game.currentBet = game.bigBlindBet;
 
-  // call function to 'give' players their cards here, preset river
-  dealRiverCards(game, 1);
+  // call function to 'give' players their cards here
   dealPlayerCards(game);
 
   // Start betting round
