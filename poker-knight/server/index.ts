@@ -67,11 +67,12 @@ io.on("connection", (socket: Socket) => {
     let players = games[gameID].players;
     let endBettingRoundFG = true;
     players.forEach((player) => {
+      console.log(player.name + ', ' + player.lastBet);
       if(!player.foldFG && (player.lastBet === 0 || player.lastBet < games[gameID].currentBet)){
         endBettingRoundFG = false;
       }
     });
-    
+    console.log("End betting round: " + endBettingRoundFG);
     // If the betting round is over
     if(endBettingRoundFG){
       games[gameID] = handleEndBettingRound(game);

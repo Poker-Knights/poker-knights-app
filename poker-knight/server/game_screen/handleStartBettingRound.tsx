@@ -8,20 +8,36 @@ export const handleStartBettingRound = (game: Game) => {
 
   // Assign the first player as little blind and second player as big blind
   let players = game.players;
-
+  console.log("Big blind: " + game.players[game.curBigBlind - 1] + ", Bet: " + game.players[game.curBigBlind - 1].lastBet);
+  console.log("little blind: " + game.players[game.curLittleBlind - 1] + ", Bet: " + game.players[game.curLittleBlind - 1].lastBet);
   // Assign Game Updates
-  if (game.curBettingRound !== 0) game.currentBet = 0;
+  if (game.curBettingRound !== 0) 
+  {
+    game.currentBet = 0;
+    // every players current bet is 0
+    players.forEach((player) => {
+      player.lastBet = 0;
+      player.currentTurn = false;
+    });
 
-  // every players current bet is 0
-  players.forEach((player) => {
-    player.lastBet = 0;
-    player.currentTurn = false;
-  });
+  }
+  else
+  {
+    players.forEach((player) => {
+
+      if ((!player.isLittleBlind) && (!player.isBigBlind)) {
+        console.log("If test: Player: " + player.name + ", Bet: " + player.lastBet + ", isLittleBlind: " + player.isLittleBlind + ", isBigBlind: " + player.isBigBlind);
+        player.lastBet = 0;
+      }
+      player.currentTurn = false;
+    });
+  }
+
 
   // make the player after the big blind the current player
   game.currentPlayer = game.curBigBlind;
   game = nextPlayer(game); // Set new player index
-  players[game.currentPlayer - 1].currentTurn = true;
+  
 
   // set players equal to game players
   game.players = players;
