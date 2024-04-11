@@ -2,6 +2,7 @@ import { Socket } from "socket.io";
 import { Game } from "../../src/types/Game";
 
 export const handleEndBettingRound = (game: Game) => {
+  console.log("Ending betting round: " + game.curBettingRound);
   // Increment Betting Round
   game.curBettingRound++;
 

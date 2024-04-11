@@ -2,6 +2,8 @@ import { Socket } from "socket.io";
 import { Game } from "../../src/types/Game";
 
 export const handleStartBettingRound = (game: Game) => {
+  console.log("Starting betting round: " + game.curBettingRound);
+
   // Assign the first player as little blind and second player as big blind
   let players = game.players;
 

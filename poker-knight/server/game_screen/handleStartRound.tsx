@@ -10,6 +10,7 @@ export const handleStartRound = (game: Game) => {
 
   game.potSize = 0;
   game.curBettingRound = 0;
+  console.log("Starting round: " + game.roundCount);
 
   // Remove all fold/allin flags
   players.forEach((player) => {
