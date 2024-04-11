@@ -126,13 +126,16 @@ export const parseCardNames = (cardNames: string[]): string[] => {
 export const returnWinners = (game: Game) => { // still unfinished.. need to test and also implement card name parsing
   var Hand = require('pokersolver').Hand;
   var cardArray: Array<Array<string>> = [];
+  var rankArray: Array<number> = [];
   var concatArray: string[] = [];
   var parsedArray: string[] = [];
   game.players.forEach((player) => {
     concatArray = player.playerCards.concat(game.riverCards);
     parsedArray = parseCardNames(concatArray);
-    cardArray.push(Hand.solve(parsedArray));
+    // cardArray.push(Hand.solve(parsedArray));
+    rankArray.push(Hand.solve(parsedArray).rank);
   });
-  const winners = Hand.winners(cardArray);
-  return winners;
+  // const winners = Hand.winners(cardArray);
+  // return winners;
+  return rankArray;
 };
