@@ -1,4 +1,3 @@
-
 import { Game } from "../../src/types/Game";
 
 export const dealRiverCards = (game: Game, caseNumber: number) => {
@@ -8,7 +7,7 @@ export const dealRiverCards = (game: Game, caseNumber: number) => {
   riverCards.sort((a, b) => a.localeCompare(b));
 
   if (caseNumber == 1) {
-    while (riverCards.length < 5) {
+    while (riverCards.length < 3) {
       const randomIndex = Math.floor(Math.random() * game.deckCards.length);
       const randomCard = game.deckCards.splice(randomIndex, 1)[0];
       if (!game.riverCards.includes(randomCard)) {
@@ -19,23 +18,21 @@ export const dealRiverCards = (game: Game, caseNumber: number) => {
       riverCards.push("back");
     }
     game.riverCards = riverCards;
+  } else if (caseNumber == 2) {
+    // Case to deal 1 card
+    let cardIndex = 0,
+      dealt = 0;
+    while (cardIndex < 5) {
+      if (game.riverCards[cardIndex] === "back" && dealt === 0) {
+        const randomIndex = Math.floor(Math.random() * game.deckCards.length);
+        const randomCard = game.deckCards.splice(randomIndex, 1)[0];
+        game.riverCards[cardIndex] = randomCard;
+        dealt = 1;
+      }
+      game.riverCards.push("back");
+      cardIndex++;
+    }
   }
-  // else if (caseNumber == 2) // Case to deal 1 card
-  // {
-  //     let cardIndex = 0, dealt = 0;
-  //     while (cardIndex < 5)
-  //     {
-  //         if (game.riverCards[cardIndex] === "back" && dealt === 0)
-  //         {
-  //             const randomIndex = Math.floor(Math.random() * game.deckCards.length);
-  //             const randomCard = game.deckCards.splice(randomIndex, 1)[0];
-  //             game.riverCards[cardIndex] = randomCard;
-  //             dealt = 1;
-  //         }
-  //         game.riverCards.push("back");
-  //         cardIndex++;
-  //     }
-  // }
 };
 
 export const dealPlayerCards = (game: Game) => {
@@ -125,8 +122,8 @@ export const parseCardNames = (cardNames: string[]): string[] => {
 };
 
 export const returnWinners = (game: Game) => {
-  var Hand = require('pokersolver').Hand;
-  var playerRanks: { username: string, rank: number }[] = [];
+  var Hand = require("pokersolver").Hand;
+  var playerRanks: { username: string; rank: number }[] = [];
   game.players.forEach((player) => {
     var concatArray: string[] = player.playerCards.concat(game.riverCards);
     var parsedArray: string[] = parseCardNames(concatArray);
@@ -137,4 +134,3 @@ export const returnWinners = (game: Game) => {
   var winners = playerRanks.map((player) => player.username);
   return winners;
 };
-

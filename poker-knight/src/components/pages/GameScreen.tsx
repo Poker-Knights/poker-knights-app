@@ -254,6 +254,7 @@ const GameScreen = ({ navigation, route }: Props) => {
         buttonPressed = "CHECK";
       } else if (curRaiseVal === theGame.currentBet) {
         console.log("Current raise value: ", curRaiseVal);
+
         buttonPressed = "CALL";
       } else if (curRaiseVal > theGame.currentBet) {
         buttonPressed = "RAISE";
@@ -485,10 +486,15 @@ const GameScreen = ({ navigation, route }: Props) => {
             if (index === filteredArray.length - 1)
               playerStyle = GameScreenStyles.playerRight; // Last player
 
-            // Add a yellow ring around the avatar if it's the player's turn
-            const avatarStyle = player.currentTurn
-              ? GameScreenStyles.activeTurnAvatar
-              : GameScreenStyles.avatar;
+            // Add a yellow ring around the avatar if it's the player's turn but if they folded then lower the opacity of the avatar
+            let avatarStyle = GameScreenStyles.avatar;
+            if (player.currentTurn) {
+              avatarStyle = GameScreenStyles.activeTurnAvatar;
+            }
+            if (player.foldFG) {
+              avatarStyle = GameScreenStyles.foldedAvatar;
+            }
+
             return (
               <View
                 key={player.id}
@@ -515,8 +521,9 @@ const GameScreen = ({ navigation, route }: Props) => {
                 )} */}
 
                 <Text style={GameScreenStyles.playerName}>{player.name}</Text>
+                {/* if a player folded make the text 'FOLDED" instead of their money */}
                 <Text style={GameScreenStyles.playerMoney}>
-                  {formatCurrency(player.money)}
+                  {!player.foldFG ? formatCurrency(player.money) : "FOLDED"}
                 </Text>
               </View>
             );
@@ -604,6 +611,8 @@ const GameScreen = ({ navigation, route }: Props) => {
                     : "CALL"
                   : curRaiseVal > theGame.currentBet
                   ? "RAISE"
+                  : curRaiseVal >= thePlayer.money
+                  ? "ALL-IN"
                   : curRaiseVal === 0
                   ? "CHECK"
                   : "CALL"}

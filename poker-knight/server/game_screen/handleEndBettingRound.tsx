@@ -25,6 +25,8 @@ export const handleEndBettingRound = (game: Game) => {
     }
   });
 
+  // Reset card and remove cards from player hands
+
   /*
   current pot: 500 = lastFullRound + joshCur + kevCur + mattCur + sriCur -> 500 - 80 - 80 - 56 - 70 = 214
           Josh (100)      Kevin (100)       Matthew (56)       Sri (70)

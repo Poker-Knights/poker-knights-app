@@ -7,7 +7,7 @@ export const handleButtonPress = (
 ) => {
   // Handle button presses
   // CallLogic
-  
+
   if (buttonPressed === "call") {
     const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
 
@@ -17,7 +17,8 @@ export const handleButtonPress = (
       game.potSize += game.currentBet; // Update Pot Value
     } else {
       curPlayer.allInFg = true; // Player is all in
-      // All in logic
+      // set button press to all in
+      buttonPressed = "all-in";
     }
 
     game = nextPlayer(game); // Move to next player
@@ -34,6 +35,8 @@ export const handleButtonPress = (
     // Check Logic
   } else if (buttonPressed === "check") {
     // Implement the check action logic here
+    const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
+    curPlayer.lastBet = 0;
     game = nextPlayer(game); // Move to next player
 
     // Raise logic
@@ -46,12 +49,12 @@ export const handleButtonPress = (
       curPlayer.lastBet = betValue; // Update last bet
       game.currentBet = betValue; // Update current game bet to new value
       game.potSize += game.currentBet; // Update Pot Value
+
       if (curPlayer.money === betValue) {
         curPlayer.allInFg = true; // Player is all in
-        // All in logic
+
+        buttonPressed = "all-in";
       }
-    } else {
-      // Logic for player doesnt have enough to bet
     }
 
     game = nextPlayer(game); // Move to next player
@@ -65,6 +68,8 @@ export const handleButtonPress = (
     curPlayer.lastBet = curPlayer.money; // Update last bet
     curPlayer.money = 0; // Empty players money
     game.potSize += game.currentBet; // Update Pot Value
+    curPlayer.allInFg = true; // Player is all in
+
     game = nextPlayer(game); // Move to next player
   }
   return game;
@@ -80,8 +85,7 @@ const nextPlayer = (game: Game) => {
   if (curPlayer <= game.playerCount) {
     game.currentPlayer++;
     game.players[game.currentPlayer - 1].currentTurn = true; // Set current player turn to true
-  }
-  else {
+  } else {
     game.currentPlayer = 1;
     game.players[game.currentPlayer - 1].currentTurn = true; // Reset last bet
   }
