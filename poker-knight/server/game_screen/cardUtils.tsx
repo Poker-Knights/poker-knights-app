@@ -1,3 +1,4 @@
+
 import { Game } from "../../src/types/Game";
 
 export const dealRiverCards = (game: Game, caseNumber: number) => {
@@ -136,3 +137,4 @@ export const returnWinners = (game: Game) => {
   var winners = playerRanks.map((player) => player.username);
   return winners;
 };
+
