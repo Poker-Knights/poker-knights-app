@@ -51,6 +51,7 @@ const GameScreen = ({ navigation, route }: Props) => {
 
   let [currentBet, setCurrentBet] = useState(theGame.currentBet); // Track Current Bet
   let [curRaiseVal, setCurRaiseVal] = useState(theGame.currentBet); //Track Raise Value
+  let [triggeredButton, setTriggeredButton] = useState<string>(""); // Track Button Pressed
 
   const [losePopupVisible, setLosePopupVisible] = useState<boolean>(false);
   const [winPopupVisible, setWinPopupVisible] = useState<boolean>(false);
@@ -62,6 +63,9 @@ const GameScreen = ({ navigation, route }: Props) => {
   let [thePlayer, setPlayer] = useState<Player>(
     theGame.players.find((p) => p.name === theUsername)!
   );
+
+
+  let [theCurrentPlayer, setCurrentPlayer] = useState<Player>(theGame.players[theGame.currentPlayer - 1]); // Initialize current player state with the first player in the game object
 
   let [playerIndex, setPlayerIndex] = useState<number>(0); // Initialize player index state with a default value
   // Set cards
@@ -81,7 +85,7 @@ const GameScreen = ({ navigation, route }: Props) => {
   }, [navigation]);
 
   // There needs to be a function to evaluate which buttons you can and cannot press
-  function determineAvailableActions(game: typeof Game): {
+  function determineAvailableActions(game: typeof Game, player: Player): {
     betOption: boolean;
     fold: boolean;
     allIn: boolean;
@@ -93,14 +97,14 @@ const GameScreen = ({ navigation, route }: Props) => {
       allIn: false,
     };
 
-    if (!thePlayer.foldFG && !thePlayer.allInFg) {
-      console.log("Reached inside fold flag and all in flag iff");
+    console.log("CLIENT SIDE TURN: " + player.currentTurn);
+    if (!player.foldFG && !player.allInFg) {
       // if its not your turn, you cannot do anything
-      if (thePlayer.currentTurn === false) {
+      if (player.currentTurn === false) {
         actions.betOption = false;
         actions.allIn = false;
         actions.fold = false;
-      } else if (thePlayer.currentTurn === true) {
+      } else if (player.currentTurn === true) {
         actions.betOption = true;
         actions.fold = true;
         actions.allIn = true;
@@ -109,6 +113,11 @@ const GameScreen = ({ navigation, route }: Props) => {
 
     return actions;
   }
+
+  const handleTriggeredButton = (action: string) => {
+    handleButtonPress(action);
+    setTriggeredButton(action);
+  };
 
   // Access the socket from the context
   const socketRef = useContext(SocketContext);
@@ -124,6 +133,7 @@ const GameScreen = ({ navigation, route }: Props) => {
     );
 
     setPlayerIndex(playerIndex);
+    setCurrentPlayer(theGame.players[theGame.currentPlayer - 1]);
 
     //setCurrentBet(theGame.currentBet);
     //setCurRaiseVal(theGame.currentBet);
@@ -131,7 +141,7 @@ const GameScreen = ({ navigation, route }: Props) => {
     setRiverCards(theGame.riverCards);
     //setPot(theGame.potSize);
 
-    let actionButtons = determineAvailableActions(theGame);
+    let actionButtons = determineAvailableActions(theGame, thePlayer);
     setActionButtonsEnabled(actionButtons);
 
     if (!socketRef) return; // Early return if null
@@ -163,30 +173,41 @@ const GameScreen = ({ navigation, route }: Props) => {
   }, [navigation]);
 
   useEffect(() => {
-    console.log(" A player just pressed a button ");
-
     if (!socketRef || !socketRef.current) return; // Early return if null
 
     // Listen for buttonPressed event
     socketRef.current.on("handleButtonPressed", (data: typeof Game) => {
       console.log("Heard Event");
 
+      console.log("Current player before: ", theGame.currentPlayer);
       let updatedGame: typeof Game = data;
       setGame(updatedGame);
 
-      let actionButtons = determineAvailableActions(updatedGame);
-      setActionButtonsEnabled(actionButtons);
+      //setCurrentPlayer(updatedGame.players[updatedGame.currentPlayer - 1]);
 
-      setPot(updatedGame.potSize);
-      setCurrentBet(updatedGame.currentBet);
-      setCurRaiseVal(updatedGame.currentBet);
+      console.log("Current player after: ", updatedGame.currentPlayer);
 
       let updatedPlayer: Player = updatedGame.players.find(
         (p) => p.name === theUsername
       )!;
       setPlayer(updatedPlayer);
+
+      let actionButtons = determineAvailableActions(updatedGame, updatedPlayer);
+      setActionButtonsEnabled(actionButtons);
+
+      // setPot(updatedGame.potSize);
+      // setCurrentBet(updatedGame.currentBet);
+      setCurRaiseVal(updatedGame.currentBet);
+
+      console.log("Current player after: ", updatedGame.currentPlayer);
     });
-  }, [theGame.currentPlayer]);
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.off("handleButtonPressed");
+      }
+    };
+  }, [triggeredButton]);
 
   // Bring user to exit confirmation modal
   const handleExitPress = () => {
@@ -228,6 +249,7 @@ const GameScreen = ({ navigation, route }: Props) => {
       if (curRaiseVal === 0) {
         buttonPressed = "CHECK";
       } else if (curRaiseVal === theGame.currentBet) {
+        console.log("Current raise value: ", curRaiseVal);
         buttonPressed = "CALL";
       } else if (curRaiseVal > theGame.currentBet) {
         buttonPressed = "RAISE";
@@ -236,53 +258,23 @@ const GameScreen = ({ navigation, route }: Props) => {
 
     switch (buttonPressed) {
       case "CALL":
-        socketRef.current?.emit(
-          "buttonPressed",
-          theGame,
-          theGame.id,
-          "call",
-          curRaiseVal
-        );
+        socketRef.current?.emit("buttonPressed", { game: theGame, gameID: theGame.id, buttonPressed: "call", betValue: curRaiseVal });
         break;
 
       case "FOLD":
-        socketRef.current?.emit(
-          "buttonPressed",
-          theGame,
-          theGame.id,
-          "fold",
-          curRaiseVal
-        );
+        socketRef.current?.emit("buttonPressed", { game: theGame, gameID: theGame.id, buttonPressed: "fold", betValue: curRaiseVal });
         break;
 
       case "CHECK":
-        socketRef.current?.emit(
-          "buttonPressed",
-          theGame,
-          theGame.id,
-          "check",
-          curRaiseVal
-        );
+        socketRef.current?.emit("buttonPressed", {game: theGame, gameID: theGame.id, buttonPressed: "check", betValue: curRaiseVal });
         break;
 
       case "RAISE":
-        socketRef.current?.emit(
-          "buttonPressed",
-          theGame,
-          theGame.id,
-          "raise",
-          curRaiseVal
-        );
+        socketRef.current?.emit("buttonPressed", {game: theGame, gameID: theGame.id, buttonPressed: "raise", betValue: curRaiseVal });
         break;
 
       case "ALL-IN":
-        socketRef.current?.emit(
-          "buttonPressed",
-          theGame,
-          theGame.id,
-          "all-in",
-          curRaiseVal
-        );
+        socketRef.current?.emit("buttonPressed", {game: theGame, gameID: theGame.id, buttonPressed: "all-in", betValue: curRaiseVal });
         break;
 
       case "decrementRaise":
@@ -299,7 +291,10 @@ const GameScreen = ({ navigation, route }: Props) => {
         break;
 
       case "incrementRaise":
-        if (curPlayer.lastBet !== 0 && curPlayer.lastBet < theGame.currentBet) {
+        if (
+          curPlayer.lastBet !== -1 &&
+          curPlayer.lastBet === theGame.currentBet
+        ) {
           curRaiseVal = theGame.currentBet;
         } else if (curRaiseVal < curPlayer.money - 10) {
           curRaiseVal += 10;
@@ -310,12 +305,7 @@ const GameScreen = ({ navigation, route }: Props) => {
         break;
     }
 
-    //Update Values
     setCurRaiseVal(curRaiseVal);
-
-    // Update these values on server side
-    setPot(theGame.potSize);
-    setCurrentBet(theGame.currentBet);
 
     // Send updated game object back to server if button was pressed
     if (socketRef.current) {
@@ -456,7 +446,7 @@ const GameScreen = ({ navigation, route }: Props) => {
 
       {/* Restructure screen so only other players avatars get displayed here*/}
       <View style={GameScreenStyles.playersContainer}>
-        {Game.players
+        {theGame.players
           .filter((player) => player.name !== thePlayer.name) // Filter out the main player
           .map((player, index, filteredArray) => {
             // Use filtered array for mapping
@@ -530,7 +520,7 @@ const GameScreen = ({ navigation, route }: Props) => {
           {/* ALL-IN Button */}
           <View style={GameScreenStyles.allInButtonContainer}>
             <TouchableOpacity
-              onPress={() => handleButtonPress("ALL-IN")}
+              onPress={() => handleTriggeredButton("ALL-IN")}
               disabled={!actionButtonsEnabled.allIn}
             >
               <Text
@@ -549,7 +539,7 @@ const GameScreen = ({ navigation, route }: Props) => {
           {/* Fold Button */}
           <View style={GameScreenStyles.foldButtonContainer}>
             <TouchableOpacity
-              onPress={() => handleButtonPress("FOLD")}
+              onPress={() => handleTriggeredButton("FOLD")}
               disabled={!actionButtonsEnabled.fold}
             >
               <Text
@@ -568,7 +558,7 @@ const GameScreen = ({ navigation, route }: Props) => {
           <View style={GameScreenStyles.raiseCallButtonContainer}>
             {/* Label */}
             <TouchableOpacity
-              onPress={() => handleButtonPress("BET")}
+              onPress={() => handleTriggeredButton("BET")}
               disabled={!actionButtonsEnabled.betOption}
             >
               <Text

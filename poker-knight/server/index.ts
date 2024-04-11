@@ -57,8 +57,13 @@ io.on("connection", (socket: Socket) => {
     }
   });
 
-  // Button Pressed Check
-  socket.on("buttonPressed", (game, gameID, buttonPressed, betValue) => {
+  socket.on("buttonPressed", ({ game, gameID, buttonPressed, betValue }) => {
+    games[gameID] = handleButtonPress(games[gameID], buttonPressed, betValue);
+
+    setTimeout(() => {
+    io.to(gameID).emit("handleButtonPressed", games[gameID]);
+    }, 250);
+  });
 
     // Handle button pressed
     games[gameID] = handleButtonPress(games[gameID], buttonPressed, betValue);
