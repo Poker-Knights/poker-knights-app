@@ -150,15 +150,6 @@ const GameScreen = ({ navigation, route }: Props) => {
 
     if (!socketRef) return; // Early return if null
 
-    if (socketRef.current) {
-      socketRef.current.on("updatePlayerCards", (data: any) => {
-        // this needs to be updated so that it can handle individual players
-        let updatedPlayerCards = data.playerCards[playerIndex];
-        // update player cards
-        setPlayerCards(updatedPlayerCards);
-      });
-    }
-
     // Use the imported helper function, passing necessary dependencies
     const exitGameHandler = handleExit(navigation, socketRef, Game.id);
 
