@@ -176,7 +176,7 @@ const GameScreen = ({ navigation, route }: Props) => {
     if (!socketRef || !socketRef.current) return; // Early return if null
 
     // Listen for buttonPressed event
-    socketRef.current.on("handleButtonPressed", (data: typeof Game) => {
+    socketRef.current.on("handledButtonPressed", (data: typeof Game) => {
       console.log("Heard Event");
 
       console.log("Current player before: ", theGame.currentPlayer);
@@ -204,7 +204,7 @@ const GameScreen = ({ navigation, route }: Props) => {
 
     return () => {
       if (socketRef.current) {
-        socketRef.current.off("handleButtonPressed");
+        socketRef.current.off("handledButtonPressed");
       }
     };
   }, [triggeredButton]);

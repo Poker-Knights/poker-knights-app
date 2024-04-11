@@ -60,25 +60,18 @@ io.on("connection", (socket: Socket) => {
   socket.on("buttonPressed", ({ game, gameID, buttonPressed, betValue }) => {
     games[gameID] = handleButtonPress(games[gameID], buttonPressed, betValue);
 
-    setTimeout(() => {
-    io.to(gameID).emit("handleButtonPressed", games[gameID]);
-    }, 250);
-  });
-
-    // Handle button pressed
-    games[gameID] = handleButtonPress(games[gameID], buttonPressed, betValue);
-
+    
     // Check if betting round ended
     // If all players have non zero for last bet
-     // every players current bet is -1
-     let players = games[gameID].players;
-     let endBettingRoundFG = true;
-     players.forEach((player) => {
+    // every players current bet is -1
+    let players = games[gameID].players;
+    let endBettingRoundFG = true;
+    players.forEach((player) => {
       if(!player.foldFG && (player.lastBet === 0 || player.lastBet < games[gameID].currentBet)){
         endBettingRoundFG = false;
       }
     });
-
+    
     // If the betting round is over
     if(endBettingRoundFG){
       games[gameID] = handleEndBettingRound(game);
@@ -87,16 +80,17 @@ io.on("connection", (socket: Socket) => {
         games[gameID] = handleEndRound(game);
         // Emit game results to client
         games[gameID] = handleStartRound(game);
-      // else just start next betting round
+        // else just start next betting round
       }else{
         games[gameID] = handleStartBettingRound(game);
       }
     }
     
-  setTimeout(() => {
-        io.to(gameID).emit("handledButtonPressed", games[gameID]);
-      }, 3000);
+    setTimeout(() => {
+    io.to(gameID).emit("handledButtonPressed", games[gameID]);
+    }, 250);
   });
+    
 
   // Example of disconnect event
   socket.on("disconnect", () => {
