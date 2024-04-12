@@ -12,7 +12,7 @@ export const handleButtonPress = (
     const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
 
     if (curPlayer.money >= game.currentBet) {
-      curPlayer.money -= game.currentBet; // Reflect bet
+      curPlayer.money -= (game.currentBet - curPlayer.lastBet); // Reflect bet
       curPlayer.lastBet = game.currentBet; // Update last bet
       game.potSize += game.currentBet; // Update Pot Value
     } else {
@@ -79,6 +79,8 @@ export const handleButtonPress = (
 const nextPlayer = (game: Game) => {
   // Logic to handle player's turn
   game.players[game.currentPlayer - 1].currentTurn = false; // Set current player turn to true
+
+  
 
   let curPlayer = game.currentPlayer + 1;
   while (game.players[curPlayer - 1].foldFG) {

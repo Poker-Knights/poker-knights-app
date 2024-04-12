@@ -40,11 +40,11 @@ export const handleStartBettingRound = (game: Game) => {
 
       break;
     case 2:
-      dealRiverCards(game, 1);
+      dealRiverCards(game, 2);
 
       break;
     case 3:
-      dealRiverCards(game, 1);
+      dealRiverCards(game, 2);
       break;
 
     default:
