@@ -28,6 +28,7 @@ export type Game = {
   playerCount: number;
   currentBet: number;
   currentPlayer: number;
+  checkCounter: number;
   gameStarted: boolean;
   riverCards: string[];
   deckCards: string[];

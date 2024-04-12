@@ -50,6 +50,7 @@ export const handleButtonPress = (
     // Implement the check action logic here
     const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
     curPlayer.lastBet = 0;
+    game.checkCounter++;
     game = nextPlayer(game); // Move to next player
 
     // Raise logic
