@@ -12,10 +12,23 @@ export const handleButtonPress = (
     const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
 
     if (curPlayer.money >= game.currentBet) {
-      curPlayer.money -= (game.currentBet - curPlayer.lastBet); // Reflect bet
+      const call_diff = game.currentBet - curPlayer.lastBet;
+      if (curPlayer.isLittleBlind)
+      {
+        console.log("LITTLE BLIND LAST BET " + curPlayer.lastBet);
+        console.log("CALL DIFFERENCE " + call_diff); 
+        console.log(curPlayer.money)
+      }
+
+      curPlayer.money -= call_diff; // Reflect bet
       curPlayer.lastBet = game.currentBet; // Update last bet
+      
+      if(curPlayer.isLittleBlind) console.log(curPlayer.money);
+
       game.potSize += game.currentBet; // Update Pot Value
-    } else {
+    } 
+    else
+    {
       curPlayer.allInFg = true; // Player is all in
       // set button press to all in
       buttonPressed = "all-in";
@@ -56,7 +69,7 @@ export const handleButtonPress = (
         buttonPressed = "all-in";
       }
     }
-
+    
     game = nextPlayer(game); // Move to next player
   }
 

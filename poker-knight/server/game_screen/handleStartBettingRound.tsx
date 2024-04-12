@@ -8,16 +8,21 @@ export const handleStartBettingRound = (game: Game) => {
 
   // Assign the first player as little blind and second player as big blind
   let players = game.players;
-  console.log("Big blind: " + game.players[game.curBigBlind - 1] + ", Bet: " + game.players[game.curBigBlind - 1].lastBet);
-  console.log("little blind: " + game.players[game.curLittleBlind - 1] + ", Bet: " + game.players[game.curLittleBlind - 1].lastBet);
   // Assign Game Updates
   if (game.curBettingRound !== 0) 
   {
+
+
     game.currentBet = 0;
     // every players current bet is 0
     players.forEach((player) => {
       player.lastBet = 0;
       player.currentTurn = false;
+    });
+
+    // Display every players name and money
+    players.forEach((player) => {
+      console.log(player.name + ", " + player.money);
     });
 
   }
@@ -26,7 +31,6 @@ export const handleStartBettingRound = (game: Game) => {
     players.forEach((player) => {
 
       if ((!player.isLittleBlind) && (!player.isBigBlind)) {
-        console.log("If test: Player: " + player.name + ", Bet: " + player.lastBet + ", isLittleBlind: " + player.isLittleBlind + ", isBigBlind: " + player.isBigBlind);
         player.lastBet = 0;
       }
       player.currentTurn = false;
@@ -63,6 +67,15 @@ export const handleStartBettingRound = (game: Game) => {
     default:
       // nothing
       break;
+  }
+
+
+  if (game.curBettingRound !== 0) {
+    console.log("END OF START BETTING ROUND");
+    // Display every players name and money
+    players.forEach((player) => {
+      console.log(player.name + ", " + player.money);
+    });
   }
 
   return game;

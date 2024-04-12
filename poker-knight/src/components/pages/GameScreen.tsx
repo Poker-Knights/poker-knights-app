@@ -71,7 +71,7 @@ const GameScreen = ({ navigation, route }: Props) => {
   let [playerIndex, setPlayerIndex] = useState<number>(0); // Initialize player index state with a default value
   // Set cards
   let [riverCards, setRiverCards] = useState<string[]>(theGame.riverCards); // Initialize river cards state with cards face down
-  let [playerCards, setPlayerCards] = useState<string[]>(["back", "back"]); // Initialize player cards state with cards face down
+  let [playerCards, setPlayerCards] = useState<string[]>(thePlayer.playerCards); // Initialize player cards state with cards face down
 
   let [actionButtonsEnabled, setActionButtonsEnabled] = useState({
     betOption: false,
