@@ -70,6 +70,7 @@ export const handleStartRound = (game: Game) => {
 
   game.currentBet = game.bigBlindBet;
   console.log(game.players[game.curLittleBlind - 1].lastBet + " " + game.players[game.curLittleBlind - 1].name);
+  
   // call function to 'give' players their cards here
   dealPlayerCards(game);
 

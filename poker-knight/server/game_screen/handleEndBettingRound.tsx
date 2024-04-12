@@ -3,6 +3,12 @@ import { Game } from "../../src/types/Game";
 
 export const handleEndBettingRound = (game: Game) => {
   console.log("Ending betting round: " + game.curBettingRound);
+
+  // print each players name and money
+  game.players.forEach((player) => {
+    console.log(player.name + ", " + player.money);
+  });
+
   // Increment Betting Round
   game.curBettingRound++;
 
