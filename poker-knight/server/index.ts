@@ -70,14 +70,22 @@ io.on("connection", (socket: Socket) => {
     // every players current bet is -1
     let players = games[gameID].players;
     let endBettingRoundFG = true;
+    let checkCounter = 0;
 
     players.forEach((player) => {
       console.log(player.name + ', ' + player.lastBet);
-      if(!player.foldFG && (player.lastBet === 0 || player.lastBet < games[gameID].currentBet)){
+      if(!player.foldFG && (player.lastBet === 0 || player.lastBet < games[gameID].currentBet))
         endBettingRoundFG = false;
-      }
+
+      if (player.lastBet === 0)
+        checkCounter++;
     });
     
+    if (checkCounter === players.length)
+      endBettingRoundFG = true;
+
+    console.log("End betting round: " + endBettingRoundFG);
+
     // If the betting round is over
     if (endBettingRoundFG) {
       games[gameID] = handleEndBettingRound(games[gameID]);
