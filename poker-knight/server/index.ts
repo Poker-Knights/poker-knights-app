@@ -60,7 +60,6 @@ io.on("connection", (socket: Socket) => {
   socket.on("buttonPressed", ({ game, gameID, buttonPressed, betValue }) => {
     games[gameID] = handleButtonPress(games[gameID], buttonPressed, betValue);
 
-    
     // Check if betting round ended
     // If all players have non zero for last bet
     // every players current bet is -1
@@ -74,21 +73,21 @@ io.on("connection", (socket: Socket) => {
     });
     console.log("End betting round: " + endBettingRoundFG);
     // If the betting round is over
-    if(endBettingRoundFG){
+    if (endBettingRoundFG) {
       games[gameID] = handleEndBettingRound(game);
       // If the round is over
-      if(games[gameID].curBettingRound === 4){
+      if (games[gameID].curBettingRound === 4) {
         games[gameID] = handleEndRound(game);
         // Emit game results to client
         games[gameID] = handleStartRound(game);
         // else just start next betting round
-      }else{
+      } else {
         games[gameID] = handleStartBettingRound(game);
       }
     }
-    
+
     setTimeout(() => {
-    io.to(gameID).emit("handledButtonPressed", games[gameID]);
+      io.to(gameID).emit("handledButtonPressed", games[gameID]);
     }, 250);
   });
 
