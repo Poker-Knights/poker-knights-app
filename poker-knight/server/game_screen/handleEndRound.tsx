@@ -2,8 +2,6 @@ import { Socket } from "socket.io";
 import { Game, Player } from "../../src/types/Game";
 
 export const handleEndRound = (game: Game) => {
-  console.log("Ended round: " + game.roundCount);
-
   // Perform Hand Analysis
   let winners: string[] = [];
 

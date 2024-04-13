@@ -10,7 +10,6 @@ export const handleStartRound = (game: Game) => {
 
   game.potSize = 0;
   game.curBettingRound = 0;
-  console.log("Starting round: " + game.roundCount);
 
   // Remove all fold/allin flags
   players.forEach((player) => {
@@ -69,13 +68,12 @@ export const handleStartRound = (game: Game) => {
   players[game.currentPlayer - 1].currentTurn = true;
 
   game.currentBet = game.bigBlindBet;
-  console.log(game.players[game.curLittleBlind - 1].lastBet + " " + game.players[game.curLittleBlind - 1].name);
-  
+
   // call function to 'give' players their cards here
   dealPlayerCards(game);
 
   game.currentBet = game.bigBlindBet;
-  console.log(game.players[game.curLittleBlind - 1].lastBet + " " + game.players[game.curLittleBlind - 1].name);
+
   // Start betting round
   return handleStartBettingRound(game);
 };
