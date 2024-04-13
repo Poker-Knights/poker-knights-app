@@ -11,7 +11,7 @@ import { handleExitGame } from "./game_screen/handleExitGame";
 import { handleStartGame } from "./game_screen/handleStartGame";
 import { handleStartRound } from "./game_screen/handleStartRound";
 import { PLAYER_COUNT } from "../src/utils/socket";
-import { handleButtonPress } from "./game_screen/handleButtonPress";
+import { dispGame, handleButtonPress } from "./game_screen/handleButtonPress";
 import { handleEndBettingRound } from "./game_screen/handleEndBettingRound";
 import { handleStartBettingRound } from "./game_screen/handleStartBettingRound";
 
