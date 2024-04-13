@@ -301,24 +301,31 @@ const GameScreen = ({ navigation, route }: Props) => {
         break;
 
       case "decrementRaise":
+        // Allow Call
         if (
           curPlayer.lastBet !== 0 &&
           curPlayer.lastBet !== theGame.currentBet
         ) {
           curRaiseVal = theGame.currentBet;
-        } else if (curRaiseVal > 0 && curRaiseVal > theGame.currentBet)
+        }
+        // Allow Raise
+        else if (curRaiseVal > 0 && curRaiseVal > theGame.currentBet)
           curRaiseVal -= 10;
 
         break;
 
       case "incrementRaise":
-        if (curPlayer.lastBet !== 0 && curPlayer.lastBet === theGame.currentBet) {
+        // Allow Call
+        if (
+          curPlayer.lastBet !== 0 &&
+          curPlayer.lastBet !== theGame.currentBet
+        ) {
           curRaiseVal = theGame.currentBet;
-        } 
-        else if (curRaiseVal < curPlayer.money - 10) {
+          // Allow Raise
+        } else if (curRaiseVal < curPlayer.money - 10) {
           curRaiseVal += 10;
-        } 
-        else {
+          // Theyre all in
+        } else {
           curRaiseVal = theGame.players[theGame.currentPlayer - 1].money;
         }
         break;
@@ -581,7 +588,7 @@ const GameScreen = ({ navigation, route }: Props) => {
           </View>
           {/* Container for the Raise/Call/Check functionality */}
           <View style={GameScreenStyles.raiseCallButtonContainer}>
-          <TouchableOpacity
+            <TouchableOpacity
               onPress={() => handleTriggeredButton("BET")}
               disabled={!actionButtonsEnabled.betOption}
             >
@@ -592,35 +599,25 @@ const GameScreen = ({ navigation, route }: Props) => {
                     ? { color: "darkgrey" }
                     : { color: "yellow" },
                 ]}
-                              >
+              >
                 {
                   // Check if the player has made a  bet (called or raised).
                   thePlayer.lastBet !== 0
-                    ? (
-                        // If so, check if the current bet is 0.
-                        theGame.currentBet === 0
-                          ? "CHECK"  // If the current bet is 0, then display "CHECK".
-                          : "CALL"   // If the current bet is not 0, then display "CALL".
-                      )
-
-                    : (
-                        // If the player hasn't made a last bet, check if the current raise value is >= the player's money.
-                        curRaiseVal >= thePlayer.money
-                          ? "ALL-IN" // If the raise value is greater or equal to the player's money, display "ALL-IN".
-                          : (
-                            // If not, check if the current raise value is > the current bet.
-                            curRaiseVal > theGame.currentBet
-                              ? "RAISE" // If the raise value is greater, then display "RAISE".
-                              : (
-                                // If not, check if the current raise value is 0.
-                                curRaiseVal === 0
-                                  ? "CHECK"  // If it is 0, then display "CHECK".
-                                  : "CALL"   // If it is not 0, then display "CALL".
-                              )
-                            )
-                       )
-                  }
-
+                    ? // If so, check if the current bet is 0.
+                      theGame.currentBet === 0
+                      ? "CHECK" // If the current bet is 0, then display "CHECK".
+                      : "CALL" // If the current bet is not 0, then display "CALL".
+                    : // If the player hasn't made a last bet, check if the current raise value is >= the player's money.
+                    curRaiseVal >= thePlayer.money
+                    ? "ALL-IN" // If the raise value is greater or equal to the player's money, display "ALL-IN".
+                    : // If not, check if the current raise value is > the current bet.
+                    curRaiseVal > theGame.currentBet
+                    ? "RAISE" // If the raise value is greater, then display "RAISE".
+                    : // If not, check if the current raise value is 0.
+                    curRaiseVal === 0
+                    ? "CHECK" // If it is 0, then display "CHECK".
+                    : "CALL" // If it is not 0, then display "CALL".
+                }
               </Text>
             </TouchableOpacity>
 
@@ -628,12 +625,16 @@ const GameScreen = ({ navigation, route }: Props) => {
             <TouchableOpacity
               onPress={() => handleButtonPress("decrementRaise")}
               // should be disabled if the player decrements below the current bet
-              disabled={!actionButtonsEnabled.betOption || (curRaiseVal < theGame.currentBet)}
+              disabled={
+                !actionButtonsEnabled.betOption ||
+                curRaiseVal < theGame.currentBet
+              }
             >
               <Text
                 style={[
                   GameScreenStyles.raiseCallValueText,
-                  !actionButtonsEnabled.betOption || (curRaiseVal < theGame.currentBet)
+                  !actionButtonsEnabled.betOption ||
+                  curRaiseVal < theGame.currentBet
                     ? { color: "darkgrey" }
                     : { color: "yellow" },
                 ]}
@@ -657,12 +658,15 @@ const GameScreen = ({ navigation, route }: Props) => {
             {/* Increment button for raise value */}
             <TouchableOpacity
               onPress={() => handleButtonPress("incrementRaise")}
-              disabled={!actionButtonsEnabled.betOption || ((curRaiseVal > thePlayer.money))}
+              disabled={
+                !actionButtonsEnabled.betOption || curRaiseVal > thePlayer.money
+              }
             >
               <Text
                 style={[
                   GameScreenStyles.raiseCallValueText,
-                  !actionButtonsEnabled.betOption || (curRaiseVal > thePlayer.money)
+                  !actionButtonsEnabled.betOption ||
+                  curRaiseVal > thePlayer.money
                     ? { color: "darkgrey" }
                     : { color: "yellow" },
                 ]}

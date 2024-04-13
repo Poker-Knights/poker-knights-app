@@ -13,29 +13,19 @@ export const handleButtonPress = (
 
     if (curPlayer.money >= game.currentBet) {
       const call_diff = game.currentBet - curPlayer.lastBet;
-      if (curPlayer.isLittleBlind)
-      {
-        console.log("LITTLE BLIND LAST BET " + curPlayer.lastBet);
-        console.log("CALL DIFFERENCE " + call_diff); 
-        console.log(curPlayer.money)
-      }
 
       curPlayer.money -= call_diff; // Reflect bet
       curPlayer.lastBet = game.currentBet; // Update last bet
-      
-      if(curPlayer.isLittleBlind) console.log(curPlayer.money);
 
       game.potSize += game.currentBet; // Update Pot Value
-    } 
-    else
-    {
+    } else {
       curPlayer.allInFg = true; // Player is all in
       // set button press to all in
       buttonPressed = "all-in";
     }
 
     game = nextPlayer(game); // Move to next player
-
+    dispGame(game);
     return game;
 
     // Fold logic
@@ -70,7 +60,7 @@ export const handleButtonPress = (
         buttonPressed = "all-in";
       }
     }
-    
+
     game = nextPlayer(game); // Move to next player
   }
 
@@ -86,6 +76,7 @@ export const handleButtonPress = (
 
     game = nextPlayer(game); // Move to next player
   }
+  dispGame(game);
   return game;
 };
 
@@ -98,8 +89,6 @@ export const nextPlayer = (game: Game) => {
   let ctr = 0;
   game.players[game.currentPlayer - 1].currentTurn = false; // Set previous current player turn to false
 
-  
-
   let curPlayer = game.currentPlayer + 1;
   if (curPlayer === 5) curPlayer = 1;
   while (game.players[curPlayer - 1].foldFG) {
@@ -110,11 +99,42 @@ export const nextPlayer = (game: Game) => {
     // This is to make sure we are not stuck in an infinite while loop, since
     // if all players have foldFG set to true, the while loop will never break.
     // (If this isn't a potential issue, remove this if statement and the ctr variable's declaration.)
-    if (ctr === game.playerCount)
-      break;
+    if (ctr === game.playerCount) break;
   }
   game.currentPlayer = curPlayer;
   game.players[game.currentPlayer - 1].currentTurn = true; // Set new current player turn to true
 
   return game;
+};
+
+export const dispGame = (game: Game) => {
+  console.log("-------------------------------------");
+  console.log(
+    "Current Round: " +
+      game.roundCount +
+      " Current Betting Round: " +
+      game.curBettingRound
+  );
+  console.log("Pot Size: " + game.potSize + " Current Bet: " + game.currentBet);
+  console.log(
+    "Current Player: " +
+      game.currentPlayer +
+      " Number Players: " +
+      game.playerCount
+  );
+  game.players.forEach((player) => {
+    console.log(
+      "Player: " +
+        player.name +
+        " Last bet: " +
+        player.lastBet +
+        " $" +
+        player.money +
+        " Turn? " +
+        player.currentTurn +
+        " Folded? " +
+        player.foldFG
+    );
+  });
+  console.log("-------------------------------------");
 };

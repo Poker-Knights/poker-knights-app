@@ -11,7 +11,7 @@ import { handleExitGame } from "./game_screen/handleExitGame";
 import { handleStartGame } from "./game_screen/handleStartGame";
 import { handleStartRound } from "./game_screen/handleStartRound";
 import { PLAYER_COUNT } from "../src/utils/socket";
-import { handleButtonPress } from "./game_screen/handleButtonPress";
+import { dispGame, handleButtonPress } from "./game_screen/handleButtonPress";
 import { handleEndBettingRound } from "./game_screen/handleEndBettingRound";
 import { handleStartBettingRound } from "./game_screen/handleStartBettingRound";
 
@@ -34,11 +34,9 @@ io.on("connection", (socket: Socket) => {
   // Register event handlers for this connection
   socket.on("createGame", handleCreateGame(socket, games));
   socket.on("attemptToJoin", handleAttemptToJoin(socket, games));
-  // socket.on('exitGame', console.log("we made it here"));
 
   socket.on("joinRoom", ({ gameId }) => {
     socket.join(gameId);
-    console.log(games[gameId].players.length);
 
     // Broadcast the updated player list to all clients in the room if its less than the player count
     if (games[gameId].players.length <= PLAYER_COUNT) {
@@ -60,11 +58,6 @@ io.on("connection", (socket: Socket) => {
   socket.on("buttonPressed", ({ game, gameID, buttonPressed, betValue }) => {
     games[gameID] = handleButtonPress(games[gameID], buttonPressed, betValue);
 
-    // print players names and money
-    games[gameID].players.forEach((player) => {
-      console.log(player.name + ", " + player.money);
-    });
-
     // Check if betting round ended
     // If all players have non zero for last bet
     // every players current bet is -1
@@ -73,7 +66,6 @@ io.on("connection", (socket: Socket) => {
     let numOfFoldedPlayers = 0;
 
     players.forEach((player) => {
-      console.log(player.name + ', ' + player.lastBet);
       if(!player.foldFG && (player.lastBet === 0 || player.lastBet < games[gameID].currentBet))
         endBettingRoundFG = false;
 
@@ -84,7 +76,6 @@ io.on("connection", (socket: Socket) => {
     if (games[gameID].checkCounter === (PLAYER_COUNT - numOfFoldedPlayers))
       endBettingRoundFG = true;
 
-    console.log("End betting round: " + endBettingRoundFG);
 
     // If the betting round is over
     if (endBettingRoundFG) {
