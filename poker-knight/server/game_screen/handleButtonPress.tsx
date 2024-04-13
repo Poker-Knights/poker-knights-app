@@ -7,7 +7,7 @@ export const handleButtonPress = (
 ) => {
   // Handle button presses
   // CallLogic
-
+  console.log(buttonPressed);
   if (buttonPressed === "call") {
     const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
 
@@ -130,10 +130,12 @@ export const dispGame = (game: Game) => {
         player.lastBet +
         " $" +
         player.money +
-        " Turn? " +
+        " Turn: " +
         player.currentTurn +
-        " Folded? " +
-        player.foldFG
+        " Folded: " +
+        player.foldFG +
+        " All-in: " +
+        player.allInFg
     );
   });
   console.log("-------------------------------------");

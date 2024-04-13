@@ -24,6 +24,9 @@ export const handleEndBettingRound = (game: Game) => {
     }
   });
 
+  game.players.forEach((curPlayer) => {
+    console.log("Player: " + curPlayer.name + curPlayer.splitPotVal);
+  });
   // Reset card and remove cards from player hands
 
   /*
