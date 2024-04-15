@@ -77,8 +77,7 @@ io.on("connection", (socket: Socket) => {
         if(!player.allInFg)
           allAllIn = false;
     });
-    
-    
+        
     if(allAllIn){
       games[gameID] = handleAllIn(games[gameID]);
     }else{

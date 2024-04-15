@@ -14,6 +14,7 @@ export const handleButtonPress = (
     curPlayer.money -= call_diff; // Reflect bet
     curPlayer.lastBet = game.currentBet; // Update last bet
     game.potSize += call_diff; // Update Pot Value
+
     game = nextPlayer(game); // Move to next player
     dispGame(game);
     return game;
