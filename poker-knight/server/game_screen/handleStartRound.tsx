@@ -67,6 +67,9 @@ export const handleStartRound = (game: Game) => {
   game.currentPlayer = curPlayerInd; // Set new player index
   players[game.currentPlayer - 1].currentTurn = true;
 
+  game.players = players;
+  // Find who the current player is
+
   game.currentBet = game.bigBlindBet;
 
   // call function to 'give' players their cards here

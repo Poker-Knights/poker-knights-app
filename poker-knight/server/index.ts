@@ -57,7 +57,7 @@ io.on("connection", (socket: Socket) => {
   });
 
   socket.on("buttonPressed", ({ game, gameID, buttonPressed, betValue }) => {
-    games[gameID] = handleButtonPress(games[gameID], buttonPressed, betValue);
+    games[gameID] = handleButtonPress(game, buttonPressed, betValue);
 
     // Check if betting round ended
     // If all players have non zero for last bet
