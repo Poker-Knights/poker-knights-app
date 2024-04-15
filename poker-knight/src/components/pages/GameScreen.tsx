@@ -101,6 +101,10 @@ const GameScreen = ({ navigation, route }: Props) => {
       allIn: false,
     };
 
+    // display whose turn it is
+    console.log("Player: ", player.name + "Current Turn " + player.currentTurn);
+    console.log("Current Player: ", game.currentPlayer);
+
     if (!player.foldFG && !player.allInFg) {
       // if its not your turn, you cannot do anything
       if (player.currentTurn === false) {
