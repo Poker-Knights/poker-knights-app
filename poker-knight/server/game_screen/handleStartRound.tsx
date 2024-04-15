@@ -26,7 +26,7 @@ export const handleStartRound = (game: Game) => {
 
   if (game.roundCount !== 0) {
     let currLittleBlind = game.curLittleBlind + 1;
-    if (currLittleBlind === 5) currLittleBlind = 1;
+    if (currLittleBlind === game.playerCount + 1) currLittleBlind = 1;
     // if the the next little blind is eliminated, find the next player who hasn't been eliminated
     while (game.players[currLittleBlind - 1].eliminated) {
       currLittleBlind = (currLittleBlind + 1) % (game.playerCount + 1);
@@ -43,7 +43,7 @@ export const handleStartRound = (game: Game) => {
 
   if (game.roundCount !== 0) {
     let curBigInd = game.curLittleBlind + 1;
-    if (curBigInd === 5) curBigInd = 1;
+    if (curBigInd === game.playerCount + 1) curBigInd = 1;
     while (game.players[curBigInd - 1].eliminated) {
       curBigInd = (curBigInd + 1) % (game.playerCount + 1);
       if (curBigInd === 0) curBigInd = 1;

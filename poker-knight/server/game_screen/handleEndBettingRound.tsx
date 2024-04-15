@@ -23,10 +23,6 @@ export const handleEndBettingRound = (game: Game) => {
       curPlayer.splitPotVal = game.potSize; // If not all in and in, split pot is total pot
     }
   });
-
-  game.players.forEach((curPlayer) => {
-    console.log("Player: " + curPlayer.name + curPlayer.splitPotVal);
-  });
   // Reset card and remove cards from player hands
 
   /*

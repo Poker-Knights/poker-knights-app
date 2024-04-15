@@ -78,25 +78,27 @@ io.on("connection", (socket: Socket) => {
           allAllIn = false;
     });
     
-    if(allAllIn) game = handleAllIn(game);
     
-    if (games[gameID].checkCounter === (PLAYER_COUNT - numOfFoldedPlayers))
-      endBettingRoundFG = true;
+    if(allAllIn){
+      games[gameID] = handleAllIn(games[gameID]);
+    }else{
+      if (games[gameID].checkCounter === (PLAYER_COUNT - numOfFoldedPlayers))
+        endBettingRoundFG = true;
 
-
-    // If the betting round is over
-    if (endBettingRoundFG) {
-      games[gameID] = handleEndBettingRound(games[gameID]);
-      // If the round is over
-      if (games[gameID].curBettingRound === 4) {
-        games[gameID] = handleEndRound(games[gameID]);
-        // Emit game results to client
-        games[gameID] = handleStartRound(games[gameID]);
-        // else just start next betting round
-      } else {
-        games[gameID] = handleStartBettingRound(games[gameID]);
+      // If the betting round is over
+      if (endBettingRoundFG) {
+        games[gameID] = handleEndBettingRound(games[gameID]);
+        // If the round is over
+        if (games[gameID].curBettingRound === 4) {
+          games[gameID] = handleEndRound(games[gameID]);
+          // Emit game results to client
+          games[gameID] = handleStartRound(games[gameID]);
+          // else just start next betting round
+        } else {
+          games[gameID] = handleStartBettingRound(games[gameID]);
+        }
       }
-    }
+   }
 
     setTimeout(() => {
       io.to(gameID).emit("handledButtonPressed", games[gameID]);

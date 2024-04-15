@@ -101,7 +101,6 @@ const GameScreen = ({ navigation, route }: Props) => {
       allIn: false,
     };
 
-    console.log("CLIENT SIDE TURN: " + player.currentTurn);
     if (!player.foldFG && !player.allInFg) {
       // if its not your turn, you cannot do anything
       if (player.currentTurn === false) {
@@ -111,7 +110,11 @@ const GameScreen = ({ navigation, route }: Props) => {
       } else if (player.currentTurn === true) {
         actions.betOption = true;
         actions.fold = true;
-        actions.allIn = true;
+        if (player.lastBet !== 0) {
+          actions.allIn = false;
+        } else {
+          actions.allIn = true;
+        }
       }
     }
 
@@ -128,10 +131,6 @@ const GameScreen = ({ navigation, route }: Props) => {
 
   // When compoment mounts, connect to the server, determine available actions
   useEffect(() => {
-    console.log(
-      "This use effect is listening for updates once the comp. mounts"
-    );
-
     let playerIndex = theGame.players.findIndex(
       (p: { name: string }) => p.name === theUsername
     );
@@ -139,11 +138,11 @@ const GameScreen = ({ navigation, route }: Props) => {
     setPlayerIndex(playerIndex);
     setCurrentPlayer(theGame.players[theGame.currentPlayer - 1]);
 
-    //setCurrentBet(theGame.currentBet);
-    //setCurRaiseVal(theGame.currentBet);
+    setCurrentBet(theGame.currentBet);
+    setCurRaiseVal(theGame.currentBet);
 
     setRiverCards(theGame.riverCards);
-    //setPot(theGame.potSize);
+    setPot(theGame.potSize);
 
     let actionButtons = determineAvailableActions(theGame, thePlayer);
     setActionButtonsEnabled(actionButtons);
@@ -172,16 +171,9 @@ const GameScreen = ({ navigation, route }: Props) => {
 
     // Listen for buttonPressed event
     socketRef.current.on("handledButtonPressed", (data: typeof Game) => {
-      console.log("Heard Event");
-
-      console.log("Current player before: ", theGame.currentPlayer);
       let updatedGame: typeof Game = data;
       setGame(updatedGame);
       setRiverCards(updatedGame.riverCards);
-
-      //setCurrentPlayer(updatedGame.players[updatedGame.currentPlayer - 1]);
-
-      console.log("Current player after: ", updatedGame.currentPlayer);
 
       let updatedPlayer: Player = updatedGame.players.find(
         (p) => p.name === theUsername
@@ -192,11 +184,9 @@ const GameScreen = ({ navigation, route }: Props) => {
       let actionButtons = determineAvailableActions(updatedGame, updatedPlayer);
       setActionButtonsEnabled(actionButtons);
 
-      // setPot(updatedGame.potSize);
-      // setCurrentBet(updatedGame.currentBet);
+      setPot(updatedGame.potSize);
+      setCurrentBet(updatedGame.currentBet);
       setCurRaiseVal(updatedGame.currentBet);
-
-      console.log("Current player after: ", updatedGame.currentPlayer);
     });
 
     return () => {
@@ -245,9 +235,9 @@ const GameScreen = ({ navigation, route }: Props) => {
     if (buttonPressed === "BET") {
       if (curRaiseVal === 0) {
         buttonPressed = "CHECK";
+      } else if (curRaiseVal >= curPlayer.money) {
+        buttonPressed = "ALL-IN";
       } else if (curRaiseVal === theGame.currentBet) {
-        console.log("Current raise value: ", curRaiseVal);
-
         buttonPressed = "CALL";
       } else if (curRaiseVal > theGame.currentBet) {
         buttonPressed = "RAISE";
@@ -296,7 +286,7 @@ const GameScreen = ({ navigation, route }: Props) => {
           game: theGame,
           gameID: theGame.id,
           buttonPressed: "all-in",
-          betValue: curRaiseVal,
+          betValue: curPlayer.money,
         });
         break;
 

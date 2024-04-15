@@ -8,22 +8,12 @@ export const handleButtonPress = (
   // Handle button presses
   // CallLogic
   console.log(buttonPressed);
+  const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
   if (buttonPressed === "call") {
-    const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
-
-    if (curPlayer.money >= game.currentBet) {
-      const call_diff = game.currentBet - curPlayer.lastBet;
-
-      curPlayer.money -= call_diff; // Reflect bet
-      curPlayer.lastBet = game.currentBet; // Update last bet
-
-      game.potSize += game.currentBet; // Update Pot Value
-    } else {
-      curPlayer.allInFg = true; // Player is all in
-      // set button press to all in
-      buttonPressed = "all-in";
-    }
-
+    const call_diff = game.currentBet - curPlayer.lastBet;
+    curPlayer.money -= call_diff; // Reflect bet
+    curPlayer.lastBet = game.currentBet; // Update last bet
+    game.potSize += call_diff; // Update Pot Value
     game = nextPlayer(game); // Move to next player
     dispGame(game);
     return game;
@@ -31,14 +21,12 @@ export const handleButtonPress = (
     // Fold logic
   } else if (buttonPressed === "fold") {
     // Implement the fold action logic here
-    const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
     curPlayer.foldFG = true;
     game = nextPlayer(game); // Move to next player
 
     // Check Logic
   } else if (buttonPressed === "check") {
     // Implement the check action logic here
-    const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
     curPlayer.lastBet = 0;
     game.checkCounter++;
     game = nextPlayer(game); // Move to next player
@@ -46,34 +34,24 @@ export const handleButtonPress = (
     // Raise logic
   } else if (buttonPressed == "raise") {
     // Implement the raise action logic here
-    const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
-
     if (curPlayer.money >= betValue) {
       curPlayer.money -= betValue; // Reflect bet
       curPlayer.lastBet = betValue; // Update last bet
       game.currentBet = betValue; // Update current game bet to new value
       game.potSize += game.currentBet; // Update Pot Value
-
-      if (curPlayer.money === betValue) {
-        curPlayer.allInFg = true; // Player is all in
-
-        buttonPressed = "all-in";
-      }
     }
 
     game = nextPlayer(game); // Move to next player
-  }
-
-  // All-in logic
-  if (buttonPressed === "all-in") {
-    // Implement the all-in action logic here
-    const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
-    game.currentBet = curPlayer.money; // Set current bet to players worth
-    curPlayer.lastBet = curPlayer.money; // Update last bet
-    curPlayer.money = 0; // Empty players money
-    game.potSize += game.currentBet; // Update Pot Value
+  } // All-in logic
+  else if (buttonPressed === "all-in") {
+    const call_diff = betValue - curPlayer.lastBet;
+    console.log(betValue + " " + curPlayer.lastBet + " " + call_diff);
+    curPlayer.lastBet += curPlayer.money; // Update last bet
+    curPlayer.money = 0; // Reflect bet
+    game.potSize += call_diff; // Update Pot Value
+    if (curPlayer.lastBet > game.currentBet)
+      game.currentBet = curPlayer.lastBet; // Set current bet to players worth
     curPlayer.allInFg = true; // Player is all in
-
     game = nextPlayer(game); // Move to next player
   }
   dispGame(game);
@@ -90,7 +68,7 @@ export const nextPlayer = (game: Game) => {
   game.players[game.currentPlayer - 1].currentTurn = false; // Set previous current player turn to false
 
   let curPlayer = game.currentPlayer + 1;
-  if (curPlayer === 5) curPlayer = 1;
+  if (curPlayer === game.playerCount + 1) curPlayer = 1;
   while (game.players[curPlayer - 1].foldFG) {
     curPlayer = (curPlayer + 1) % (game.playerCount + 1);
     if (curPlayer === 0) curPlayer = 1;
