@@ -5,8 +5,6 @@ export const handleEndRound = (game: Game) => {
   // Perform Hand Analysis
   let winners: string[] = [];
 
-  // Perform Chip adjustments
-
   // Round winner chips += potSize
   let payouts = game.potSize;
   let paidout = 0;

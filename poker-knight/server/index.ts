@@ -14,6 +14,7 @@ import { PLAYER_COUNT } from "../src/utils/socket";
 import { dispGame, handleButtonPress } from "./game_screen/handleButtonPress";
 import { handleEndBettingRound } from "./game_screen/handleEndBettingRound";
 import { handleStartBettingRound } from "./game_screen/handleStartBettingRound";
+import { handleAllIn } from "./game_screen/handleAllIn";
 
 const app = express();
 app.use(cors());
@@ -64,6 +65,7 @@ io.on("connection", (socket: Socket) => {
     let players = games[gameID].players;
     let endBettingRoundFG = true;
     let numOfFoldedPlayers = 0;
+    let allAllIn = true;
 
     players.forEach((player) => {
       if(!player.foldFG && (player.lastBet === 0 || player.lastBet < games[gameID].currentBet))
@@ -71,25 +73,31 @@ io.on("connection", (socket: Socket) => {
 
       if (player.foldFG)
         numOfFoldedPlayers++;
+
+        if(!player.allInFg)
+          allAllIn = false;
     });
-    
-    if (games[gameID].checkCounter === (PLAYER_COUNT - numOfFoldedPlayers))
-      endBettingRoundFG = true;
+        
+    if(allAllIn){
+      games[gameID] = handleAllIn(games[gameID]);
+    }else{
+      if (games[gameID].checkCounter === (PLAYER_COUNT - numOfFoldedPlayers))
+        endBettingRoundFG = true;
 
-
-    // If the betting round is over
-    if (endBettingRoundFG) {
-      games[gameID] = handleEndBettingRound(games[gameID]);
-      // If the round is over
-      if (games[gameID].curBettingRound === 4) {
-        games[gameID] = handleEndRound(games[gameID]);
-        // Emit game results to client
-        games[gameID] = handleStartRound(games[gameID]);
-        // else just start next betting round
-      } else {
-        games[gameID] = handleStartBettingRound(games[gameID]);
+      // If the betting round is over
+      if (endBettingRoundFG) {
+        games[gameID] = handleEndBettingRound(games[gameID]);
+        // If the round is over
+        if (games[gameID].curBettingRound === 4) {
+          games[gameID] = handleEndRound(games[gameID]);
+          // Emit game results to client
+          games[gameID] = handleStartRound(games[gameID]);
+          // else just start next betting round
+        } else {
+          games[gameID] = handleStartBettingRound(games[gameID]);
+        }
       }
-    }
+   }
 
     setTimeout(() => {
       io.to(gameID).emit("handledButtonPressed", games[gameID]);
