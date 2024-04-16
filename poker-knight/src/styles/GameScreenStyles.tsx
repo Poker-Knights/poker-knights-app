@@ -190,7 +190,7 @@ export const GameScreenStyles = StyleSheet.create({
     width: 80, // Adjust the size as needed
     height: 80, // Adjust the size as needed
     borderRadius: 40, // Half the width/height to make it a circle
-    borderWidth: 2, // Size of border around the avatar
+    borderWidth: 1, // Size of border around the avatar
     borderColor: "#FFFFFF", // Border color, assuming white is desired
     backgroundColor: "#C4C4C4", // A placeholder background color in case the image fails to load
     overflow: "hidden", // Ensures that the image does not spill out of the border radius
@@ -397,9 +397,10 @@ export const GameScreenStyles = StyleSheet.create({
   },
 
   blindIcon: {
-    width: 10, // Adjust based on your icon size
-    height: 10, // Adjust based on your icon size
-    marginLeft: 5, // Spacing between the avatar and icon, adjust as needed
+    width: 45, // Adjust based on your icon size
+    height: 45, // Adjust based on your icon size
+    marginLeft: 65, // Spacing between the avatar and icon, adjust as needed
+    marginTop: 50,
     // Add other styling as needed for positioning, etc.
   },
 
