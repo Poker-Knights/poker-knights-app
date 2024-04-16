@@ -38,8 +38,8 @@ const generateAvatar = (players: Player[]): string => {
   const avatarImages: { [key: string]: any } = {
     avatar1: "https://i.imgur.com/3bP0BK0.png",
     avatar2: "https://i.imgur.com/hUCwjoo.png",
-    avatar3: "https://i.imgur.com/YAldsI9.png",
-    avatar4: "https://i.imgur.com/SS946rP.png",
+    avatar3: "https://i.imgur.com/qHv9k6L.png",
+    avatar4: "https://i.imgur.com/KdByOkp.png",
     // Add all other avatars here
   };
 
