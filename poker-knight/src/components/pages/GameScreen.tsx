@@ -490,25 +490,26 @@ const GameScreen = ({ navigation, route }: Props) => {
                 key={player.id}
                 style={[GameScreenStyles.playerContainer, playerStyle]}
               >
+
+                {/* Conditionally render little blind or big blind icon next to avatar */}
+                {player.isLittleBlind && (
+                  <Image
+                  source={{ uri: "https://i.imgur.com/RwOJWuJ.png"}} // Update path to your little blind icon
+                  style={GameScreenStyles.blindIcon} // Define a style for positioning and sizing the icon
+                  />
+                )}
+                {player.isBigBlind && (
+                  <Image
+                  source={{ uri: "https://i.imgur.com/fKpdah1.png" }} // Update path to your big blind icon
+                  style={GameScreenStyles.blindIcon} // Define a style for positioning and sizing the icon
+                  />
+                )}
+                
                 <Image
                   source={{ uri: player.avatarUri }}
                   style={avatarStyle}
                   resizeMode="contain"
                 />
-
-                {/* Conditionally render little blind or big blind icon next to avatar */}
-                {player.isLittleBlind && (
-                  <Image
-                    source={{ uri: "https://i.imgur.com/RwOJWuJ.png"}} // Update path to your little blind icon
-                    style={GameScreenStyles.blindIcon} // Define a style for positioning and sizing the icon
-                  />
-                )}
-                {player.isBigBlind && (
-                  <Image
-                    source={{ uri: "https://i.imgur.com/fKpdah1.png" }} // Update path to your big blind icon
-                    style={GameScreenStyles.blindIcon} // Define a style for positioning and sizing the icon
-                  />
-                )}
 
                 <Text style={GameScreenStyles.playerName}>{player.name}</Text>
                 {/* if a player folded make the text 'FOLDED" instead of their money */}
