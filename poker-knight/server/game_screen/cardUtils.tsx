@@ -22,18 +22,19 @@ export const dealRiverCards = (game: Game, caseNumber: number) => {
     // Case to deal 1 card
     let cardIndex = 0,
       dealt = 0;
-    while (cardIndex < 5) {
+    while (dealt == 0) {
       if (game.riverCards[cardIndex] === "back" && dealt === 0) {
         const randomIndex = Math.floor(Math.random() * game.deckCards.length);
         const randomCard = game.deckCards.splice(randomIndex, 1)[0];
         game.riverCards[cardIndex] = randomCard;
         dealt = 1;
       }
-      game.riverCards.push("back");
+      // game.riverCards.push("back");
       cardIndex++;
     }
   }
 };
+
 
 export const dealPlayerCards = (game: Game) => {
   // Function to deal player cards, removing them from deck
@@ -121,16 +122,28 @@ export const parseCardNames = (cardNames: string[]): string[] => {
   return parsedCardNames;
 };
 
-export const returnWinners = (game: Game) => {
+const returnWinners = (game: Game) => {
   var Hand = require("pokersolver").Hand;
-  var playerRanks: { username: string; rank: number }[] = [];
+  var playerRanks: { username: string; rank: number; cardArray: string[]; descr: string}[] = [];
   game.players.forEach((player) => {
     var concatArray: string[] = player.playerCards.concat(game.riverCards);
     var parsedArray: string[] = parseCardNames(concatArray);
+    // console.log(player.name + " cards: " + parsedArray);
     var rank = Hand.solve(parsedArray).rank;
-    playerRanks.push({ username: player.name, rank: rank });
+    var descr = Hand.solve(parsedArray).descr;
+    // console.log(player.name + " rank: " + rank, "descr: " + Hand.solve(parsedArray).descr);
+    playerRanks.push({ username: player.name, rank: rank, cardArray: parsedArray, descr: descr});
   });
-  playerRanks.sort((a, b) => a.rank - b.rank);
-  var winners = playerRanks.map((player) => player.username);
-  return winners;
+
+  // Accessing the cardArray field of the first player
+  // console.log("Card Array of the first player: " + playerRanks[0].cardArray);
+  // console.log("Player Ranks: " + playerRanks);
+  // playerRanks.sort((a, b) => a.rank - b.rank);
+  playerRanks.sort((a, b) => {
+    const handA = Hand.solve(a.cardArray);
+    const handB = Hand.solve(b.cardArray);
+    return Hand.winners([handA, handB])[0] === handA ? -1 : 1;
+  });
+  // var winners = playerRanks.map((player) => player.username);
+  return playerRanks;
 };
