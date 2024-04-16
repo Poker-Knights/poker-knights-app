@@ -2,7 +2,6 @@ import { Socket } from "socket.io";
 import { Game } from "../../src/types/Game";
 
 export const handleEndBettingRound = (game: Game) => {
-  console.log("Ending betting round: " + game.curBettingRound);
   // Increment Betting Round
   game.curBettingRound++;
 
@@ -24,7 +23,6 @@ export const handleEndBettingRound = (game: Game) => {
       curPlayer.splitPotVal = game.potSize; // If not all in and in, split pot is total pot
     }
   });
-
   // Reset card and remove cards from player hands
 
   /*

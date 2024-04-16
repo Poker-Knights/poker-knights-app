@@ -10,7 +10,6 @@ export const handleStartRound = (game: Game) => {
 
   game.potSize = 0;
   game.curBettingRound = 0;
-  console.log("Starting round: " + game.roundCount);
 
   // Remove all fold/allin flags
   players.forEach((player) => {
@@ -27,7 +26,7 @@ export const handleStartRound = (game: Game) => {
 
   if (game.roundCount !== 0) {
     let currLittleBlind = game.curLittleBlind + 1;
-    if (currLittleBlind === 5) currLittleBlind = 1;
+    if (currLittleBlind === game.playerCount + 1) currLittleBlind = 1;
     // if the the next little blind is eliminated, find the next player who hasn't been eliminated
     while (game.players[currLittleBlind - 1].eliminated) {
       currLittleBlind = (currLittleBlind + 1) % (game.playerCount + 1);
@@ -44,7 +43,7 @@ export const handleStartRound = (game: Game) => {
 
   if (game.roundCount !== 0) {
     let curBigInd = game.curLittleBlind + 1;
-    if (curBigInd === 5) curBigInd = 1;
+    if (curBigInd === game.playerCount + 1) curBigInd = 1;
     while (game.players[curBigInd - 1].eliminated) {
       curBigInd = (curBigInd + 1) % (game.playerCount + 1);
       if (curBigInd === 0) curBigInd = 1;
@@ -68,13 +67,16 @@ export const handleStartRound = (game: Game) => {
   game.currentPlayer = curPlayerInd; // Set new player index
   players[game.currentPlayer - 1].currentTurn = true;
 
+  game.players = players;
+  // Find who the current player is
+
   game.currentBet = game.bigBlindBet;
-  console.log(game.players[game.curLittleBlind - 1].lastBet + " " + game.players[game.curLittleBlind - 1].name);
+
   // call function to 'give' players their cards here
   dealPlayerCards(game);
 
   game.currentBet = game.bigBlindBet;
-  console.log(game.players[game.curLittleBlind - 1].lastBet + " " + game.players[game.curLittleBlind - 1].name);
+
   // Start betting round
   return handleStartBettingRound(game);
 };

@@ -4,40 +4,35 @@ import { dealRiverCards } from "./cardUtils";
 import { nextPlayer } from "./handleButtonPress";
 
 export const handleStartBettingRound = (game: Game) => {
-  console.log("Starting betting round: " + game.curBettingRound);
-
   // Assign the first player as little blind and second player as big blind
   let players = game.players;
-  console.log("Big blind: " + game.players[game.curBigBlind - 1] + ", Bet: " + game.players[game.curBigBlind - 1].lastBet);
-  console.log("little blind: " + game.players[game.curLittleBlind - 1] + ", Bet: " + game.players[game.curLittleBlind - 1].lastBet);
   // Assign Game Updates
-  if (game.curBettingRound !== 0) 
-  {
+  if (game.curBettingRound !== 0) {
     game.currentBet = 0;
+    game.checkCounter = 0;
     // every players current bet is 0
     players.forEach((player) => {
       player.lastBet = 0;
-      player.currentTurn = false;
     });
 
-  }
-  else
-  {
+    
+  } 
+  else { // this is the first betting round
     players.forEach((player) => {
-
-      if ((!player.isLittleBlind) && (!player.isBigBlind)) {
-        console.log("If test: Player: " + player.name + ", Bet: " + player.lastBet + ", isLittleBlind: " + player.isLittleBlind + ", isBigBlind: " + player.isBigBlind);
+      if (!player.isLittleBlind && !player.isBigBlind) {
         player.lastBet = 0;
       }
-      player.currentTurn = false;
+      
     });
+
+  
   }
 
+  console.log("The current player is " + game.players[game.currentPlayer - 1].name + ' ' + game.players[game.currentPlayer - 1].currentTurn);
+  // if(game.curBettingRound === 0){
+  //   game = nextPlayer(game);
+  // }
 
-  // make the player after the big blind the current player
-  game.currentPlayer = game.curBigBlind;
-  game = nextPlayer(game); // Set new player index
-  
 
   // set players equal to game players
   game.players = players;
@@ -53,11 +48,11 @@ export const handleStartBettingRound = (game: Game) => {
 
       break;
     case 2:
-      dealRiverCards(game, 1);
+      dealRiverCards(game, 2);
 
       break;
     case 3:
-      dealRiverCards(game, 1);
+      dealRiverCards(game, 2);
       break;
 
     default:

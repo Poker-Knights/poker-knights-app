@@ -18,6 +18,7 @@ export const handleCreateGame =
       playerCount: 0, // Will be updated when adding a player
       currentBet: 0,
       currentPlayer: 1,
+      checkCounter: 0,
       gameStarted: false,
       roundCount: 0,
       riverCards: ["back", "back", "back", "back", "back"],

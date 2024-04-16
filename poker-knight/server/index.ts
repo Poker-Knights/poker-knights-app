@@ -11,9 +11,10 @@ import { handleExitGame } from "./game_screen/handleExitGame";
 import { handleStartGame } from "./game_screen/handleStartGame";
 import { handleStartRound } from "./game_screen/handleStartRound";
 import { PLAYER_COUNT } from "../src/utils/socket";
-import { handleButtonPress } from "./game_screen/handleButtonPress";
+import { dispGame, handleButtonPress } from "./game_screen/handleButtonPress";
 import { handleEndBettingRound } from "./game_screen/handleEndBettingRound";
 import { handleStartBettingRound } from "./game_screen/handleStartBettingRound";
+import { handleAllIn } from "./game_screen/handleAllIn";
 
 const app = express();
 app.use(cors());
@@ -34,11 +35,9 @@ io.on("connection", (socket: Socket) => {
   // Register event handlers for this connection
   socket.on("createGame", handleCreateGame(socket, games));
   socket.on("attemptToJoin", handleAttemptToJoin(socket, games));
-  // socket.on('exitGame', console.log("we made it here"));
 
   socket.on("joinRoom", ({ gameId }) => {
     socket.join(gameId);
-    console.log(games[gameId].players.length);
 
     // Broadcast the updated player list to all clients in the room if its less than the player count
     if (games[gameId].players.length <= PLAYER_COUNT) {
@@ -58,37 +57,50 @@ io.on("connection", (socket: Socket) => {
   });
 
   socket.on("buttonPressed", ({ game, gameID, buttonPressed, betValue }) => {
-    games[gameID] = handleButtonPress(games[gameID], buttonPressed, betValue);
+    games[gameID] = handleButtonPress(game, buttonPressed, betValue);
 
-    
     // Check if betting round ended
     // If all players have non zero for last bet
     // every players current bet is -1
     let players = games[gameID].players;
     let endBettingRoundFG = true;
+    let numOfFoldedPlayers = 0;
+    let allAllIn = true;
+
     players.forEach((player) => {
-      console.log(player.name + ', ' + player.lastBet);
-      if(!player.foldFG && (player.lastBet === 0 || player.lastBet < games[gameID].currentBet)){
+      if(!player.foldFG && (player.lastBet === 0 || player.lastBet < games[gameID].currentBet))
         endBettingRoundFG = false;
-      }
+
+      if (player.foldFG)
+        numOfFoldedPlayers++;
+
+        if(!player.allInFg)
+          allAllIn = false;
     });
-    console.log("End betting round: " + endBettingRoundFG);
-    // If the betting round is over
-    if(endBettingRoundFG){
-      games[gameID] = handleEndBettingRound(game);
-      // If the round is over
-      if(games[gameID].curBettingRound === 4){
-        games[gameID] = handleEndRound(game);
-        // Emit game results to client
-        games[gameID] = handleStartRound(game);
-        // else just start next betting round
-      }else{
-        games[gameID] = handleStartBettingRound(game);
+        
+    if(allAllIn){
+      games[gameID] = handleAllIn(games[gameID]);
+    }else{
+      if (games[gameID].checkCounter === (PLAYER_COUNT - numOfFoldedPlayers))
+        endBettingRoundFG = true;
+
+      // If the betting round is over
+      if (endBettingRoundFG) {
+        games[gameID] = handleEndBettingRound(games[gameID]);
+        // If the round is over
+        if (games[gameID].curBettingRound === 4) {
+          games[gameID] = handleEndRound(games[gameID]);
+          // Emit game results to client
+          games[gameID] = handleStartRound(games[gameID]);
+          // else just start next betting round
+        } else {
+          games[gameID] = handleStartBettingRound(games[gameID]);
+        }
       }
-    }
-    
+   }
+
     setTimeout(() => {
-    io.to(gameID).emit("handledButtonPressed", games[gameID]);
+      io.to(gameID).emit("handledButtonPressed", games[gameID]);
     }, 250);
   });
 

@@ -71,7 +71,7 @@ const GameScreen = ({ navigation, route }: Props) => {
   let [playerIndex, setPlayerIndex] = useState<number>(0); // Initialize player index state with a default value
   // Set cards
   let [riverCards, setRiverCards] = useState<string[]>(theGame.riverCards); // Initialize river cards state with cards face down
-  let [playerCards, setPlayerCards] = useState<string[]>(["back", "back"]); // Initialize player cards state with cards face down
+  let [playerCards, setPlayerCards] = useState<string[]>(thePlayer.playerCards); // Initialize player cards state with cards face down
 
   let [actionButtonsEnabled, setActionButtonsEnabled] = useState({
     betOption: false,
@@ -101,7 +101,10 @@ const GameScreen = ({ navigation, route }: Props) => {
       allIn: false,
     };
 
-    console.log("CLIENT SIDE TURN: " + player.currentTurn);
+    // display whose turn it is
+    console.log("Player: ", player.name + "Current Turn " + player.currentTurn);
+    console.log("Current Player: ", game.currentPlayer);
+
     if (!player.foldFG && !player.allInFg) {
       // if its not your turn, you cannot do anything
       if (player.currentTurn === false) {
@@ -111,7 +114,11 @@ const GameScreen = ({ navigation, route }: Props) => {
       } else if (player.currentTurn === true) {
         actions.betOption = true;
         actions.fold = true;
-        actions.allIn = true;
+        if (player.lastBet !== 0) {
+          actions.allIn = false;
+        } else {
+          actions.allIn = true;
+        }
       }
     }
 
@@ -128,10 +135,6 @@ const GameScreen = ({ navigation, route }: Props) => {
 
   // When compoment mounts, connect to the server, determine available actions
   useEffect(() => {
-    console.log(
-      "This use effect is listening for updates once the comp. mounts"
-    );
-
     let playerIndex = theGame.players.findIndex(
       (p: { name: string }) => p.name === theUsername
     );
@@ -139,11 +142,11 @@ const GameScreen = ({ navigation, route }: Props) => {
     setPlayerIndex(playerIndex);
     setCurrentPlayer(theGame.players[theGame.currentPlayer - 1]);
 
-    //setCurrentBet(theGame.currentBet);
-    //setCurRaiseVal(theGame.currentBet);
+    setCurrentBet(theGame.currentBet);
+    setCurRaiseVal(theGame.currentBet);
 
     setRiverCards(theGame.riverCards);
-    //setPot(theGame.potSize);
+    setPot(theGame.potSize);
 
     let actionButtons = determineAvailableActions(theGame, thePlayer);
     setActionButtonsEnabled(actionButtons);
@@ -172,16 +175,9 @@ const GameScreen = ({ navigation, route }: Props) => {
 
     // Listen for buttonPressed event
     socketRef.current.on("handledButtonPressed", (data: typeof Game) => {
-      console.log("Heard Event");
-
-      console.log("Current player before: ", theGame.currentPlayer);
       let updatedGame: typeof Game = data;
       setGame(updatedGame);
       setRiverCards(updatedGame.riverCards);
-
-      //setCurrentPlayer(updatedGame.players[updatedGame.currentPlayer - 1]);
-
-      console.log("Current player after: ", updatedGame.currentPlayer);
 
       let updatedPlayer: Player = updatedGame.players.find(
         (p) => p.name === theUsername
@@ -192,11 +188,9 @@ const GameScreen = ({ navigation, route }: Props) => {
       let actionButtons = determineAvailableActions(updatedGame, updatedPlayer);
       setActionButtonsEnabled(actionButtons);
 
-      // setPot(updatedGame.potSize);
-      // setCurrentBet(updatedGame.currentBet);
+      setPot(updatedGame.potSize);
+      setCurrentBet(updatedGame.currentBet);
       setCurRaiseVal(updatedGame.currentBet);
-
-      console.log("Current player after: ", updatedGame.currentPlayer);
     });
 
     return () => {
@@ -245,9 +239,9 @@ const GameScreen = ({ navigation, route }: Props) => {
     if (buttonPressed === "BET") {
       if (curRaiseVal === 0) {
         buttonPressed = "CHECK";
+      } else if (curRaiseVal >= curPlayer.money) {
+        buttonPressed = "ALL-IN";
       } else if (curRaiseVal === theGame.currentBet) {
-        console.log("Current raise value: ", curRaiseVal);
-
         buttonPressed = "CALL";
       } else if (curRaiseVal > theGame.currentBet) {
         buttonPressed = "RAISE";
@@ -296,34 +290,37 @@ const GameScreen = ({ navigation, route }: Props) => {
           game: theGame,
           gameID: theGame.id,
           buttonPressed: "all-in",
-          betValue: curRaiseVal,
+          betValue: curPlayer.money,
         });
         break;
 
       case "decrementRaise":
+        // Allow Call
         if (
           curPlayer.lastBet !== 0 &&
           curPlayer.lastBet !== theGame.currentBet
         ) {
           curRaiseVal = theGame.currentBet;
-        } else if (curRaiseVal > 0 && curRaiseVal > theGame.currentBet)
-          curRaiseVal -= 10;
-        else {
-          // ADD LOGIC TO GREY OUT DECREMENT IF WE CANT GO LOWER
         }
+        // Allow Raise
+        else if (curRaiseVal > 0 && curRaiseVal > theGame.currentBet)
+          curRaiseVal -= 10;
+
         break;
 
       case "incrementRaise":
+        // Allow Call
         if (
           curPlayer.lastBet !== 0 &&
-          curPlayer.lastBet === theGame.currentBet
+          curPlayer.lastBet !== theGame.currentBet
         ) {
           curRaiseVal = theGame.currentBet;
+          // Allow Raise
         } else if (curRaiseVal < curPlayer.money - 10) {
           curRaiseVal += 10;
+          // Theyre all in
         } else {
           curRaiseVal = theGame.players[theGame.currentPlayer - 1].money;
-          // ADD LOGIC TO GREY OUT DECREMENT IF WE CANT GO HIGHER
         }
         break;
     }
@@ -585,7 +582,6 @@ const GameScreen = ({ navigation, route }: Props) => {
           </View>
           {/* Container for the Raise/Call/Check functionality */}
           <View style={GameScreenStyles.raiseCallButtonContainer}>
-            {/* Label */}
             <TouchableOpacity
               onPress={() => handleTriggeredButton("BET")}
               disabled={!actionButtonsEnabled.betOption}
@@ -598,30 +594,41 @@ const GameScreen = ({ navigation, route }: Props) => {
                     : { color: "yellow" },
                 ]}
               >
-                {thePlayer.lastBet !== 0
-                  ? theGame.currentBet === 0
-                    ? "CHECK"
-                    : "CALL"
-                  : curRaiseVal > theGame.currentBet
-                  ? "RAISE"
-                  : curRaiseVal >= thePlayer.money
-                  ? "ALL-IN"
-                  : curRaiseVal === 0
-                  ? "CHECK"
-                  : "CALL"}
-                :
+                {
+                  // Check if the player has made a  bet (called or raised).
+                  thePlayer.lastBet !== 0
+                    ? // If so, check if the current bet is 0.
+                      theGame.currentBet === 0
+                      ? "CHECK" // If the current bet is 0, then display "CHECK".
+                      : "CALL" // If the current bet is not 0, then display "CALL".
+                    : // If the player hasn't made a last bet, check if the current raise value is >= the player's money.
+                    curRaiseVal >= thePlayer.money
+                    ? "ALL-IN" // If the raise value is greater or equal to the player's money, display "ALL-IN".
+                    : // If not, check if the current raise value is > the current bet.
+                    curRaiseVal > theGame.currentBet
+                    ? "RAISE" // If the raise value is greater, then display "RAISE".
+                    : // If not, check if the current raise value is 0.
+                    curRaiseVal === 0
+                    ? "CHECK" // If it is 0, then display "CHECK".
+                    : "CALL" // If it is not 0, then display "CALL".
+                }
               </Text>
             </TouchableOpacity>
 
             {/* Decrement button for raise value */}
             <TouchableOpacity
               onPress={() => handleButtonPress("decrementRaise")}
-              disabled={!actionButtonsEnabled.betOption}
+              // should be disabled if the player decrements below the current bet
+              disabled={
+                !actionButtonsEnabled.betOption ||
+                curRaiseVal < theGame.currentBet
+              }
             >
               <Text
                 style={[
                   GameScreenStyles.raiseCallValueText,
-                  !actionButtonsEnabled.betOption
+                  !actionButtonsEnabled.betOption ||
+                  curRaiseVal < theGame.currentBet
                     ? { color: "darkgrey" }
                     : { color: "yellow" },
                 ]}
@@ -645,12 +652,15 @@ const GameScreen = ({ navigation, route }: Props) => {
             {/* Increment button for raise value */}
             <TouchableOpacity
               onPress={() => handleButtonPress("incrementRaise")}
-              disabled={!actionButtonsEnabled.betOption}
+              disabled={
+                !actionButtonsEnabled.betOption || curRaiseVal > thePlayer.money
+              }
             >
               <Text
                 style={[
                   GameScreenStyles.raiseCallValueText,
-                  !actionButtonsEnabled.betOption
+                  !actionButtonsEnabled.betOption ||
+                  curRaiseVal > thePlayer.money
                     ? { color: "darkgrey" }
                     : { color: "yellow" },
                 ]}

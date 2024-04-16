@@ -2,12 +2,8 @@ import { Socket } from "socket.io";
 import { Game, Player } from "../../src/types/Game";
 
 export const handleEndRound = (game: Game) => {
-  console.log("Ended round: " + game.roundCount);
-
   // Perform Hand Analysis
   let winners: string[] = [];
-
-  // Perform Chip adjustments
 
   // Round winner chips += potSize
   let payouts = game.potSize;
@@ -51,6 +47,7 @@ export const handleEndRound = (game: Game) => {
       paidout += winnings;
     }
   }
+
 
   /*
  End Round -> Rating: 1) Matt, 2) Sri, 3) Kev, 4) Josh
