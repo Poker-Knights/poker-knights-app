@@ -497,18 +497,18 @@ const GameScreen = ({ navigation, route }: Props) => {
                 />
 
                 {/* Conditionally render little blind or big blind icon next to avatar */}
-                {/* {player.isSmallBlind && (
+                {player.isLittleBlind && (
                   <Image
-                    source={require('../../path/to/little_blind_icon.png')} // Update path to your little blind icon
+                    source={{ uri: "https://i.imgur.com/RwOJWuJ.png"}} // Update path to your little blind icon
                     style={GameScreenStyles.blindIcon} // Define a style for positioning and sizing the icon
                   />
                 )}
                 {player.isBigBlind && (
                   <Image
-                    source={require('../../path/to/big_blind_icon.png')} // Update path to your big blind icon
+                    source={{ uri: "https://i.imgur.com/fKpdah1.png" }} // Update path to your big blind icon
                     style={GameScreenStyles.blindIcon} // Define a style for positioning and sizing the icon
                   />
-                )} */}
+                )}
 
                 <Text style={GameScreenStyles.playerName}>{player.name}</Text>
                 {/* if a player folded make the text 'FOLDED" instead of their money */}
