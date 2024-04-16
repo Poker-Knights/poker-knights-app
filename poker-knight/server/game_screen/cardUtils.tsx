@@ -39,6 +39,10 @@ export const dealRiverCards = (game: Game, caseNumber: number) => {
 export const dealPlayerCards = (game: Game) => {
   // Function to deal player cards, removing them from deck
   game.players.forEach((player) => {
+    // if player is eliminated, skip them
+    if (player.eliminated) {
+      return;
+    }
     player.playerCards = [];
     while (player.playerCards.length < 2) {
       const randomIndex = Math.floor(Math.random() * game.deckCards.length);
@@ -122,7 +126,7 @@ export const parseCardNames = (cardNames: string[]): string[] => {
   return parsedCardNames;
 };
 
-const returnWinners = (game: Game) => {
+export const returnWinners = (game: Game) => {
   var Hand = require("pokersolver").Hand;
   var playerRanks: { username: string; rank: number; cardArray: string[]; descr: string}[] = [];
   game.players.forEach((player) => {

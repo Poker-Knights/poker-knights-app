@@ -10,6 +10,7 @@ export const handleExitGame =
 
     removePlayer(socketID, game);
 
+    
     console.log(`${socketID} was removed from game with ID: ${gameID}`);
 
     socket.emit("gameExited");

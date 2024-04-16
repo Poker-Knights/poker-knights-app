@@ -12,6 +12,8 @@ export const handleStartBettingRound = (game: Game) => {
     game.checkCounter = 0;
     // every players current bet is 0
     players.forEach((player) => {
+      // if the player is eliminated, skip them
+      if (player.eliminated) return;
       player.lastBet = 0;
     });
 
@@ -20,6 +22,8 @@ export const handleStartBettingRound = (game: Game) => {
   else { // this is the first betting round
     players.forEach((player) => {
       if (!player.isLittleBlind && !player.isBigBlind) {
+        // if the player is eliminated, skip them
+        if (player.eliminated) return;
         player.lastBet = 0;
       }
       
@@ -27,12 +31,6 @@ export const handleStartBettingRound = (game: Game) => {
 
   
   }
-
-  console.log("The current player is " + game.players[game.currentPlayer - 1].name + ' ' + game.players[game.currentPlayer - 1].currentTurn);
-  // if(game.curBettingRound === 0){
-  //   game = nextPlayer(game);
-  // }
-
 
   // set players equal to game players
   game.players = players;

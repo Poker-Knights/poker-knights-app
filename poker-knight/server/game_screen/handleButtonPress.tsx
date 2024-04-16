@@ -70,7 +70,7 @@ export const nextPlayer = (game: Game) => {
 
   let curPlayer = game.currentPlayer + 1;
   if (curPlayer === game.playerCount + 1) curPlayer = 1;
-  while (game.players[curPlayer - 1].foldFG) {
+  while (game.players[curPlayer - 1].foldFG || game.players[curPlayer - 1].eliminated) {
     curPlayer = (curPlayer + 1) % (game.playerCount + 1);
     if (curPlayer === 0) curPlayer = 1;
     ctr++;

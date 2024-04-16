@@ -481,7 +481,7 @@ const GameScreen = ({ navigation, route }: Props) => {
             if (player.currentTurn) {
               avatarStyle = GameScreenStyles.activeTurnAvatar;
             }
-            if (player.foldFG) {
+            if (player.foldFG || player.eliminated) {
               avatarStyle = GameScreenStyles.foldedAvatar;
             }
 
@@ -513,7 +513,7 @@ const GameScreen = ({ navigation, route }: Props) => {
                 <Text style={GameScreenStyles.playerName}>{player.name}</Text>
                 {/* if a player folded make the text 'FOLDED" instead of their money */}
                 <Text style={GameScreenStyles.playerMoney}>
-                  {!player.foldFG ? formatCurrency(player.money) : "FOLDED"}
+                  {player.eliminated ? "ELIMINATED" : (!player.foldFG ? formatCurrency(player.money) : "FOLDED")}
                 </Text>
               </View>
             );
@@ -536,9 +536,9 @@ const GameScreen = ({ navigation, route }: Props) => {
       <View style={GameScreenStyles.parentToChipCountAndButtons}>
         <View style={GameScreenStyles.clientChipCountContainer}>
           <Text style={GameScreenStyles.clientChipCountText}>
-            {!thePlayer.foldFG
+            {thePlayer.eliminated ? "ELIMINATED" : (!thePlayer.foldFG
               ? "CHIPS:$".concat(String(thePlayer.money))
-              : "FOLDED"}
+              : "FOLDED")}
           </Text>
         </View>
 

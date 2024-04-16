@@ -1,17 +1,26 @@
 import { Socket } from "socket.io";
 import { Game, Player } from "../../src/types/Game";
+import { returnWinners, resetCards} from "./cardUtils"
 
 export const handleEndRound = (game: Game) => {
   // Perform Hand Analysis
-  let winners: string[] = [];
+  let winners: { username: string; rank: number; cardArray: string[]; descr: string}[] = [];
+
+  // Find the winners
+  winners = returnWinners(game);
+
+  let winningHandDescription = winners[0].descr;
+  let winningUsername = winners[0].username;
 
   // Round winner chips += potSize
   let payouts = game.potSize;
   let paidout = 0;
-  let winPlayer1: Player = game.players.find((p) => p.name === winners[0])!;
-  let winPlayer2: Player = game.players.find((p) => p.name === winners[1])!;
-  let winPlayer3: Player = game.players.find((p) => p.name === winners[2])!;
-  let winPlayer4: Player = game.players.find((p) => p.name === winners[3])!;
+
+  // Find the winning player if they are not already eliminated
+  let winPlayer1: Player = game.players.find((p) => p.name === winners[0].username)!;
+  let winPlayer2: Player = game.players.find((p) => p.name === winners[1].username)!;
+  let winPlayer3: Player = game.players.find((p) => p.name === winners[2].username)!;
+  let winPlayer4: Player = game.players.find((p) => p.name === winners[3].username)!;
 
   // First place
   winPlayer1.money += winPlayer1.splitPotVal; // Pay them their winnings
@@ -48,23 +57,11 @@ export const handleEndRound = (game: Game) => {
     }
   }
 
-
-  /*
- End Round -> Rating: 1) Matt, 2) Sri, 3) Kev, 4) Josh
- Total pot = 600
- Matts split = 438
- Sri split = 480
- Kev/Josh have no split
-              Matt can only win his split - > 438
-                new pot = 600 - 438 = 162
-              Sri could have won 480, buttttt 438 was already won -> 480 - 438 = 42
-                new pot = 162 - 42 = 120
-              Kev wins 120
-                new pot = 0
-              Josh wins 0 
-  */
-
   // Undeal/remove Cards
+  resetCards(game);
+
+  // SRI -> Emit round UI here with delay so it doesn't overlap with buttonPress UI
+  // -------------------------------------------------------------------------------
 
   // Return the updated game
   return game;
