@@ -13,20 +13,26 @@ export const handleStartBettingRound = (game: Game) => {
     // every players current bet is 0
     players.forEach((player) => {
       player.lastBet = 0;
-      player.currentTurn = false;
     });
-  } else {
+
+    
+  } 
+  else { // this is the first betting round
     players.forEach((player) => {
       if (!player.isLittleBlind && !player.isBigBlind) {
         player.lastBet = 0;
       }
-      player.currentTurn = false;
+      
     });
+
+  
   }
 
-  // make the player after the big blind the current player
-  game.currentPlayer = game.curBigBlind;
-  game = nextPlayer(game); // Set new player index
+  console.log("The current player is " + game.players[game.currentPlayer - 1].name + ' ' + game.players[game.currentPlayer - 1].currentTurn);
+  // if(game.curBettingRound === 0){
+  //   game = nextPlayer(game);
+  // }
+
 
   // set players equal to game players
   game.players = players;
