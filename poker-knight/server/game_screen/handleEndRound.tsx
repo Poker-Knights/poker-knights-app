@@ -1,10 +1,15 @@
 import { Server } from "socket.io";
 import { Game, Player } from "../../src/types/Game";
-import { returnWinners, resetCards} from "./cardUtils"
+import { returnWinners, resetCards } from "./cardUtils";
 
 export const handleEndRound = (io: Server, gameID: string, game: Game) => {
   // Perform Hand Analysis
-  let winners: { username: string; rank: number; cardArray: string[]; descr: string}[] = [];
+  let winners: {
+    username: string;
+    rank: number;
+    cardArray: string[];
+    descr: string;
+  }[] = [];
 
   // Find the winners
   winners = returnWinners(game);
@@ -17,10 +22,18 @@ export const handleEndRound = (io: Server, gameID: string, game: Game) => {
   let paidout = 0;
 
   // Find the winning player if they are not already eliminated
-  let winPlayer1: Player = game.players.find((p) => p.name === winners[0].username)!;
-  let winPlayer2: Player = game.players.find((p) => p.name === winners[1].username)!;
-  let winPlayer3: Player = game.players.find((p) => p.name === winners[2].username)!;
-  let winPlayer4: Player = game.players.find((p) => p.name === winners[3].username)!;
+  let winPlayer1: Player = game.players.find(
+    (p) => p.name === winners[0].username
+  )!;
+  let winPlayer2: Player = game.players.find(
+    (p) => p.name === winners[1].username
+  )!;
+  let winPlayer3: Player = game.players.find(
+    (p) => p.name === winners[2].username
+  )!;
+  let winPlayer4: Player = game.players.find(
+    (p) => p.name === winners[3].username
+  )!;
 
   // First place
   winPlayer1.money += winPlayer1.splitPotVal; // Pay them their winnings
@@ -65,8 +78,14 @@ export const handleEndRound = (io: Server, gameID: string, game: Game) => {
     winPlayer1.isRoundWinner = true;
 
     // Emit the winner to the client
-    io.to(gameID).emit("handledWinner", winningUsername, winningHandDescription);
+    io.to(gameID).emit(
+      "handledWinner",
+      winningUsername,
+      winningHandDescription
+    );
   }, 250);
+
+  game.roundCount++;
 
   // Return the updated game
   return game;

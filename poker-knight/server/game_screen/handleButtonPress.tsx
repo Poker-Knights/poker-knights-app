@@ -14,7 +14,7 @@ export const handleButtonPress = (
     curPlayer.money -= call_diff; // Reflect bet
     curPlayer.lastBet = game.currentBet; // Update last bet
     game.potSize += call_diff; // Update Pot Value
-
+    curPlayer.lastTurnCheckFG = false;
     game = nextPlayer(game); // Move to next player
     dispGame(game);
     return game;
@@ -30,6 +30,7 @@ export const handleButtonPress = (
     // Implement the check action logic here
     curPlayer.lastBet = 0;
     game.checkCounter++;
+    curPlayer.lastTurnCheckFG = true;
     game = nextPlayer(game); // Move to next player
 
     // Raise logic
@@ -40,6 +41,7 @@ export const handleButtonPress = (
       curPlayer.lastBet = betValue; // Update last bet
       game.currentBet = betValue; // Update current game bet to new value
       game.potSize += game.currentBet; // Update Pot Value
+      curPlayer.lastTurnCheckFG = false;
     }
 
     game = nextPlayer(game); // Move to next player
@@ -55,6 +57,7 @@ export const handleButtonPress = (
     curPlayer.allInFg = true; // Player is all in
     game = nextPlayer(game); // Move to next player
   }
+  curPlayer.lastTurnCheckFG = false;
   dispGame(game);
   return game;
 };
@@ -70,7 +73,10 @@ export const nextPlayer = (game: Game) => {
 
   let curPlayer = game.currentPlayer + 1;
   if (curPlayer === game.playerCount + 1) curPlayer = 1;
-  while (game.players[curPlayer - 1].foldFG || game.players[curPlayer - 1].eliminated) {
+  while (
+    game.players[curPlayer - 1].foldFG ||
+    game.players[curPlayer - 1].eliminated
+  ) {
     curPlayer = (curPlayer + 1) % (game.playerCount + 1);
     if (curPlayer === 0) curPlayer = 1;
     ctr++;

@@ -6,30 +6,26 @@ import { nextPlayer } from "./handleButtonPress";
 export const handleStartBettingRound = (game: Game) => {
   // Assign the first player as little blind and second player as big blind
   let players = game.players;
+  game.checkCounter = 0;
   // Assign Game Updates
   if (game.curBettingRound !== 0) {
     game.currentBet = 0;
-    game.checkCounter = 0;
     // every players current bet is 0
     players.forEach((player) => {
       // if the player is eliminated, skip them
-      if (player.eliminated) return;
+      if (player.eliminated || player.foldFG) return;
       player.lastBet = 0;
+      player.lastTurnCheckFG = false;
     });
-
-    
-  } 
-  else { // this is the first betting round
+  } else {
+    // this is the first betting round
     players.forEach((player) => {
       if (!player.isLittleBlind && !player.isBigBlind) {
         // if the player is eliminated, skip them
         if (player.eliminated) return;
         player.lastBet = 0;
       }
-      
     });
-
-  
   }
 
   // set players equal to game players

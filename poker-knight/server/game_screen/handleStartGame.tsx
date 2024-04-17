@@ -23,7 +23,7 @@ export const handleStartGame = (game: Game) => {
 
   curGame.players[0].isLittleBlind = true;
   curGame.players[1].isBigBlind = true;
-  
+
   // Call the function handle start round
   curGame = handleStartRound(curGame);
 

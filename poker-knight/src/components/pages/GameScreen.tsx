@@ -500,21 +500,20 @@ const GameScreen = ({ navigation, route }: Props) => {
                 key={player.id}
                 style={[GameScreenStyles.playerContainer, playerStyle]}
               >
-
                 {/* Conditionally render little blind or big blind icon next to avatar */}
                 {player.isLittleBlind && (
                   <Image
-                  source={{ uri: "https://i.imgur.com/RwOJWuJ.png"}} // Update path to your little blind icon
-                  style={GameScreenStyles.blindIcon} // Define a style for positioning and sizing the icon
+                    source={{ uri: "https://i.imgur.com/RwOJWuJ.png" }} // Update path to your little blind icon
+                    style={GameScreenStyles.blindIcon} // Define a style for positioning and sizing the icon
                   />
                 )}
                 {player.isBigBlind && (
                   <Image
-                  source={{ uri: "https://i.imgur.com/fKpdah1.png" }} // Update path to your big blind icon
-                  style={GameScreenStyles.blindIcon} // Define a style for positioning and sizing the icon
+                    source={{ uri: "https://i.imgur.com/fKpdah1.png" }} // Update path to your big blind icon
+                    style={GameScreenStyles.blindIcon} // Define a style for positioning and sizing the icon
                   />
                 )}
-                
+
                 <Image
                   source={{ uri: player.avatarUri }}
                   style={avatarStyle}
@@ -524,7 +523,11 @@ const GameScreen = ({ navigation, route }: Props) => {
                 <Text style={GameScreenStyles.playerName}>{player.name}</Text>
                 {/* if a player folded make the text 'FOLDED" instead of their money */}
                 <Text style={GameScreenStyles.playerMoney}>
-                  {player.eliminated ? "ELIMINATED" : (!player.foldFG ? formatCurrency(player.money) : "FOLDED")}
+                  {player.eliminated
+                    ? "ELIMINATED"
+                    : !player.foldFG
+                    ? formatCurrency(player.money)
+                    : "FOLDED"}
                 </Text>
               </View>
             );
@@ -540,20 +543,14 @@ const GameScreen = ({ navigation, route }: Props) => {
       </View>
 
       <View style={GameScreenStyles.bottomContainer}>
-        {theGame.players
-        .map((player, index) => {
-          
+        {theGame.players.map((player, index) => {
           return (
-            <View
-              key={player.id}
-              style={GameScreenStyles.bottomContainer}
-              >
-
+            <View key={player.id} style={GameScreenStyles.bottomContainer}>
               {/* Display text which says the winner at the end of the round based on whether winnerPopupVisible is true or not and add a delay before starting the next round. */}
               {player.isRoundWinner && (
-              <Text style={GameScreenStyles.textStyle}>
-                {winnerName} won with a {winnerDesc}!
-              </Text>
+                <Text style={GameScreenStyles.textStyle}>
+                  {winnerName} won with a {winnerDesc}!
+                </Text>
               )}
             </View>
           );
@@ -568,9 +565,11 @@ const GameScreen = ({ navigation, route }: Props) => {
       <View style={GameScreenStyles.parentToChipCountAndButtons}>
         <View style={GameScreenStyles.clientChipCountContainer}>
           <Text style={GameScreenStyles.clientChipCountText}>
-            {thePlayer.eliminated ? "ELIMINATED" : (!thePlayer.foldFG
+            {thePlayer.eliminated
+              ? "ELIMINATED"
+              : !thePlayer.foldFG
               ? "CHIPS:$".concat(String(thePlayer.money))
-              : "FOLDED")}
+              : "FOLDED"}
           </Text>
         </View>
 
@@ -582,6 +581,7 @@ const GameScreen = ({ navigation, route }: Props) => {
               disabled={!actionButtonsEnabled.allIn}
             >
               <Text
+                allowFontScaling={false}
                 style={[
                   GameScreenStyles.allInButtonText,
                   !actionButtonsEnabled.allIn
