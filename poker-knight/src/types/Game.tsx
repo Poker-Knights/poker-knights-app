@@ -15,6 +15,7 @@ export type Player = {
   playerCards: string[];
   splitPotVal: number;
   eliminated: boolean;
+  lastTurnCheckFG: boolean;
 };
 
 export type Game = {

@@ -71,18 +71,23 @@ io.on("connection", (socket: Socket) => {
       if(!player.foldFG && (player.lastBet === 0 || player.lastBet < games[gameID].currentBet))
         endBettingRoundFG = false;
 
-      if (player.foldFG)
+      if (player.foldFG){
         numOfFoldedPlayers++;
-
-        if(!player.allInFg)
+        if(player.lastTurnCheckFG){
+          games[gameID].checkCounter--;
+          player.lastTurnCheckFG = false;
+        }
+      }else if(!player.allInFg)
           allAllIn = false;
     });
         
     if(allAllIn){
       games[gameID] = handleAllIn(io, gameID, games[gameID]);
     }else{
+      console.log(games[gameID].checkCounter);
       if (games[gameID].checkCounter === (PLAYER_COUNT - numOfFoldedPlayers))
         endBettingRoundFG = true;
+
 
       // If the betting round is over
       if (endBettingRoundFG) {

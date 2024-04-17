@@ -23,6 +23,8 @@ export const handleCreateAndAddPlayer = (
     playerCards: [],
     splitPotVal: 0,
     eliminated: false,
+    isRoundWinner: false,
+    lastTurnCheckFG: false,
   };
 
   // Add the new player to the game

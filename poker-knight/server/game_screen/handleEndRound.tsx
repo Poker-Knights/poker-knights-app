@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 import { Game, Player } from "../../src/types/Game";
-import { returnWinners, resetCards} from "./cardUtils"
+import { returnWinners, resetCards } from "./cardUtils";
 
 export const handleEndRound = (io: Server, gameID: string, game: Game) => {
   // Perform Hand Analysis
@@ -102,6 +102,8 @@ export const handleEndRound = (io: Server, gameID: string, game: Game) => {
   for (let i = 0; i < 5000000000; i++) {
     // do nothing
   }
+
+  game.roundCount++;
 
   // Return the updated game
   return game;
