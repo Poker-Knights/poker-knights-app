@@ -1,8 +1,8 @@
-import { Socket } from "socket.io";
+import { Server } from "socket.io";
 import { Game, Player } from "../../src/types/Game";
 import { returnWinners, resetCards} from "./cardUtils"
 
-export const handleEndRound = (game: Game) => {
+export const handleEndRound = (io: Server, gameID: string, game: Game) => {
   // Perform Hand Analysis
   let winners: { username: string; rank: number; cardArray: string[]; descr: string}[] = [];
 
@@ -60,8 +60,9 @@ export const handleEndRound = (game: Game) => {
   // Undeal/remove Cards
   resetCards(game);
 
-  // SRI -> Emit round UI here with delay so it doesn't overlap with buttonPress UI
-  // -------------------------------------------------------------------------------
+  setTimeout(() => {
+    io.to(gameID).emit("handledWinner", winningUsername, winningHandDescription);
+  }, 250);
 
   // Return the updated game
   return game;

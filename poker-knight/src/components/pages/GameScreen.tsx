@@ -53,6 +53,9 @@ const GameScreen = ({ navigation, route }: Props) => {
   let [curRaiseVal, setCurRaiseVal] = useState(theGame.currentBet); //Track Raise Value
   let [triggeredButton, setTriggeredButton] = useState<string>(""); // Track Button Pressed
 
+  let [winnerName, setWinnerName] = useState<string>(""); // Track Winner Name
+  let [winnerDesc, setWinnerDesc] = useState<string>(""); // Track Winner Description
+
   const [losePopupVisible, setLosePopupVisible] = useState<boolean>(false);
   const [winPopupVisible, setWinPopupVisible] = useState<boolean>(false);
 
@@ -172,6 +175,11 @@ const GameScreen = ({ navigation, route }: Props) => {
 
   useEffect(() => {
     if (!socketRef || !socketRef.current) return; // Early return if null
+
+    socketRef.current.on("handledWinner", (name: string, desc: string) => {
+      setWinnerName(name);
+      setWinnerDesc(desc);
+    });
 
     // Listen for buttonPressed event
     socketRef.current.on("handledButtonPressed", (data: typeof Game) => {

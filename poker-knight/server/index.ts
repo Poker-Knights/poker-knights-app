@@ -79,7 +79,7 @@ io.on("connection", (socket: Socket) => {
     });
         
     if(allAllIn){
-      games[gameID] = handleAllIn(games[gameID]);
+      games[gameID] = handleAllIn(io, gameID, games[gameID]);
     }else{
       if (games[gameID].checkCounter === (PLAYER_COUNT - numOfFoldedPlayers))
         endBettingRoundFG = true;
@@ -89,7 +89,12 @@ io.on("connection", (socket: Socket) => {
         games[gameID] = handleEndBettingRound(games[gameID]);
         // If the round is over
         if (games[gameID].curBettingRound === 4) {
-          games[gameID] = handleEndRound(games[gameID]);
+          games[gameID] = handleEndRound(io, gameID, games[gameID]);
+
+          const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+          async function example() { await delay(250); }
+          example();
+
           // Emit game results to client
           games[gameID] = handleStartRound(games[gameID]);
           // else just start next betting round

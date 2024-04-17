@@ -1,9 +1,10 @@
+import { Server } from "socket.io";
 import { Game, Player } from "../../src/types/Game";
 import { dealRiverCards } from "./cardUtils";
 import { handleEndBettingRound } from "./handleEndBettingRound";
 import { handleEndRound } from "./handleEndRound";
 
-export const handleAllIn = (game: Game) => {
+export const handleAllIn = (io: Server, gameID: string, game: Game) => {
   // End the game
   game = handleEndBettingRound(game);
   // call function to deal cards here
@@ -25,7 +26,7 @@ export const handleAllIn = (game: Game) => {
       break;
   }
 
-  game = handleEndRound(game);
+  game = handleEndRound(io, gameID, game);
 
   return game;
 };
