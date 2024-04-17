@@ -179,6 +179,8 @@ const GameScreen = ({ navigation, route }: Props) => {
     socketRef.current.on("handledWinner", (name: string, desc: string) => {
       setWinnerName(name);
       setWinnerDesc(desc);
+
+      console.log("Winner: ", name, "Description: ", desc);
     });
 
     // Listen for buttonPressed event
@@ -535,6 +537,27 @@ const GameScreen = ({ navigation, route }: Props) => {
         <Image source={cardImages[riverCards[2]]} />
         <Image source={cardImages[riverCards[3]]} />
         <Image source={cardImages[riverCards[4]]} />
+      </View>
+
+      <View style={GameScreenStyles.bottomContainer}>
+        {theGame.players
+        .map((player, index) => {
+          
+          return (
+            <View
+              key={player.id}
+              style={GameScreenStyles.bottomContainer}
+              >
+
+              {/* Display text which says the winner at the end of the round based on whether winnerPopupVisible is true or not and add a delay before starting the next round. */}
+              {player.isRoundWinner && (
+              <Text style={GameScreenStyles.textStyle}>
+                {winnerName} won with a {winnerDesc}!
+              </Text>
+              )}
+            </View>
+          );
+        })}
       </View>
 
       <View style={GameScreenStyles.handCardContainer}>

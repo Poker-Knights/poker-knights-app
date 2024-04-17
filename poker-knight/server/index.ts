@@ -29,6 +29,9 @@ const PORT = 3000;
 
 const games: { [key: string]: Game } = {};
 
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+async function example() { await delay(2000); }
+
 io.on("connection", (socket: Socket) => {
   console.log(`User connected: ${socket.id}`);
 
@@ -91,8 +94,6 @@ io.on("connection", (socket: Socket) => {
         if (games[gameID].curBettingRound === 4) {
           games[gameID] = handleEndRound(io, gameID, games[gameID]);
 
-          const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-          async function example() { await delay(250); }
           example();
 
           // Emit game results to client

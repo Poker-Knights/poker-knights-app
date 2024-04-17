@@ -18,6 +18,7 @@ export const handleStartRound = (game: Game) => {
     player.isBigBlind = false;
     player.isLittleBlind = false;
     player.splitPotVal = 0;
+    player.isRoundWinner = false;
   });
 
   // Assign Blind Bets

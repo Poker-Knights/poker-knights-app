@@ -61,6 +61,10 @@ export const handleEndRound = (io: Server, gameID: string, game: Game) => {
   resetCards(game);
 
   setTimeout(() => {
+    // Set the winner's isWinner flag to true
+    winPlayer1.isRoundWinner = true;
+
+    // Emit the winner to the client
     io.to(gameID).emit("handledWinner", winningUsername, winningHandDescription);
   }, 250);
 
