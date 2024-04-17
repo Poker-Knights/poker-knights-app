@@ -176,7 +176,20 @@ const GameScreen = ({ navigation, route }: Props) => {
   useEffect(() => {
     if (!socketRef || !socketRef.current) return; // Early return if null
 
-    socketRef.current.on("handledWinner", (name: string, desc: string) => {
+    socketRef.current.on("handledWinner", (updatedGame: typeof Game, name: string, desc: string) => {
+      setGame(updatedGame);
+      setRiverCards(updatedGame.riverCards);
+      setPot(updatedGame.potSize);
+      setCurrentBet(updatedGame.currentBet);
+      setCurRaiseVal(updatedGame.currentBet);
+      
+      // set all action buttons to false
+      setActionButtonsEnabled({
+        betOption: false,
+        fold: false,
+        allIn: false,
+      });
+
       setWinnerName(name);
       setWinnerDesc(desc);
 
@@ -544,13 +557,14 @@ const GameScreen = ({ navigation, route }: Props) => {
 
       <View style={GameScreenStyles.bottomContainer}>
         {theGame.players.map((player, index) => {
+
           return (
             <View key={player.id} style={GameScreenStyles.bottomContainer}>
               {/* Display text which says the winner at the end of the round based on whether winnerPopupVisible is true or not and add a delay before starting the next round. */}
               {player.isRoundWinner && (
-                <Text style={GameScreenStyles.textStyle}>
-                  {winnerName} won with a {winnerDesc}!
-                </Text>
+              <Text style={GameScreenStyles.playerName}>
+                {winnerName} won with a {winnerDesc}!
+              </Text>
               )}
             </View>
           );
