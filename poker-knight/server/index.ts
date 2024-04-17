@@ -29,9 +29,6 @@ const PORT = 3000;
 
 const games: { [key: string]: Game } = {};
 
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-async function example() { await delay(2000); }
-
 io.on("connection", (socket: Socket) => {
   console.log(`User connected: ${socket.id}`);
 
@@ -92,13 +89,24 @@ io.on("connection", (socket: Socket) => {
         games[gameID] = handleEndBettingRound(games[gameID]);
         // If the round is over
         if (games[gameID].curBettingRound === 4) {
+          
           games[gameID] = handleEndRound(io, gameID, games[gameID]);
 
-          example();
+          // console log who the big blind and little blind are
+          let players = games[gameID].players;
+          let littleBlind = players.find((player) => player.isLittleBlind);
+          let bigBlind = players.find((player) => player.isBigBlind);
+          console.log(`Little Blind: ${littleBlind?.name}`);
+          console.log(`Big Blind: ${bigBlind?.name}`);
 
-          // Emit game results to client
+          console.log("New Round Started");
+          console.log("-----------------");
           games[gameID] = handleStartRound(games[gameID]);
-          // else just start next betting round
+
+          
+          console.log(`Little Blind: ${littleBlind?.name}`);
+          console.log(`Big Blind: ${bigBlind?.name}`);
+
         } else {
           games[gameID] = handleStartBettingRound(games[gameID]);
         }

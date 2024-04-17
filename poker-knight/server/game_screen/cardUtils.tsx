@@ -128,7 +128,7 @@ export const parseCardNames = (cardNames: string[]): string[] => {
 
 export const returnWinners = (game: Game) => {
   var Hand = require("pokersolver").Hand;
-  var playerRanks: { username: string; rank: number; cardArray: string[]; descr: string}[] = [];
+  var playerRanks: { username: string; rank: number; cardArray: string[]; descr: string; isValid: boolean}[] = [];
   game.players.forEach((player) => {
     var concatArray: string[] = player.playerCards.concat(game.riverCards);
     var parsedArray: string[] = parseCardNames(concatArray);
@@ -136,7 +136,14 @@ export const returnWinners = (game: Game) => {
     var rank = Hand.solve(parsedArray).rank;
     var descr = Hand.solve(parsedArray).descr;
     // console.log(player.name + " rank: " + rank, "descr: " + Hand.solve(parsedArray).descr);
-    playerRanks.push({ username: player.name, rank: rank, cardArray: parsedArray, descr: descr});
+    if (!(player.eliminated) && !(player.foldFG))
+    {
+      playerRanks.push({ username: player.name, rank: rank, cardArray: parsedArray, descr: descr, isValid: true});
+    }
+    else
+    {
+      playerRanks.push({ username: player.name, rank: rank, cardArray: parsedArray, descr: descr, isValid: false});
+    }
   });
 
   // Accessing the cardArray field of the first player
@@ -148,6 +155,12 @@ export const returnWinners = (game: Game) => {
     const handB = Hand.solve(b.cardArray);
     return Hand.winners([handA, handB])[0] === handA ? -1 : 1;
   });
+  for (let i = 0; i < playerRanks.length; i++) { // push folded or eliminated players to the end of the array
+    if (!playerRanks[i].isValid)
+    {
+      playerRanks.push(playerRanks.splice(i, 1)[0]);
+    }
+  }
   // var winners = playerRanks.map((player) => player.username);
   return playerRanks;
 };
