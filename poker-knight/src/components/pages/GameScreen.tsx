@@ -370,6 +370,22 @@ const GameScreen = ({ navigation, route }: Props) => {
     // 5. If the player left the game or is eliminated (gray out the player prpfle picture)
 
     <View style={GameScreenStyles.backgroundContainer}>
+    <ImageBackground
+      source={cardBackgroundImage}
+      style={GameScreenStyles.cardBackground}
+      resizeMode="contain"
+    >
+      {/* Exit Button */}
+      <TouchableOpacity
+        style={GameScreenStyles.exitButton}
+        onPress={handleExitPress}
+      >
+        <Text allowFontScaling={false} style={GameScreenStyles.exitText}>
+          EXIT
+        </Text>
+      </TouchableOpacity>
+
+      {/* Exit Button Modal */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -378,7 +394,10 @@ const GameScreen = ({ navigation, route }: Props) => {
       >
         <View style={GameScreenStyles.centeredView}>
           <View style={GameScreenStyles.exitModalPopupView}>
-            <Text style={GameScreenStyles.modalText}>
+            <Text
+              allowFontScaling={false}
+              style={GameScreenStyles.modalText}
+            >
               Are you sure you want to exit the game?
             </Text>
 
@@ -390,7 +409,12 @@ const GameScreen = ({ navigation, route }: Props) => {
                 onExitConfirmPress();
               }}
             >
-              <Text style={GameScreenStyles.textStyle}>EXIT GAME</Text>
+              <Text
+                allowFontScaling={false}
+                style={GameScreenStyles.textStyle}
+              >
+                EXIT GAME
+              </Text>
             </TouchableOpacity>
 
             {/* Continue game */}
@@ -401,92 +425,106 @@ const GameScreen = ({ navigation, route }: Props) => {
                 setMenuVisible(false);
               }}
             >
-              <Text style={GameScreenStyles.textStyle}>CONTINUE GAME</Text>
+              <Text
+                allowFontScaling={false}
+                style={GameScreenStyles.textStyle}
+              >
+                CONTINUE GAME
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
 
-      {/* Win pop-up modal */}
-      <View>
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={winPopupVisible}
-          onRequestClose={() => setWinPopupVisible(false)}
-        >
-          <View style={GameScreenStyles.centeredView}>
-            <View style={GameScreenStyles.winModalPopupView}>
-              <Image
-                source={winGIF}
-                style={GameScreenStyles.gif}
-                resizeMode="contain"
-              />
-              <Text style={GameScreenStyles.modalText}>Woohoo! You won!</Text>
+      {/* Win Popup Modal */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={winPopupVisible}
+        onRequestClose={() => setWinPopupVisible(false)}
+      >
+        <View style={GameScreenStyles.centeredView}>
+          <View style={GameScreenStyles.winModalPopupView}>
+            <Image
+              source={winGIF}
+              style={GameScreenStyles.gif}
+              resizeMode="contain"
+            />
+            <Text
+              allowFontScaling={false}
+              style={GameScreenStyles.modalText}
+            >
+              Woohoo! You won!
+            </Text>
 
-              {/* Exit game Button */}
-              <TouchableOpacity
-                style={GameScreenStyles.exitGameModalButton}
-                onPress={() => {
-                  console.log("Game was attempted to be exited");
-                  onExitConfirmPress();
-                }}
+            {/* Exit game Button */}
+            <TouchableOpacity
+              style={GameScreenStyles.exitGameModalButton}
+              onPress={() => {
+                console.log("Game was attempted to be exited");
+                onExitConfirmPress();
+              }}
+            >
+              <Text
+                allowFontScaling={false}
+                style={GameScreenStyles.textStyle}
               >
-                <Text style={GameScreenStyles.textStyle}>EXIT GAME</Text>
-              </TouchableOpacity>
-            </View>
+                EXIT GAME
+              </Text>
+            </TouchableOpacity>
           </View>
-        </Modal>
-      </View>
+        </View>
+      </Modal>
 
       {/* Lost pop-up modal */}
-      <View>
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={losePopupVisible}
-          onRequestClose={() => setLosePopupVisible(false)}
-        >
-          <View style={GameScreenStyles.centeredView}>
-            <View style={GameScreenStyles.loseModalPopupView}>
-              <Image
-                source={loseGIF}
-                style={GameScreenStyles.gif}
-                resizeMode="contain"
-              />
-              <Text style={GameScreenStyles.modalText}>
-                Womp womp. You lost! Better luck next time!
-              </Text>
-
-              {/* Exit game Button */}
-              <TouchableOpacity
-                style={GameScreenStyles.exitGameModalButton}
-                onPress={() => {
-                  console.log("Game was attempted to be exited");
-                  onExitConfirmPress();
-                }}
-              >
-                <Text style={GameScreenStyles.textStyle}>EXIT GAME</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
-      </View>
-
-      {/* Exit Button */}
-      <TouchableOpacity
-        style={GameScreenStyles.exitButton}
-        onPress={handleExitPress}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={losePopupVisible}
+        onRequestClose={() => setLosePopupVisible(false)}
       >
-        <Text style={GameScreenStyles.exitText}>EXIT</Text>
-      </TouchableOpacity>
+        <View style={GameScreenStyles.centeredView}>
+          <View style={GameScreenStyles.loseModalPopupView}>
+            <Image
+              source={loseGIF}
+              style={GameScreenStyles.gif}
+              resizeMode="contain"
+            />
+            <Text
+              allowFontScaling={false}
+              style={GameScreenStyles.modalText}
+            >
+              Womp womp. You lost! Better luck next time!
+            </Text>
+
+            {/* Exit game Button */}
+            <TouchableOpacity
+              style={GameScreenStyles.exitGameModalButton}
+              onPress={() => {
+                console.log("Game was attempted to be exited");
+                onExitConfirmPress();
+              }}
+            >
+              <Text
+                allowFontScaling={false}
+                style={GameScreenStyles.textStyle}
+              >
+                EXIT GAME
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       {/* Top part of the screen with pot and current bet */}
       <View style={GameScreenStyles.topContainer}>
-        <Text style={GameScreenStyles.potText}>
+        <Text allowFontScaling={false} style={GameScreenStyles.potText}>
           POT:{formatCurrency(theGame.potSize)}
         </Text>
-        <Text style={GameScreenStyles.currentBetText}>
+        <Text
+          allowFontScaling={false}
+          style={GameScreenStyles.currentBetText}
+        >
           Current Bet: {formatCurrency(theGame.currentBet)}
         </Text>
 
@@ -518,18 +556,25 @@ const GameScreen = ({ navigation, route }: Props) => {
             return (
               <View
                 key={player.id}
-                style={[GameScreenStyles.playerContainer, playerStyle]}
+                style={[
+                  GameScreenStyles.playerContainer,
+                  playerStyle,
+                ]}
               >
                 {/* Conditionally render little blind or big blind icon next to avatar */}
                 {player.isLittleBlind && (
                   <Image
-                    source={{ uri: "https://i.imgur.com/RwOJWuJ.png" }} // Update path to your little blind icon
+                    source={{
+                      uri: "https://i.imgur.com/RwOJWuJ.png",
+                    }} // Update path to your little blind icon
                     style={GameScreenStyles.blindIcon} // Define a style for positioning and sizing the icon
                   />
                 )}
                 {player.isBigBlind && (
                   <Image
-                    source={{ uri: "https://i.imgur.com/fKpdah1.png" }} // Update path to your big blind icon
+                    source={{
+                      uri: "https://i.imgur.com/fKpdah1.png",
+                    }} // Update path to your big blind icon
                     style={GameScreenStyles.blindIcon} // Define a style for positioning and sizing the icon
                   />
                 )}
@@ -540,9 +585,17 @@ const GameScreen = ({ navigation, route }: Props) => {
                   resizeMode="contain"
                 />
 
-                <Text style={GameScreenStyles.playerName}>{player.name}</Text>
+                <Text
+                  allowFontScaling={false}
+                  style={GameScreenStyles.playerName}
+                >
+                  {player.name}
+                </Text>
                 {/* if a player folded make the text 'FOLDED" instead of their money */}
-                <Text style={GameScreenStyles.playerMoney}>
+                <Text
+                  allowFontScaling={false}
+                  style={GameScreenStyles.playerMoney}
+                >
                   {player.eliminated
                     ? "ELIMINATED"
                     : !player.foldFG
@@ -554,6 +607,7 @@ const GameScreen = ({ navigation, route }: Props) => {
           })}
       </View>
 
+      {/* River of cards */}
       <View style={GameScreenStyles.riverCardContainer}>
         <Image source={cardImages[riverCards[0]]} />
         <Image source={cardImages[riverCards[1]]} />
@@ -562,30 +616,41 @@ const GameScreen = ({ navigation, route }: Props) => {
         <Image source={cardImages[riverCards[4]]} />
       </View>
 
+      {/* Round Based Display Message */}
       <View style={GameScreenStyles.bottomContainer}>
         {theGame.players.map((player, index) => {
-
           return (
-            <View key={player.id} style={GameScreenStyles.bottomContainer}>
+            <View
+              key={player.id}
+              style={GameScreenStyles.bottomContainer}
+            >
               {/* Display text which says the winner at the end of the round based on whether winnerPopupVisible is true or not and add a delay before starting the next round. */}
               {player.isRoundWinner && (
-              <Text style={GameScreenStyles.playerName}>
-                {winnerName} won with a {winnerDesc}!
-              </Text>
+                <Text
+                  allowFontScaling={false}
+                  style={GameScreenStyles.displayTextStyle}
+                >
+                  {winnerName} won with a {winnerDesc}!
+                </Text>
               )}
             </View>
           );
         })}
       </View>
 
+      {/* Hand cards */}
       <View style={GameScreenStyles.handCardContainer}>
         <Image source={cardImages[playerCards[0]]} />
         <Image source={cardImages[playerCards[1]]} />
       </View>
 
+      {/* Chip Counter & Action Buttons */}
       <View style={GameScreenStyles.parentToChipCountAndButtons}>
         <View style={GameScreenStyles.clientChipCountContainer}>
-          <Text style={GameScreenStyles.clientChipCountText}>
+          <Text
+            allowFontScaling={false}
+            style={GameScreenStyles.clientChipCountText}
+          >
             {thePlayer.eliminated
               ? "ELIMINATED"
               : !thePlayer.foldFG
@@ -622,6 +687,7 @@ const GameScreen = ({ navigation, route }: Props) => {
               disabled={!actionButtonsEnabled.fold}
             >
               <Text
+                allowFontScaling={false}
                 style={[
                   GameScreenStyles.foldButtonText,
                   !actionButtonsEnabled.fold
@@ -635,30 +701,30 @@ const GameScreen = ({ navigation, route }: Props) => {
           </View>
           {/* Container for the Raise/Call/Check functionality */}
           <View style={GameScreenStyles.raiseCallButtonContainer}>
-            <TouchableOpacity
-              onPress={() => handleTriggeredButton("BET")}
-              disabled={!actionButtonsEnabled.betOption}
+          <TouchableOpacity
+            onPress={() => handleTriggeredButton("BET")}
+            disabled={!actionButtonsEnabled.betOption}
             >
-              <Text
-                style={[
-                  GameScreenStyles.raiseCallValueText,
-                  !actionButtonsEnabled.betOption
-                    ? { color: "darkgrey" }
-                    : { color: "yellow" },
-                ]}
-              >
+            <Text
+              style={[
+                GameScreenStyles.raiseCallValueText,
+                !actionButtonsEnabled.betOption
+                  ? { color: "darkgrey" }
+                  : { color: "yellow" },
+              ]}
+            >
             {/* {thePlayer.lastBet !== 0 ?
-              (theGame.currentBet === 0 ? "CHECK" : "CALL") :
-              (curRaiseVal >= thePlayer.money ? "ALL-IN" :
-                (curRaiseVal > theGame.currentBet ? "RAISE" :
-                  (curRaiseVal === 0 ? "CHECK" : "CALL")))} */}
+            (theGame.currentBet === 0 ? "CHECK" : "CALL") :
+            (curRaiseVal >= thePlayer.money ? "ALL-IN" :
+              (curRaiseVal > theGame.currentBet ? "RAISE" :
+                (curRaiseVal === 0 ? "CHECK" : "CALL")))} */}
             {thePlayer.lastBet !== 0 ?
-              (curRaiseVal >= thePlayer.money ? "ALL-IN" : 
-                (theGame.currentBet === 0 ? "CHECK" : "CALL")) :
-              (curRaiseVal >= thePlayer.money ? "ALL-IN" :
-                (curRaiseVal > theGame.currentBet ? "RAISE" :
-                  (curRaiseVal === 0 ? "CHECK" : "CALL")))}
-              </Text>
+            (curRaiseVal >= thePlayer.money ? "ALL-IN" : 
+              (theGame.currentBet === 0 ? "CHECK" : "CALL")) :
+            (curRaiseVal >= thePlayer.money ? "ALL-IN" :
+              (curRaiseVal > theGame.currentBet ? "RAISE" :
+                (curRaiseVal === 0 ? "CHECK" : "CALL")))}
+            </Text>
             </TouchableOpacity>
 
             {/* Decrement button for raise value */}
@@ -671,6 +737,7 @@ const GameScreen = ({ navigation, route }: Props) => {
               }
             >
               <Text
+                allowFontScaling={false}
                 style={[
                   GameScreenStyles.raiseCallValueText,
                   !actionButtonsEnabled.betOption ||
@@ -685,6 +752,7 @@ const GameScreen = ({ navigation, route }: Props) => {
 
             {/* Current raise value */}
             <Text
+              allowFontScaling={false}
               style={[
                 GameScreenStyles.raiseCallValueText,
                 !actionButtonsEnabled.betOption
@@ -692,7 +760,6 @@ const GameScreen = ({ navigation, route }: Props) => {
                   : { color: "yellow" },
               ]}
             >
-             
               {formatCurrency(curRaiseVal)}
             </Text>
 
@@ -700,10 +767,12 @@ const GameScreen = ({ navigation, route }: Props) => {
             <TouchableOpacity
               onPress={() => handleButtonPress("incrementRaise")}
               disabled={
-                !actionButtonsEnabled.betOption || curRaiseVal > thePlayer.money
+                !actionButtonsEnabled.betOption ||
+                curRaiseVal > thePlayer.money
               }
             >
               <Text
+                allowFontScaling={false}
                 style={[
                   GameScreenStyles.raiseCallValueText,
                   !actionButtonsEnabled.betOption ||
@@ -718,16 +787,13 @@ const GameScreen = ({ navigation, route }: Props) => {
           </View>
         </View>
       </View>
+    </ImageBackground>
+  </View>
 
-      <View style={GameScreenStyles.bottomContainer}>
-        <ImageBackground
-          source={cardBackgroundImage}
-          style={GameScreenStyles.cardBackground}
-          resizeMode="contain"
-        ></ImageBackground>
-      </View>
-    </View>
+
   );
 };
 
 export default GameScreen;
+
+
