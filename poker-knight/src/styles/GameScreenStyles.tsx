@@ -1,435 +1,360 @@
 import { StyleSheet } from "react-native";
 
 export const GameScreenStyles = StyleSheet.create({
-  backgroundContainer: {
-    flex: 1,
-    backgroundColor: "#292626", // Correct property for background color
-  },
+	backgroundContainer: {
+		flex: 1,
+		backgroundColor: "#292626",
 
-  bottomContainer: {
-    position: "absolute",
-    bottom: 140,
-    width: "100%",
-    alignItems: "center",
-    height: "60%",
-  },
+		// // Delete this
+		// borderWidth: 1,
+		// borderColor: "white",
+	},
 
-  cardBackground: {
-    width: "98%",
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
+	cardBackground: {
+		width: "100%",
+		height: "100%",
+	},
 
-  exitModalPopupView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
+	exitButton: {
+		alignSelf: "flex-start",
+		justifyContent: "center",
 
-  loseModalPopupView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
+		margin: 15,
+		padding: 8,
 
-  winModalPopupView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
+		backgroundColor: "#333",
 
-  gif: {
-    width: 100, // Adjust the size as needed
-    height: 100, // Adjust the size as needed
-    borderRadius: 40, // Half the width/height to make it a circle
-    overflow: "hidden", // Ensures that the image does not spill out of the border radius
-  },
+		borderRadius: 20,
 
-  testButtonsContainer: {
-    flexDirection: "row",
-    paddingBottom: 10, // Or any other value that fits your design
-    alignItems: "center",
-  },
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 2,
+			height: 2,
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 4,
+	},
 
-  exitGameModalButton: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-    marginTop: 10,
-    backgroundColor: "#feeb00",
-    borderColor: "black",
-    borderStyle: "solid",
-    borderWidth: 5,
-  },
+	exitText: {
+		fontFamily: "PixeloidMono",
+		color: "#feeb00",
+		fontSize: 20,
+	},
 
-  textStyle: {
-    fontFamily: "PixeloidMono",
-    color: "black",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
+	centeredView: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		marginTop: 22,
+	},
 
-  modalText: {
-    fontFamily: "PixeloidMono",
-    marginBottom: 15,
-    textAlign: "center",
-  },
+	exitModalPopupView: {
+		margin: 20,
+		backgroundColor: "white",
+		borderRadius: 20,
+		padding: 35,
+		alignItems: "center",
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 2,
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 4,
+		elevation: 5,
+	},
 
-  exitButton: {
-    alignSelf: "flex-start",
-    position: "relative",
-    margin: 15, // This makes the button outer space '15' in each direction
-    borderRadius: 20,
-    backgroundColor: "#333",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 2,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-  },
+	modalText: {
+		fontFamily: "PixeloidMono",
+		marginBottom: 15,
+		textAlign: "center",
+	},
 
-  loseButton: {
-    alignSelf: "flex-start",
-    position: "relative",
-    margin: 15, // This makes the button outer space '15' in each direction
-    borderRadius: 20,
-    backgroundColor: "#333",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 2,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-  },
+	exitGameModalButton: {
+		borderRadius: 20,
+		padding: 10,
+		elevation: 2,
+		marginTop: 10,
+		backgroundColor: "#feeb00",
+		borderColor: "black",
+		borderStyle: "solid",
+		borderWidth: 5,
+	},
 
-  winButton: {
-    alignSelf: "flex-start",
-    position: "relative",
-    margin: 15, // This makes the button outer space '15' in each direction
-    borderRadius: 20,
-    backgroundColor: "#333",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 2,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-  },
+	textStyle: {
+		fontFamily: "PixeloidMono",
+		color: "black",
+		fontWeight: "bold",
+		textAlign: "center",
+	},
 
-  exitText: {
-    fontFamily: "PixeloidMono",
-    color: "#feeb00", // Gold color for the pot amount
-    fontSize: 20, // Adjust the size as needed
-    margin: 10,
-  },
+	winModalPopupView: {
+		margin: 20,
+		backgroundColor: "white",
+		borderRadius: 20,
+		padding: 35,
+		alignItems: "center",
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 2,
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 4,
+		elevation: 5,
+	},
 
-  topContainer: {
-    backgroundColor: "#292626", // Background color as per your design
-    margin: 10,
+	loseModalPopupView: {
+		margin: 20,
+		backgroundColor: "white",
+		borderRadius: 20,
+		padding: 35,
+		alignItems: "center",
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 2,
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 4,
+		elevation: 5,
+	},
 
-    paddingBottom: 10, // Or any other value that fits your design
-    alignItems: "center",
-  },
+	gif: {
+		width: 100, // Adjust the size as needed
+		height: 100, // Adjust the size as needed
+		borderRadius: 40, // Half the width/height to make it a circle
+		overflow: "hidden", // Ensures that the image does not spill out of the border radius
+	},
 
-  potText: {
-    fontFamily: "PixeloidMono",
-    color: "#feeb00", // Gold color for the pot amount
-    fontSize: 36, // Adjust the size as needed
-    paddingBottom: 2,
-  },
+	topContainer: {
+		backgroundColor: "#292626",
 
-  currentBetText: {
-    fontFamily: "PixeloidMono",
-    color: "#feeb00", // Gold color for the current bet amount
-    fontSize: 14, // Adjust the size as needed
-  },
+		margin: 5,
+		alignItems: "center",
+	},
 
-  whiteLine: {
-    height: 2, // Height of the white line
-    backgroundColor: "#FFFFFF", // White color for the line
-    width: "80%", // Width of the line, adjust as needed
-    marginTop: 4, // Space between the text and the line, adjust as needed
-  },
+	potText: {
+		fontFamily: "PixeloidMono",
+		color: "#feeb00",
+		fontSize: 36,
 
-  avatar: {
-    width: 80, // Adjust the size as needed
-    height: 80, // Adjust the size as needed
-    borderRadius: 40, // Half the width/height to make it a circle
-    borderWidth: 1, // Size of border around the avatar
-    borderColor: "#FFFFFF", // Border color, assuming white is desired
-    backgroundColor: "#C4C4C4", // A placeholder background color in case the image fails to load
-    overflow: "hidden", // Ensures that the image does not spill out of the border radius
-  },
+		paddingBottom: 2,
+	},
 
-  activeTurnAvatar: {
-    width: 80, // Adjust the size as needed
-    height: 80, // Adjust the size as needed
-    borderRadius: 40, // Half the width/height to make it a circle
-    borderWidth: 2, // Size of border around the avatar
-    borderColor: "#feeb00", // Border color, assuming white is desired
-    backgroundColor: "#C4C4C4", // A placeholder background color in case the image fails to load
-    overflow: "hidden", // Ensures that the image does not spill out of the border radius
-  },
+	currentBetText: {
+		fontFamily: "PixeloidMono",
+		color: "#feeb00",
+		fontSize: 14,
+	},
 
-  foldedAvatar: {
-    width: 80, // Adjust the size as needed
-    height: 80, // Adjust the size as needed
-    borderRadius: 40, // Half the width/height to make it a circle
-    borderWidth: 2, // Size of border around the avatar
-    borderColor: "#FF0000", // Border color, assuming white is desired
-    backgroundColor: "#C4C4C4", // A placeholder background color in case the image fails to load
-    opacity: 0.35,
-    overflow: "hidden", // Ensures that the image does not spill out of the border radius
-  },
+	whiteLine: {
+		height: 2,
+		backgroundColor: "#FFFFFF",
+		width: "80%",
 
-  playerName: {
-    fontFamily: "PixeloidMono",
-    color: "#feeb00", // Assuming a gold color for the player's name text
-    fontSize: 16, // Adjust the size as needed
-    marginTop: 4, // Space between the avatar and the name
-  },
+		marginVertical: 5,
+	},
 
-  playerMoney: {
-    fontFamily: "PixeloidMono",
-    color: "#feeb00", // Assuming white color for the player's money text
-    fontSize: 14, // Adjust the size as needed
-    marginTop: 2, // Space between the name and the money
-  },
+	playersContainer: {
+		flexDirection: "row",
+		justifyContent: "center", // This will distribute your player containers evenly across the top
+		height: 200,
+		alignItems: "flex-end",
+		marginTop: 5,
+	},
 
-  playersContainer: {
-    flexDirection: "row",
-    justifyContent: "center", // This will distribute your player containers evenly across the top
-    height: 250,
-    alignItems: "flex-end",
-  },
+	playerLeft: {
+		position: "absolute",
+		left: 5, // Adjust based on your design needs
+		bottom: 5, // Lower the left player to create a triangle formation
+	},
 
-  playerContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 10,
-    // If you need to space out the player containers evenly, you might consider additional layout styling here
-  },
+	playerMiddle: {
+		position: "absolute",
+		bottom: 30, // Adjust based on your design needs, this should be the highest point
+	},
 
-  playerLeft: {
-    position: "absolute",
-    left: 5, // Adjust based on your design needs
-    bottom: 5, // Lower the left player to create a triangle formation
-  },
+	playerRight: {
+		position: "absolute",
+		right: 5, // Adjust based on your design needs
+		bottom: 5, // Lower the right player to create a triangle formation
+	},
 
-  playerMiddle: {
-    position: "absolute",
-    bottom: 100, // Adjust based on your design needs, this should be the highest point
-  },
+	avatar: {
+		width: 80, // Adjust the size as needed
+		height: 80, // Adjust the size as needed
+		borderRadius: 40, // Half the width/height to make it a circle
+		borderWidth: 1, // Size of border around the avatar
+		borderColor: "#FFFFFF", // Border color, assuming white is desired
+		backgroundColor: "#C4C4C4", // A placeholder background color in case the image fails to load
+		overflow: "hidden", // Ensures that the image does not spill out of the border radius
+	},
 
-  playerRight: {
-    position: "absolute",
-    right: 5, // Adjust based on your design needs
-    bottom: 5, // Lower the right player to create a triangle formation
-  },
+	activeTurnAvatar: {
+		width: 80, // Adjust the size as needed
+		height: 80, // Adjust the size as needed
+		borderRadius: 40, // Half the width/height to make it a circle
+		borderWidth: 2, // Size of border around the avatar
+		borderColor: "#feeb00", // Border color, assuming white is desired
+		backgroundColor: "#C4C4C4", // A placeholder background color in case the image fails to load
+		overflow: "hidden", // Ensures that the image does not spill out of the border radius
+	},
 
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22,
-  },
+	foldedAvatar: {
+		width: 80, // Adjust the size as needed
+		height: 80, // Adjust the size as needed
+		borderRadius: 40, // Half the width/height to make it a circle
+		borderWidth: 2, // Size of border around the avatar
+		borderColor: "#FF0000", // Border color, assuming white is desired
+		backgroundColor: "#C4C4C4", // A placeholder background color in case the image fails to load
+		opacity: 0.35,
+		overflow: "hidden", // Ensures that the image does not spill out of the border radius
+	},
 
-  modalExitView: {
-    right: 12, // Adjust as needed
-    top: 4,
-    marginTop: 20,
-    marginLeft: 20,
-    marginBottom: 8,
-    backgroundColor: "#333",
-    borderRadius: 20,
-    height: 40,
-    alignItems: "center",
-    elevation: 5,
-    //marginRight: 275,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-  },
+	playerContainer: {
+		alignItems: "center",
+		justifyContent: "center",
+		padding: 10,
+		// If you need to space out the player containers evenly, you might consider additional layout styling here
+	},
 
-  modalPopupView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
+	blindIcon: {
+		width: 45,
+		height: 45,
 
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-    marginTop: 10,
-  },
+		marginLeft: 65,
+		marginTop: 50,
+	},
 
-  buttonClose: {
-    backgroundColor: "#2196F3",
-  },
+	playerName: {
+		fontFamily: "PixeloidMono",
+		color: "#feeb00", // Assuming a gold color for the player's name text
+		fontSize: 16, // Adjust the size as needed
 
-  actionButtonsContainer: {
-    bottom: 0,
-    left: 10,
-    width: "95%",
-    height: "39%",
-    alignItems: "baseline",
-    marginBottom: 10,
-    backgroundColor: "#333", // Background color
-    borderColor: "#555", // Border color
-    borderWidth: 2, // Border width
-    borderRadius: 10, // Border radius
-  },
+		marginTop: 4, // Space between the avatar and the name
+	},
 
-  topButtonsContainer: {
-    flexDirection: "row",
-  },
+	playerMoney: {
+		fontFamily: "PixeloidMono",
+		color: "#feeb00", // Assuming white color for the player's money text
+		fontSize: 14, // Adjust the size as needed
 
-  raiseCallButtonContainer: {
-    flexDirection: "row",
-    marginLeft: 5,
-  },
+		marginTop: 2, // Space between the name and the money
+	},
 
-  raiseCallValueText: {
-    fontFamily: "PixeloidMono",
-    color: "#feeb00",
-    fontSize: 20,
-    paddingHorizontal: 4,
-  },
+	riverCardContainer: {
+		flexDirection: "row",
 
-  allInButtonContainer: {
-    paddingTop: 10,
-  },
+		// Centers in dead middle
+		position: "absolute",
+		top: "50%",
+		right: 0,
+		left: 0,
 
-  allInButtonText: {
-    fontFamily: "PixeloidMono",
-    color: "#feeb00",
-    fontSize: 20,
-    marginLeft: 10,
-  },
+		// Scale down the elements by 20 percent
+		transform: [{ scale: 0.8 }],
 
-  foldButtonContainer: {
-    paddingVertical: 10,
-  },
+		justifyContent: "center",
+		alignItems: "center",
+	},
 
-  foldButtonText: {
-    fontFamily: "PixeloidMono",
-    color: "#feeb00",
-    fontSize: 20,
-    marginLeft: 10,
-  },
+	// THIS NEEDS TO BE ALTERED
+	bottomContainer: {
+		position: "absolute",
+		bottom: "25%",
+		left: 0,
+		right: 0,
+		// marginHorizontal: 10,
 
-  disabledButton: {
-    backgroundColor: "#ccc", // Grey color
-  },
+		// height: "60%",
+	},
 
-  clientChipCountContainer: {
-    left: 10, // Adjust as needed for padding from the left edge
-    marginBottom: 0, // Adjust as needed to position above the action buttons
-    backgroundColor: "#292626", // Slightly darker background for readability
-    padding: 5,
-    borderRadius: 5,
-  },
+	// THIS ALSO NEEDS TO BE ALTERED
+	displayTextStyle: {
+		fontFamily: "PixeloidMono",
+		color: "#feeb00",
+		fontWeight: "bold",
+		textAlign: "center",
+		fontSize: 20,
 
-  clientChipCountText: {
-    color: "#feeb00",
-    fontSize: 16,
-    fontFamily: "PixeloidMono",
-  },
+		// backgroundColor: "#333",
+		// borderWidth: 2,
+		// borderRadius: 10,
+		// borderColor: "#555",
+	},
 
-  labelText: {
-    // Style for the RAISE/CHECK/CALL label text
-    color: "#feeb00", // Use the same color as your raiseValueText for consistency
-    fontFamily: "PixeloidMono",
-    fontSize: 20, // Adjust the size as needed
-    marginRight: 4,
-    marginHorizontal: 4, // This adds spacing on both sides of the value,// Add some margin to the right of the label
-    // Add other styles as necessary
-  },
+	handCardContainer: {
+		flexDirection: "row",
 
-  blindIcon: {
-    width: 45, // Adjust based on your icon size
-    height: 45, // Adjust based on your icon size
-    marginLeft: 65, // Spacing between the avatar and icon, adjust as needed
-    marginTop: 50,
-    // Add other styling as needed for positioning, etc.
-  },
+		position: "absolute",
+		bottom: "8%",
+		right: "10%",
 
-  parentToChipCountAndButtons: {
-    flex: 1,
-    padding: 10, // Or any other value to keep space around the items
-    // To center the children to the left edge
-    alignItems: "flex-start", // To align the children at the start of the container
-    justifyContent: "flex-end", // To align the children at the end of the container
-    paddingBottom: 0,
-  },
-  riverCardContainer: {
-    position: "relative",
-    top: 0,
-    transform: [{ scale: 0.8 }], // Scale down the elements by 20 percent
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 2,
-  },
-  handCardContainer: {
-    position: "absolute",
-    bottom: 80,
-    right: 30,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    // marginTop: 20,
-    zIndex: 5,
-    // padding: 50, // Add padding to the card container
-  },
+		zIndex: 2,
+
+		justifyContent: "center",
+		alignItems: "center",
+	},
+
+	parentToChipCountAndButtons: {
+		position: "absolute",
+		bottom: 0,
+		left: 0,
+		right: 0,
+
+		margin: 20,
+	},
+
+	clientChipCountContainer: {
+		backgroundColor: "#292626",
+	},
+
+	clientChipCountText: {
+		fontFamily: "PixeloidMono",
+		color: "#feeb00",
+		fontSize: 16,
+	},
+
+	actionButtonsContainer: {
+		backgroundColor: "#333",
+
+		borderWidth: 2,
+		borderRadius: 10,
+		borderColor: "#555",
+	},
+
+	allInButtonContainer: {
+		marginTop: 10,
+		marginHorizontal: 10,
+	},
+
+	allInButtonText: {
+		fontFamily: "PixeloidMono",
+		color: "#feeb00",
+		fontSize: 20,
+	},
+
+	foldButtonContainer: {
+		margin: 10,
+	},
+
+	foldButtonText: {
+		fontFamily: "PixeloidMono",
+		color: "#feeb00",
+		fontSize: 20,
+	},
+
+	raiseCallButtonContainer: {
+		flexDirection: "row",
+		marginBottom: 10,
+		marginHorizontal: 10,
+	},
+
+	raiseCallValueText: {
+		fontFamily: "PixeloidMono",
+		color: "#feeb00",
+		fontSize: 20,
+		marginRight: 8,
+	},
 });
