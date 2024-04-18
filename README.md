@@ -21,7 +21,6 @@ git clone <https://github.com/Poker-Knights/poker-knight-app>
 cd poker-knight-app
 yarn install
 
-```bash
 yarn add @expo/metro-runtime@^3.1.3
 yarn add @react-navigation/native@^6.1.10
 yarn add @react-navigation/native-stack@^6.9.18
