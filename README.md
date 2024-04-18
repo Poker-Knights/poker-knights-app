@@ -4,7 +4,7 @@ This repository contains the code for our Poker Project.
 
 ## Overview
 
-Our Poker Project, Poker Knight, is a mobile application built using React Native and Expo. It provides a platform for users to play poker games and engage in multiplayer sessions with friends or other players online. The app offers various features such as real-time chat, customizable game settings, and integration with the pokersolver library for hand analysis.
+Our Poker Project, Poker Knight, is a mobile application built using React Native and Expo. It provides a platform for users to play poker games and engage in multiplayer sessions with friends or other players online. The app offers various features such as real-time game interaction,  nd integration with the pokersolver library for hand analysis.
 
 ## Features
 
