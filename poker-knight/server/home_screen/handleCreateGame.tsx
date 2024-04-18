@@ -21,6 +21,7 @@ export const handleCreateGame =
       checkCounter: 0,
       gameStarted: false,
       roundCount: 0,
+      gameWon: false,
       riverCards: ["back", "back", "back", "back", "back"],
       deckCards: [
         "spades_2",

@@ -356,6 +356,13 @@ const GameScreen = ({ navigation, route }: Props) => {
     }
   };
 
+    // Update current raise value based on the player's money
+    useEffect(() => {
+      if (curRaiseVal >= thePlayer.money) {
+        setCurRaiseVal(thePlayer.money);
+      }
+    }, [thePlayer.money, curRaiseVal]);
+
   return (
     // Things to update on UI (not in any particular order)
     // 3. Big blind & little blind indicator
@@ -640,24 +647,17 @@ const GameScreen = ({ navigation, route }: Props) => {
                     : { color: "yellow" },
                 ]}
               >
-                {
-                  // Check if the player has made a  bet (called or raised).
-                  thePlayer.lastBet !== 0
-                    ? // If so, check if the current bet is 0.
-                      theGame.currentBet === 0
-                      ? "CHECK" // If the current bet is 0, then display "CHECK".
-                      : "CALL" // If the current bet is not 0, then display "CALL".
-                    : // If the player hasn't made a last bet, check if the current raise value is >= the player's money.
-                    curRaiseVal >= thePlayer.money
-                    ? "ALL-IN" // If the raise value is greater or equal to the player's money, display "ALL-IN".
-                    : // If not, check if the current raise value is > the current bet.
-                    curRaiseVal > theGame.currentBet
-                    ? "RAISE" // If the raise value is greater, then display "RAISE".
-                    : // If not, check if the current raise value is 0.
-                    curRaiseVal === 0
-                    ? "CHECK" // If it is 0, then display "CHECK".
-                    : "CALL" // If it is not 0, then display "CALL".
-                }
+            {/* {thePlayer.lastBet !== 0 ?
+              (theGame.currentBet === 0 ? "CHECK" : "CALL") :
+              (curRaiseVal >= thePlayer.money ? "ALL-IN" :
+                (curRaiseVal > theGame.currentBet ? "RAISE" :
+                  (curRaiseVal === 0 ? "CHECK" : "CALL")))} */}
+            {thePlayer.lastBet !== 0 ?
+              (curRaiseVal >= thePlayer.money ? "ALL-IN" : 
+                (theGame.currentBet === 0 ? "CHECK" : "CALL")) :
+              (curRaiseVal >= thePlayer.money ? "ALL-IN" :
+                (curRaiseVal > theGame.currentBet ? "RAISE" :
+                  (curRaiseVal === 0 ? "CHECK" : "CALL")))}
               </Text>
             </TouchableOpacity>
 
@@ -692,6 +692,7 @@ const GameScreen = ({ navigation, route }: Props) => {
                   : { color: "yellow" },
               ]}
             >
+             
               {formatCurrency(curRaiseVal)}
             </Text>
 

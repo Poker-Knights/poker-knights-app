@@ -33,6 +33,17 @@ export const dealRiverCards = (game: Game, caseNumber: number) => {
       cardIndex++;
     }
   }
+  else if (caseNumber == 3) { // Case to deal all remaining cards (2 cards)
+    for (let i = 0; i < 5; i++) {
+      if (game.riverCards[i] === "back") {
+        const randomIndex = Math.floor(Math.random() * game.deckCards.length);
+        const randomCard = game.deckCards.splice(randomIndex, 1)[0];
+        game.riverCards[i] = randomCard;
+      }
+    }
+  }
+
+  return game;
 };
 
 
@@ -132,17 +143,19 @@ export const returnWinners = (game: Game) => {
   game.players.forEach((player) => {
     var concatArray: string[] = player.playerCards.concat(game.riverCards);
     var parsedArray: string[] = parseCardNames(concatArray);
-    // console.log(player.name + " cards: " + parsedArray);
-    var rank = Hand.solve(parsedArray).rank;
-    var descr = Hand.solve(parsedArray).descr;
+    console.log("Parsed Array: " + parsedArray);
     // console.log(player.name + " rank: " + rank, "descr: " + Hand.solve(parsedArray).descr);
     if (!(player.eliminated) && !(player.foldFG))
-    {
+      {
+      console.log("Player: " + player.name + " is eliminated? " + player.eliminated + " Folded? " + player.foldFG);
+      var tempHand = Hand.solve(parsedArray);
+      var rank = tempHand.rank;
+      var descr = tempHand.descr;
       playerRanks.push({ username: player.name, rank: rank, cardArray: parsedArray, descr: descr, isValid: true});
     }
     else
     {
-      playerRanks.push({ username: player.name, rank: rank, cardArray: parsedArray, descr: descr, isValid: false});
+      playerRanks.push({ username: player.name, rank: -1, cardArray: parsedArray, descr: "NA", isValid: false});
     }
   });
 
@@ -151,16 +164,31 @@ export const returnWinners = (game: Game) => {
   // console.log("Player Ranks: " + playerRanks);
   // playerRanks.sort((a, b) => a.rank - b.rank);
   playerRanks.sort((a, b) => {
-    const handA = Hand.solve(a.cardArray);
-    const handB = Hand.solve(b.cardArray);
-    return Hand.winners([handA, handB])[0] === handA ? -1 : 1;
-  });
-  for (let i = 0; i < playerRanks.length; i++) { // push folded or eliminated players to the end of the array
-    if (!playerRanks[i].isValid)
+    if (a.isValid && !b.isValid)
     {
-      playerRanks.push(playerRanks.splice(i, 1)[0]);
+      return -1;
     }
-  }
+    else if (!a.isValid && b.isValid)
+    {
+      return 1;
+    }
+    else if (!a.isValid && !b.isValid)
+    {
+      return -1;
+    }
+    else
+    {
+      const handA = Hand.solve(a.cardArray);
+      const handB = Hand.solve(b.cardArray);
+      return Hand.winners([handA, handB])[0] === handA ? -1 : 1;
+    }
+  });
+  // for (let i = 0; i < playerRanks.length; i++) { // push folded or eliminated players to the end of the array
+  //   if (!playerRanks[i].isValid)
+  //   {
+  //     playerRanks.push(playerRanks.splice(i, 1)[0]);
+  //   }
+  // }
   // var winners = playerRanks.map((player) => player.username);
   return playerRanks;
 };

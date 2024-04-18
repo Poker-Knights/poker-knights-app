@@ -13,7 +13,7 @@ export const handleStartBettingRound = (game: Game) => {
     // every players current bet is 0
     players.forEach((player) => {
       // if the player is eliminated, skip them
-      if (player.eliminated || player.foldFG) return;
+      if (player.foldFG) return;
       player.lastBet = 0;
       player.lastTurnCheckFG = false;
     });
@@ -38,15 +38,15 @@ export const handleStartBettingRound = (game: Game) => {
       break;
     case 1:
       // Deal 3 cards
-      dealRiverCards(game, 1);
+      game = dealRiverCards(game, 1);
 
       break;
     case 2:
-      dealRiverCards(game, 2);
+      game = dealRiverCards(game, 2);
 
       break;
     case 3:
-      dealRiverCards(game, 2);
+      game = dealRiverCards(game, 2);
       break;
 
     default:

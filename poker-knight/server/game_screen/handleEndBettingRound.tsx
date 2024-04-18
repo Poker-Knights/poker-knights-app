@@ -1,11 +1,16 @@
 import { Socket } from "socket.io";
+import { Server } from "socket.io";
 import { Game } from "../../src/types/Game";
+import { PLAYER_COUNT } from "../../src/utils/socket";
+import { handleAllIn } from "./handleAllIn";
 
-export const handleEndBettingRound = (game: Game) => {
+export const handleEndBettingRound = (io: Server, gameID: string, game:Game) => {
+
   // Increment Betting Round
   game.curBettingRound++;
 
-  // Save current pots
+
+        // Save current pots
   game.players.forEach((curPlayer) => {
 
     // If the player is eliminated skip them
@@ -27,6 +32,24 @@ export const handleEndBettingRound = (game: Game) => {
       curPlayer.splitPotVal = game.potSize; // If not all in and in, split pot is total pot
     }
   });
+
+
+  let allInCount = 0;
+  let numOfFoldedPlayers = 0;
+  game.players.forEach((player) => {
+    if(player.allInFg){
+      allInCount++;
+    }
+    if(player.foldFG || player.eliminated){
+      numOfFoldedPlayers++;
+    }
+  });
+
+  console.log("ALL IN COUNT: " + allInCount)
+  console.log("NUM OF FOLDED PLAYERS: " + numOfFoldedPlayers)
+  if(allInCount >= (PLAYER_COUNT - numOfFoldedPlayers - 1)){
+    game = handleAllIn(io, gameID, game);
+  }
 
   return game;
 };

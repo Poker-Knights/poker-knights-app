@@ -120,7 +120,10 @@ export const dispGame = (game: Game) => {
         " Folded: " +
         player.foldFG +
         " All-in: " +
-        player.allInFg
+        player.allInFg +
+        " Eliminated: " +
+        player.eliminated
+        
     );
   });
   console.log("-------------------------------------");
