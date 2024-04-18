@@ -28,7 +28,7 @@ import { Player } from "../../types/Game";
 
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
 const loseGIF = require("../../Graphics/lose.gif");
-const winGIF = require("../../Graphics/win.gif");
+const winGIF = require("../../Graphics/winGIF.gif");
 
 const userIcon = require("../../Graphics/userIcon.png");
 
@@ -177,11 +177,16 @@ const GameScreen = ({ navigation, route }: Props) => {
     if (!socketRef || !socketRef.current) return; // Early return if null
 
     socketRef.current.on("handledWinner", (updatedGame: typeof Game, name: string, desc: string) => {
+
       setGame(updatedGame);
       setRiverCards(updatedGame.riverCards);
       setPot(updatedGame.potSize);
       setCurrentBet(updatedGame.currentBet);
       setCurRaiseVal(updatedGame.currentBet);
+
+      let updatedPlayer = updatedGame.players.find((p) => p.name === theUsername)!;
+      console.log(updatedPlayer);
+      setPlayer(updatedPlayer);
       
       // set all action buttons to false
       setActionButtonsEnabled({
@@ -194,6 +199,27 @@ const GameScreen = ({ navigation, route }: Props) => {
       setWinnerDesc(desc);
 
       console.log("Winner: ", name, "Description: ", desc);
+
+      
+      // if the player is eliminated, show the lose popup
+
+      console.log(updatedPlayer.name + updatedPlayer.eliminated)
+      // if the game is the won, find the player that won, if its not the updated player, show the lose popup
+      if (updatedGame.gameWon)
+      {
+        if (updatedPlayer.eliminated) {
+          setLosePopupVisible(true);
+        }
+
+        else
+        {
+          setWinPopupVisible(true);
+
+        }
+      }
+
+
+
     });
 
     // Listen for buttonPressed event
@@ -219,7 +245,9 @@ const GameScreen = ({ navigation, route }: Props) => {
     return () => {
       if (socketRef.current) {
         socketRef.current.off("handledButtonPressed");
+        socketRef.current.off("handledWinner");
       }
+
     };
   }, [triggeredButton]);
 
@@ -229,15 +257,6 @@ const GameScreen = ({ navigation, route }: Props) => {
     setMenuVisible(true);
   };
 
-  const handleLoseTestPress = () => {
-    console.log("Lose button was pressed");
-    setLosePopupVisible(true);
-  };
-
-  const handleWinTestPress = () => {
-    console.log("Win button was pressed");
-    setWinPopupVisible(true);
-  };
 
   const onExitConfirmPress = () => {
     if (!socketRef) {
@@ -630,7 +649,7 @@ const GameScreen = ({ navigation, route }: Props) => {
                   allowFontScaling={false}
                   style={GameScreenStyles.displayTextStyle}
                 >
-                  {winnerName} won with a {winnerDesc}!
+                  {winnerName} WON WITH A  {winnerDesc}!
                 </Text>
               )}
             </View>

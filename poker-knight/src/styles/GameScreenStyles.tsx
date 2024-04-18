@@ -84,7 +84,7 @@ export const GameScreenStyles = StyleSheet.create({
 	textStyle: {
 		fontFamily: "PixeloidMono",
 		color: "black",
-		fontWeight: "bold",
+		//fontWeight: "bold",
 		textAlign: "center",
 	},
 
@@ -274,9 +274,10 @@ export const GameScreenStyles = StyleSheet.create({
 	displayTextStyle: {
 		fontFamily: "PixeloidMono",
 		color: "#feeb00",
-		fontWeight: "bold",
+		//fontWeight: "bold",
 		textAlign: "center",
 		fontSize: 20,
+		textTransform: "uppercase",
 
 		// backgroundColor: "#333",
 		// borderWidth: 2,
