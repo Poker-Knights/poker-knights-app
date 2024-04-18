@@ -29,9 +29,6 @@ const PORT = 3000;
 
 const games: { [key: string]: Game } = {};
 
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-async function example() { await delay(5); }
-
 io.on("connection", (socket: Socket) => {
   console.log(`User connected: ${socket.id}`);
 
@@ -68,25 +65,25 @@ io.on("connection", (socket: Socket) => {
     let players = games[gameID].players;
     let endBettingRoundFG = true;
     let numOfFoldedPlayers = 0;
-    let allAllIn = true;
 
     players.forEach((player) => {
-      if(!player.foldFG && (player.lastBet === 0 || player.lastBet < games[gameID].currentBet))
-        endBettingRoundFG = false;
+      if(!player.foldFG && !player.eliminated && !player.allInFg && (player.lastBet === 0 || player.lastBet < games[gameID].currentBet))
+        {
+          endBettingRoundFG = false;
+          console.log("Setting Betting Round as FALSE")
+        }
 
       if (player.foldFG){
         numOfFoldedPlayers++;
         if(player.lastTurnCheckFG){
           games[gameID].checkCounter--;
           player.lastTurnCheckFG = false;
+          console.log("Setting Betting Round as FALSE - check")
         }
-      }else if(!player.allInFg)
-          allAllIn = false;
+      }
     });
         
-    if(allAllIn){
-      games[gameID] = handleAllIn(io, gameID, games[gameID]);
-    }else{
+
       console.log(games[gameID].checkCounter);
       if (games[gameID].checkCounter === (PLAYER_COUNT - numOfFoldedPlayers))
         endBettingRoundFG = true;
@@ -94,26 +91,35 @@ io.on("connection", (socket: Socket) => {
 
       // If the betting round is over
       if (endBettingRoundFG) {
-        games[gameID] = handleEndBettingRound(games[gameID]);
+        console.log("Handling End Betting Round")
+        games[gameID] = handleEndBettingRound(io, gameID, games[gameID])!;
+
         // If the round is over
         if (games[gameID].curBettingRound === 4) {
+          
           games[gameID] = handleEndRound(io, gameID, games[gameID]);
+        
+          // check if the game is over
+          if(!games[gameID].gameWon){
+            games[gameID] = handleStartRound(games[gameID]);
 
-          example();
+          }
 
-          // Emit game results to client
-          games[gameID] = handleStartRound(games[gameID]);
-          // else just start next betting round
-        } else {
+        } 
+        
+        // Round not over, start new betting round
+        else {
           games[gameID] = handleStartBettingRound(games[gameID]);
         }
       }
-   }
+   
 
     setTimeout(() => {
       io.to(gameID).emit("handledButtonPressed", games[gameID]);
     }, 250);
   });
+
+  // Exit logic here
 
   // Example of disconnect event
   socket.on("disconnect", () => {

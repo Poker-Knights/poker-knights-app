@@ -36,4 +36,5 @@ export type Game = {
   deckCards: string[];
   curBettingRound: number;
   roundCount: number;
+  gameWon: boolean;
 };

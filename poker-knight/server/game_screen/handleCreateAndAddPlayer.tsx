@@ -19,10 +19,10 @@ export const handleCreateAndAddPlayer = (
     foldFG: false,
     isLittleBlind: false,
     isBigBlind: false,
+    isRoundWinner: false,
     playerCards: [],
     splitPotVal: 0,
     eliminated: false,
-    isRoundWinner: false,
     lastTurnCheckFG: false,
   };
 
