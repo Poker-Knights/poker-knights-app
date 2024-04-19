@@ -154,19 +154,26 @@ const GameScreen = ({ navigation, route }: Props) => {
     let actionButtons = determineAvailableActions(theGame, thePlayer);
     setActionButtonsEnabled(actionButtons);
 
-    if (!socketRef) return; // Early return if null
+    if (!socketRef || !socketRef.current) return; // Early return if null
 
     // Use the imported helper function, passing necessary dependencies
     const exitGameHandler = handleExit(navigation, socketRef, Game.id);
-
+    
     if (socketRef.current) {
       socketRef.current.on("gameExited", exitGameHandler);
     }
+    
+    const handleNavigationHome = () => {
+      navigation.navigate("Home");
+    };
+  
+    socketRef.current.on("navigateHome", handleNavigationHome);
 
     // Cleanup on component unmount
     return () => {
       if (socketRef.current) {
         socketRef.current.off("gameExited", exitGameHandler);
+        socketRef.current.off("navigateHome", handleNavigationHome);
         socketRef.current.disconnect();
         navigation.navigate("Home");
       }
@@ -216,9 +223,17 @@ const GameScreen = ({ navigation, route }: Props) => {
       setCurRaiseVal(updatedGame.currentBet);
     });
 
+    const handleNavigationHome = () => {
+      navigation.navigate("Home");
+    };
+  
+    socketRef.current.on("navigateHome", handleNavigationHome);
+
     return () => {
       if (socketRef.current) {
         socketRef.current.off("handledButtonPressed");
+        socketRef.current.off("handledWinner");
+        socketRef.current.off("navigateHome", handleNavigationHome);
       }
     };
   }, [triggeredButton]);
@@ -388,6 +403,7 @@ const GameScreen = ({ navigation, route }: Props) => {
               onPress={() => {
                 console.log("Game was attempted to be exited");
                 onExitConfirmPress();
+                setTriggeredButton("EXIT");
               }}
             >
               <Text style={GameScreenStyles.textStyle}>EXIT GAME</Text>
