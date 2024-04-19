@@ -27,7 +27,7 @@ import { SERVER_URL } from "../../utils/socket";
 import { Player } from "../../types/Game";
 
 const cardBackgroundImage = require("../../Graphics/poker_background.png");
-const loseGIF = require("../../Graphics/lose.gif");
+const loseGIF = require("../../Graphics/loseGIF.gif");
 const winGIF = require("../../Graphics/winGIF.gif");
 
 const userIcon = require("../../Graphics/userIcon.png");
