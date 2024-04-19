@@ -102,20 +102,25 @@ io.on("connection", (socket: Socket) => {
           // check if the game is over
           if(!games[gameID].gameWon){
             games[gameID] = handleStartRound(games[gameID]);
-
           }
 
         } 
         
         // Round not over, start new betting round
         else {
-          games[gameID] = handleStartBettingRound(games[gameID]);
+          if (!games[gameID].gameWon)
+            {
+              games[gameID] = handleStartBettingRound(games[gameID]);
+            }
+          
         }
       }
    
-
+    
     setTimeout(() => {
-      io.to(gameID).emit("handledButtonPressed", games[gameID]);
+      console.log("Game won? " + games[gameID].gameWon)
+      if (!games[gameID].gameWon) {
+      io.to(gameID).emit("handledButtonPressed", games[gameID]);}
     }, 250);
   });
 

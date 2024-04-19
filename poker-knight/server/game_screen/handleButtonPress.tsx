@@ -16,7 +16,6 @@ export const handleButtonPress = (
     game.potSize += call_diff; // Update Pot Value
     curPlayer.lastTurnCheckFG = false;
     game = nextPlayer(game); // Move to next player
-    dispGame(game);
     return game;
 
     // Fold logic
@@ -47,18 +46,16 @@ export const handleButtonPress = (
     game = nextPlayer(game); // Move to next player
   } // All-in logic
   else if (buttonPressed === "all-in") {
-    const call_diff = betValue - curPlayer.lastBet;
-    console.log(betValue + " " + curPlayer.lastBet + " " + call_diff);
+    //const call_diff = betValue - curPlayer.lastBet;
+    game.potSize += curPlayer.money;
     curPlayer.lastBet += curPlayer.money; // Update last bet
     curPlayer.money = 0; // Reflect bet
-    game.potSize += call_diff; // Update Pot Value
     if (curPlayer.lastBet > game.currentBet)
       game.currentBet = curPlayer.lastBet; // Set current bet to players worth
     curPlayer.allInFg = true; // Player is all in
     game = nextPlayer(game); // Move to next player
   }
   curPlayer.lastTurnCheckFG = false;
-  dispGame(game);
   return game;
 };
 

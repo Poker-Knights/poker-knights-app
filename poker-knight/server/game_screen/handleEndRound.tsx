@@ -99,6 +99,26 @@ export const handleEndRound = (io: Server, gameID: string, game: Game) => {
   game.currentBet = 0;
 
   
+    // If a players money falls at or below zero they are eliminated
+    game.players.forEach((player) => {
+      if (player.money <= 0) {
+        player.eliminated = true;
+      }
+    });
+  
+    // Iterate through the players and if 3 eliminated, set gameWon to true
+    let eliminatedPlayers = 0;
+    game.players.forEach((player) => {
+      if (player.eliminated) {
+        eliminatedPlayers++;
+      }
+    });
+  
+    if (eliminatedPlayers === PLAYER_COUNT - 1) {
+      console.log (" HANDLE END ROUND SETS GAME WON AS TRUE")
+      game.gameWon = true;
+    }
+  
   
   // Emit the winner to the client
   io.to(gameID).emit("handledWinner", game, winningUsername, winningHandDescription);
@@ -107,24 +127,6 @@ export const handleEndRound = (io: Server, gameID: string, game: Game) => {
   resetCards(game);
 
 
-  // If a players money falls at or below zero they are eliminated
-  game.players.forEach((player) => {
-    if (player.money <= 0) {
-      player.eliminated = true;
-    }
-  });
-
-  // Iterate through the players and if 3 eliminated, set gameWon to true
-  let eliminatedPlayers = 0;
-  game.players.forEach((player) => {
-    if (player.eliminated) {
-      eliminatedPlayers++;
-    }
-  });
-
-  if (eliminatedPlayers === PLAYER_COUNT - 1) {
-    game.gameWon = true;
-  }
 
   // add delay before returning the game
   for (let i = 0; i < 6000000000; i++) {
