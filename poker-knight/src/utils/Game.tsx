@@ -1,4 +1,5 @@
 // util/Game.tsx
+import { Alert } from "react-native";
 import { Socket } from "socket.io-client";
 import { Player, Game } from "../types/Game";
 
@@ -60,9 +61,7 @@ const handleExitConfirmPress = (
       `Disconnecting player ${socketRef.current.id} from game ${gameID}`
     );
 
-    const playerID = socketRef.current.id;
-
-    socketRef.current.emit("exitGame", playerID, gameID);
+    socketRef.current.emit("exitGame", (gameID));
   }
 };
 

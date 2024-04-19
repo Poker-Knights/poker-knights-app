@@ -125,10 +125,29 @@ io.on("connection", (socket: Socket) => {
   });
 
   // Exit logic here
+  socket.on("exitGame", (gameID) => {
+    setTimeout(() => {
+      io.to(gameID).emit("navigateHome");
+    }, 250);
+
+    setTimeout(() => {
+      delete games[gameID];
+    }, 2000);
+  });
 
   // Example of disconnect event
   socket.on("disconnect", () => {
     console.log(`User disconnected: ${socket.id}`);
+
+    let gameID = "";
+    for (const key in games) {
+      if (games[key].players.some((player) => player.id === socket.id)) {
+        gameID = key;
+        break;
+      }
+    }
+
+    io.to(gameID).emit("navigateHome");
   });
 });
 
