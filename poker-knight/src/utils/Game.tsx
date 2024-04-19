@@ -61,9 +61,7 @@ const handleExitConfirmPress = (
       `Disconnecting player ${socketRef.current.id} from game ${gameID}`
     );
 
-    Alert.alert("Player exited! Disconnecting from game...");
-
-    socketRef.current.emit("exitGame", gameID);
+    socketRef.current.emit("exitGame", (gameID));
   }
 };
 

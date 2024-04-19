@@ -14,6 +14,7 @@ import {
   Image,
   ImageBackground,
   Button,
+  Alert,
 } from "react-native";
 
 import { formatCurrency } from "../../utils/Money";
@@ -135,6 +136,14 @@ const GameScreen = ({ navigation, route }: Props) => {
 
   // Access the socket from the context
   const socketRef = useContext(SocketContext);
+  
+  const handleNavigationHome = () => {
+    Alert.alert("Player exited! Disconnecting from game...");
+
+    console.log("Exiting game");
+
+    navigation.navigate("Home");
+  };
 
   // When compoment mounts, connect to the server, determine available actions
   useEffect(() => {
@@ -163,10 +172,6 @@ const GameScreen = ({ navigation, route }: Props) => {
       socketRef.current.on("gameExited", exitGameHandler);
     }
     
-    const handleNavigationHome = () => {
-      navigation.navigate("Home");
-    };
-  
     socketRef.current.on("navigateHome", handleNavigationHome);
 
     // Cleanup on component unmount
@@ -174,8 +179,7 @@ const GameScreen = ({ navigation, route }: Props) => {
       if (socketRef.current) {
         socketRef.current.off("gameExited", exitGameHandler);
         socketRef.current.off("navigateHome", handleNavigationHome);
-        socketRef.current.disconnect();
-        navigation.navigate("Home");
+        // navigation.navigate("Home");
       }
     };
   }, [navigation]);
@@ -223,17 +227,10 @@ const GameScreen = ({ navigation, route }: Props) => {
       setCurRaiseVal(updatedGame.currentBet);
     });
 
-    const handleNavigationHome = () => {
-      navigation.navigate("Home");
-    };
-  
-    socketRef.current.on("navigateHome", handleNavigationHome);
-
     return () => {
       if (socketRef.current) {
         socketRef.current.off("handledButtonPressed");
         socketRef.current.off("handledWinner");
-        socketRef.current.off("navigateHome", handleNavigationHome);
       }
     };
   }, [triggeredButton]);
@@ -258,7 +255,7 @@ const GameScreen = ({ navigation, route }: Props) => {
     if (!socketRef) {
       return;
     }
-    handleExitConfirmPress(socketRef, Game.id);
+    handleExitConfirmPress(socketRef, theGame.id);
   };
 
   // Function to handle when buttons are pressed  // export this to utils file for game

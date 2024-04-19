@@ -124,13 +124,15 @@ io.on("connection", (socket: Socket) => {
     setTimeout(() => {
       io.to(gameID).emit("navigateHome");
     }, 250);
+
+    setTimeout(() => {
+      delete games[gameID];
+    }, 2000);
   });
 
   // Example of disconnect event
   socket.on("disconnect", () => {
     console.log(`User disconnected: ${socket.id}`);
-
-    // FIX TO EMIT ONLY TO SPECIFIC ROOM
 
     let gameID = "";
     for (const key in games) {
