@@ -76,11 +76,9 @@ const Loading = ({ navigation, route }: Props) => {
     let timer: any; // Declare timer here for broader scope
 
     const handleGameStarted = (initGame: any) => {
-      console.log("Game Started Event Recieved");
       setUpdatedGame(initGame);
 
       timer = setTimeout(() => {
-        console.log("Navigating to Game Screen");
         navigation.navigate("Game", {
           Game: initGame,
           username: username,
@@ -89,7 +87,6 @@ const Loading = ({ navigation, route }: Props) => {
     };
 
     // Register the event listener
-    console.log("Registering gameStarted listener");
     socketRef.current.once("gameStarted", handleGameStarted);
 
     // Cleanup function to remove listener and clear timeout if the component unmounts

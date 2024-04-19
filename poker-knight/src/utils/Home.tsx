@@ -13,7 +13,6 @@ export const createGame = (
 
   if (socketRef.current) {
     socketRef.current.emit("createGame", newGameID, hostUsername);
-    console.log("socket createGame emitted to server with ID: " + newGameID);
   }
 };
 
@@ -46,7 +45,6 @@ export const handleJoinGamePress = (username: string, navigation: any) => {
 export const handleSettingsPress = (
   setMenuVisible: (visible: boolean) => void
 ) => {
-  console.log("Settings");
   setMenuVisible(true);
 };
 

@@ -24,13 +24,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import io, { Socket } from "socket.io-client";
 import { SocketContext } from "../../../App";
 import { SERVER_URL } from "../../utils/socket";
+import { Game, Player } from "../../types/Game";
 
 type Props = {
   navigation: StackNavigationProp<StackParamList, "Join">;
 };
-
-import { Game, Player } from "../../types/Game";
-//import { initializePlayers } from "../../utils/Game";
 
 const Home = ({ navigation }: Props) => {
   React.useLayoutEffect(() => {
@@ -44,13 +42,6 @@ const Home = ({ navigation }: Props) => {
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
   const [game, setGame] = useState<Game | null>(null);
   const socketRef = useContext(SocketContext);
-
-  // useEffect is a hook that runs after the first render of the component
-  // It is used to perform side effects like data fetching, subscriptions, or manual DOM manipulations
-  // It runs after the render has been committed to the screen
-  // It is safe to perform side effects in this function
-  // Allows re renders of the component to be skipped if the props or state haven't changed
-  // such as when the user is typing in the input field, the component doesn't need to re render
 
   useEffect(() => {
     if (!socketRef) return; // Early return if null
@@ -76,7 +67,9 @@ const Home = ({ navigation }: Props) => {
 
   // Event emitters & helper functions for buttons
   const onCreateGame = () => {
-    if (!socketRef) { return; }
+    if (!socketRef) {
+      return;
+    }
     createGame(username, socketRef, setGameId);
   };
   const onHostGamePress = () => handleHostGamePress(username, onCreateGame);

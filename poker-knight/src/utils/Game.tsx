@@ -35,7 +35,6 @@ const generateAvatar = (players: Player[]): string => {
 
 // Function to remove a player from the specified game
 const removePlayer = (socketId: string, game: Game) => {
-  console.log(`Current player count: ${game.playerCount}`);
   console.log(`Removing user: ${socketId} from player list`);
 
   // Iterate through all players in game
@@ -48,7 +47,6 @@ const removePlayer = (socketId: string, game: Game) => {
     }
   }
 
-  console.log(`Updated players count: ${game.playerCount}`);
 
   return game.players; // Return players left in the game for any further use
 };
@@ -57,9 +55,6 @@ const handleExitConfirmPress = (
   gameID: string
 ) => {
   if (socketRef.current) {
-    console.log(
-      `Disconnecting player ${socketRef.current.id} from game ${gameID}`
-    );
 
     socketRef.current.emit("exitGame", (gameID));
   }
@@ -71,12 +66,8 @@ const handleExit =
     if (socketRef.current) {
       socketRef.current.disconnect();
 
-      console.log("Exit game was successful");
-
       navigation.navigate("Home");
-    } else {
-      console.log("Exit game was unsuccessful");
-    }
+    } 
   };
 
 // Export each function separately

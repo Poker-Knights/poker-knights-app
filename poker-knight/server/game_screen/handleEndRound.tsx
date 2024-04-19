@@ -4,11 +4,15 @@ import { returnWinners, resetCards } from "./cardUtils";
 import { PLAYER_COUNT } from "../../src/utils/socket";
 
 export const handleEndRound = (io: Server, gameID: string, game: Game) => {
-
-  console.log("HANDLING END ROUND")
+  console.log("HANDLING END ROUND");
 
   // Perform Hand Analysis
-  let winners: { username: string; rank: number; cardArray: string[]; descr: string}[] = [];
+  let winners: {
+    username: string;
+    rank: number;
+    cardArray: string[];
+    descr: string;
+  }[] = [];
   let players = game.players;
   let winPlayer: Player[] = [];
 
@@ -17,19 +21,20 @@ export const handleEndRound = (io: Server, gameID: string, game: Game) => {
 
   let winningHandDescription = winners[0].descr;
   let winningUsername = winners[0].username;
-  
+
   // Round winner chips += potSize
   let payouts = game.potSize;
   let paidout = 0;
-  
+
   players.forEach((player, index) => {
-    winPlayer[index] = game.players.find((p) => p.name === winners[index].username)!;
+    winPlayer[index] = game.players.find(
+      (p) => p.name === winners[index].username
+    )!;
   });
-  
+
   winPlayer.forEach((player, index) => {
     // If the player has been eliminated or they folded, make sure they don't get any winnings and move on to the next player
-    if (player.eliminated || player.foldFG)
-      return;
+    if (player.eliminated || player.foldFG) return;
 
     if (player.name === winners[0].username) {
       winPlayer[index].money += winPlayer[index].splitPotVal;
@@ -38,101 +43,70 @@ export const handleEndRound = (io: Server, gameID: string, game: Game) => {
 
       // Set the winner's isWinner flag to true
       winPlayer[index].isRoundWinner = true;
-      console.log("Player: " + player.name + " Winnings " + winPlayer[index].splitPotVal + " Payouts " + payouts);
+      console.log(
+        "Player: " +
+          player.name +
+          " Winnings " +
+          winPlayer[index].splitPotVal +
+          " Payouts " +
+          payouts
+      );
     }
 
-    if ((payouts != 0) && (player.name !== winners[0].username)) {
+    if (payouts != 0 && player.name !== winners[0].username) {
       let winnings = winPlayer[index].splitPotVal - paidout;
       if (winnings > 0) {
         winPlayer[index].money += winnings;
         payouts -= winnings;
         paidout += winnings;
-        
-        console.log("After first winner - Player: " + player.name + " Winnings " + winnings)
-      }
 
+        console.log(
+          "After first winner - Player: " +
+            player.name +
+            " Winnings " +
+            winnings
+        );
+      }
     }
   });
-
-  // // Find the winning player if they are not already eliminated
-  // let winPlayer1: Player = game.players.find((p) => p.name === winners[0].username)!;
-  // let winPlayer2: Player = game.players.find((p) => p.name === winners[1].username)!;
-  // let winPlayer3: Player = game.players.find((p) => p.name === winners[2].username)!;
-  // let winPlayer4: Player = game.players.find((p) => p.name === winners[3].username)!;
-
-  // // First place
-  // winPlayer1.money += winPlayer1.splitPotVal; // Pay them their winnings
-  // payouts -= winPlayer1.splitPotVal; // Subtract from winnings
-  // paidout += winPlayer1.splitPotVal;
-
-  // // Second place if needed
-  // if (payouts != 0) {
-  //   let winnings = winPlayer2.splitPotVal - paidout;
-  //   if (winnings > 0) {
-  //     winPlayer2.money += winnings; // Pay them their winnings
-  //     payouts -= winnings; // Subtract from winnings
-  //     paidout += winnings;
-  //   }
-  // }
-
-  // // Third place if needed
-  // if (payouts != 0) {
-  //   let winnings = winPlayer3.splitPotVal - paidout;
-  //   if (winnings > 0) {
-  //     winPlayer3.money += winnings; // Pay them their winnings
-  //     payouts -= winnings; // Subtract from winnings
-  //     paidout += winnings;
-  //   }
-  // }
-
-  // // Foruth place if needed
-  // if (payouts != 0) {
-  //   let winnings = winPlayer4.splitPotVal - paidout;
-  //   if (winnings > 0) {
-  //     winPlayer4.money += winnings; // Pay them their winnings
-  //     payouts -= winnings; // Subtract from winnings
-  //     paidout += winnings;
-  //   }
-  // }
 
   game.potSize = 0;
   game.currentBet = 0;
 
-  
-    // If a players money falls at or below zero they are eliminated
-    game.players.forEach((player) => {
-      if (player.money <= 0) {
-        player.eliminated = true;
-      }
-    });
-  
-    // Iterate through the players and if 3 eliminated, set gameWon to true
-    let eliminatedPlayers = 0;
-    game.players.forEach((player) => {
-      if (player.eliminated) {
-        eliminatedPlayers++;
-      }
-    });
-  
-    if (eliminatedPlayers === PLAYER_COUNT - 1) {
-      console.log (" HANDLE END ROUND SETS GAME WON AS TRUE")
-      game.gameWon = true;
+  // If a players money falls at or below zero they are eliminated
+  game.players.forEach((player) => {
+    if (player.money <= 0) {
+      player.eliminated = true;
     }
-  
-  
+  });
+
+  // Iterate through the players and if 3 eliminated, set gameWon to true
+  let eliminatedPlayers = 0;
+  game.players.forEach((player) => {
+    if (player.eliminated) {
+      eliminatedPlayers++;
+    }
+  });
+
+  if (eliminatedPlayers === PLAYER_COUNT - 1) {
+    game.gameWon = true;
+  }
+
   // Emit the winner to the client
-  io.to(gameID).emit("handledWinner", game, winningUsername, winningHandDescription);
+  io.to(gameID).emit(
+    "handledWinner",
+    game,
+    winningUsername,
+    winningHandDescription
+  );
 
   // Undeal/remove Cards
   resetCards(game);
-
-
 
   // add delay before returning the game
   for (let i = 0; i < 6000000000; i++) {
     // do nothing
   }
-
 
   game.roundCount++;
 

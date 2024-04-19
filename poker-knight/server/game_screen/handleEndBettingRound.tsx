@@ -4,15 +4,16 @@ import { Game } from "../../src/types/Game";
 import { PLAYER_COUNT } from "../../src/utils/socket";
 import { handleAllIn } from "./handleAllIn";
 
-export const handleEndBettingRound = (io: Server, gameID: string, game:Game) => {
-
+export const handleEndBettingRound = (
+  io: Server,
+  gameID: string,
+  game: Game
+) => {
   // Increment Betting Round
   game.curBettingRound++;
 
-
-        // Save current pots
+  // Save current pots
   game.players.forEach((curPlayer) => {
-
     // If the player is eliminated skip them
     if (curPlayer.eliminated) return;
     // If the player had to go all in
@@ -33,21 +34,20 @@ export const handleEndBettingRound = (io: Server, gameID: string, game:Game) => 
     }
   });
 
-
   let allInCount = 0;
   let numOfFoldedPlayers = 0;
   game.players.forEach((player) => {
-    if(player.allInFg){
+    if (player.allInFg) {
       allInCount++;
     }
-    if(player.foldFG || player.eliminated){
+    if (player.foldFG || player.eliminated) {
       numOfFoldedPlayers++;
     }
   });
 
-  console.log("ALL IN COUNT: " + allInCount)
-  console.log("NUM OF FOLDED PLAYERS: " + numOfFoldedPlayers)
-  if(allInCount >= (PLAYER_COUNT - numOfFoldedPlayers - 1)){
+  console.log("ALL IN COUNT: " + allInCount);
+  console.log("NUM OF FOLDED PLAYERS: " + numOfFoldedPlayers);
+  if (allInCount >= PLAYER_COUNT - numOfFoldedPlayers - 1) {
     game = handleAllIn(io, gameID, game);
   }
 

@@ -7,7 +7,6 @@ export const handleButtonPress = (
 ) => {
   // Handle button presses
   // CallLogic
-  console.log(buttonPressed);
   const curPlayer = game.players[game.currentPlayer - 1]; // Get current player
   if (buttonPressed === "call") {
     const call_diff = game.currentBet - curPlayer.lastBet;
@@ -120,7 +119,6 @@ export const dispGame = (game: Game) => {
         player.allInFg +
         " Eliminated: " +
         player.eliminated
-        
     );
   });
   console.log("-------------------------------------");

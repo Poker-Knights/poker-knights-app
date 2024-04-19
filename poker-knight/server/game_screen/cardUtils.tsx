@@ -32,8 +32,8 @@ export const dealRiverCards = (game: Game, caseNumber: number) => {
       // game.riverCards.push("back");
       cardIndex++;
     }
-  }
-  else if (caseNumber == 3) { // Case to deal all remaining cards (2 cards)
+  } else if (caseNumber == 3) {
+    // Case to deal all remaining cards (2 cards)
     for (let i = 0; i < 5; i++) {
       if (game.riverCards[i] === "back") {
         const randomIndex = Math.floor(Math.random() * game.deckCards.length);
@@ -45,7 +45,6 @@ export const dealRiverCards = (game: Game, caseNumber: number) => {
 
   return game;
 };
-
 
 export const dealPlayerCards = (game: Game) => {
   // Function to deal player cards, removing them from deck
@@ -139,45 +138,47 @@ export const parseCardNames = (cardNames: string[]): string[] => {
 
 export const returnWinners = (game: Game) => {
   var Hand = require("pokersolver").Hand;
-  var playerRanks: { username: string; rank: number; cardArray: string[]; descr: string; isValid: boolean}[] = [];
+  var playerRanks: {
+    username: string;
+    rank: number;
+    cardArray: string[];
+    descr: string;
+    isValid: boolean;
+  }[] = [];
   game.players.forEach((player) => {
     var concatArray: string[] = player.playerCards.concat(game.riverCards);
     var parsedArray: string[] = parseCardNames(concatArray);
-    console.log("Parsed Array: " + parsedArray);
-    // console.log(player.name + " rank: " + rank, "descr: " + Hand.solve(parsedArray).descr);
-    if (!(player.eliminated) && !(player.foldFG))
-      {
-      console.log("Player: " + player.name + " is eliminated? " + player.eliminated + " Folded? " + player.foldFG);
+    if (!player.eliminated && !player.foldFG) {
       var tempHand = Hand.solve(parsedArray);
       var rank = tempHand.rank;
       var descr = tempHand.descr;
-      playerRanks.push({ username: player.name, rank: rank, cardArray: parsedArray, descr: descr, isValid: true});
-    }
-    else
-    {
-      playerRanks.push({ username: player.name, rank: -1, cardArray: parsedArray, descr: "NA", isValid: false});
+      playerRanks.push({
+        username: player.name,
+        rank: rank,
+        cardArray: parsedArray,
+        descr: descr,
+        isValid: true,
+      });
+    } else {
+      playerRanks.push({
+        username: player.name,
+        rank: -1,
+        cardArray: parsedArray,
+        descr: "NA",
+        isValid: false,
+      });
     }
   });
 
   // Accessing the cardArray field of the first player
-  // console.log("Card Array of the first player: " + playerRanks[0].cardArray);
-  // console.log("Player Ranks: " + playerRanks);
-  // playerRanks.sort((a, b) => a.rank - b.rank);
   playerRanks.sort((a, b) => {
-    if (a.isValid && !b.isValid)
-    {
+    if (a.isValid && !b.isValid) {
       return -1;
-    }
-    else if (!a.isValid && b.isValid)
-    {
+    } else if (!a.isValid && b.isValid) {
       return 1;
-    }
-    else if (!a.isValid && !b.isValid)
-    {
+    } else if (!a.isValid && !b.isValid) {
       return -1;
-    }
-    else
-    {
+    } else {
       const handA = Hand.solve(a.cardArray);
       const handB = Hand.solve(b.cardArray);
       return Hand.winners([handA, handB])[0] === handA ? -1 : 1;

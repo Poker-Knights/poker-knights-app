@@ -1,5 +1,6 @@
 // App.js
 import React, { RefObject, useRef, useEffect, useState, useContext, createContext } from "react";
+import { LogBox } from "react-native";
 import * as Font from "expo-font";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -14,6 +15,8 @@ import { useFonts } from "./src/utils/useFonts";
 import { SERVER_URL } from './src/utils/socket'; // Make sure you have the correct path to your server URL
 import { Game } from "./src/types/Game";
 //import { playerCount } from "./src/utils/Game";
+
+LogBox.ignoreAllLogs();
 
 // Create a type that can be either a socket or null
 type SocketRef = RefObject<Socket | null>;

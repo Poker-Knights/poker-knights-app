@@ -15,7 +15,7 @@ export const handleCreateGame =
       littleBlindBet: 10,
       bigBlindBet: 20,
       potSize: 0,
-      playerCount: 0, // Will be updated when adding a player
+      playerCount: 0,
       currentBet: 0,
       currentPlayer: 1,
       checkCounter: 0,
@@ -85,8 +85,6 @@ export const handleCreateGame =
 
     // Store the new game in the games object
     games[gameID] = newGame;
-
-    console.log("Server Side Creating Game");
 
     // Notify the creator that the game has been created successfully
     socket.emit("gameCreated", { gameState: newGame });

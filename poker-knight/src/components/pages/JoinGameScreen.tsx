@@ -3,7 +3,13 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamList } from "../../../App";
 import { Game } from "../../types/Game";
 import { styles } from "../../styles/JoinGameScreenStyles";
-import { handleJoinPress, handleBackPress, handleGameJoined, handleGameNotFound, handleUsernameTaken } from "../../utils/Join";
+import {
+  handleJoinPress,
+  handleBackPress,
+  handleGameJoined,
+  handleGameNotFound,
+  handleUsernameTaken,
+} from "../../utils/Join";
 
 import {
   StatusBar,
@@ -18,9 +24,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RouteProp } from "@react-navigation/native";
 //import { addPlayer } from "../../utils/Game";
-import io, { Socket } from 'socket.io-client';
+import io, { Socket } from "socket.io-client";
 import { SocketContext } from "../../../App";
-import {SERVER_URL} from '../../utils/socket';
+import { SERVER_URL } from "../../utils/socket";
 
 type GameScreenRouteProp = RouteProp<StackParamList, "Join">;
 
@@ -30,7 +36,7 @@ type Props = {
 };
 
 const Join = ({ navigation, route }: Props) => {
-  const {username} = route.params;
+  const { username } = route.params;
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false, // Set this to false to hide the navigation bar
@@ -41,8 +47,8 @@ const Join = ({ navigation, route }: Props) => {
   const socketRef = useContext(SocketContext);
   const [gameID, setGameID] = useState("");
 
-   // Set up socket connection and event listeners
-   useEffect(() => {
+  // Set up socket connection and event listeners
+  useEffect(() => {
     if (!socketRef) return; // Early return if null
 
     // Bind necessary parameters to the handlers
@@ -51,29 +57,28 @@ const Join = ({ navigation, route }: Props) => {
     const usernameTakenHandler = handleUsernameTaken();
 
     if (socketRef.current) {
-      socketRef.current.on('gameJoined', gameJoinedHandler);
-      socketRef.current.on('gameNotFound', gameNotFoundHandler);
-      socketRef.current.on('usernameTaken', usernameTakenHandler);
+      socketRef.current.on("gameJoined", gameJoinedHandler);
+      socketRef.current.on("gameNotFound", gameNotFoundHandler);
+      socketRef.current.on("usernameTaken", usernameTakenHandler);
     }
 
     // Cleanup on component unmount
     return () => {
       if (socketRef.current) {
-        socketRef.current.off('gameJoined', gameJoinedHandler);
-        socketRef.current.off('gameNotFound', gameNotFoundHandler);
-        socketRef.current.off('usernameTaken', usernameTakenHandler);
+        socketRef.current.off("gameJoined", gameJoinedHandler);
+        socketRef.current.off("gameNotFound", gameNotFoundHandler);
+        socketRef.current.off("usernameTaken", usernameTakenHandler);
       }
     };
   }, [navigation]);
 
-
   const onJoinPress = () => {
-    if (!socketRef) { return; }
-    handleJoinPress(socketRef, username, gameID); 
+    if (!socketRef) {
+      return;
+    }
+    handleJoinPress(socketRef, username, gameID);
   };
   const onBackPress = () => handleBackPress(navigation);
-
-
 
   return (
     <SafeAreaView style={styles.container}>
@@ -86,22 +91,14 @@ const Join = ({ navigation, route }: Props) => {
         <Text style={styles.subtitle}> </Text>
       </View>
 
-      {/* <View style={styles.knightContainer}>
-        <Image
-          source={require("../../Graphics/knight.png")}
-          style={styles.knightIcon}
-          resizeMode="contain" // This will make sure the entire icon is visible
-        />
-      </View> */}
-
       <View style={styles.gameIDContainer}>
         <TextInput
           style={styles.gameIDInput}
           textAlign={"center"}
           keyboardType="numeric"
-          onChangeText= {setGameID}
+          onChangeText={setGameID}
           maxLength={6} // Placeholder
-          value = {gameID} // Convert gameID to string
+          value={gameID} // Convert gameID to string
           placeholder="Game ID"
           placeholderTextColor="#a9a9a9" // Placeholder text color
           autoCapitalize="none"

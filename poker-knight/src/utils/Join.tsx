@@ -14,13 +14,12 @@ export const handleJoinPress = (
 
   // verify that the gameID is valid
   if (socketRef.current) {
-    console.log("Attempting to join game with id: " + gameID);
+    ("Attempting to join game with id: " + gameID);
     socketRef.current.emit("attemptToJoin", gameID, username);
   }
 };
 
 export const handleBackPress = (navigation: any) => {
-  console.log("Back Arrow Pressed");
   // disconnect from the socket
   navigation.navigate("Home");
 };
@@ -32,7 +31,6 @@ export const handleGameJoined =
   (navigation: any, username: string, socketRef: React.RefObject<any>) =>
   (data: any) => {
     const joiningGame: Game = data.gameState;
-    console.log("Attempting to join game, game data: " + joiningGame);
     navigation.navigate("Loading", { username, Game: joiningGame });
   };
 

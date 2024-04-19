@@ -42,23 +42,25 @@ const generateAvatar = (players: Player[]): string => {
     avatar2: "https://i.imgur.com/hUCwjoo.png",
     avatar3: "https://i.imgur.com/qHv9k6L.png",
     avatar4: "https://i.imgur.com/KdByOkp.png",
+    avatar5: "https://i.imgur.com/om832wf.png",
     // Add all other avatars here
   };
 
   // Get the keys of the avatarImages object
   const avatarKeys = Object.keys(avatarImages);
 
-  const playerCount = players.length;
+  // Filter out the avatars that are already in use
+  const usedAvatars = new Set(players.map((player) => player.avatarUri));
+  const availableAvatars = avatarKeys.filter(
+    (key) => !usedAvatars.has(avatarImages[key])
+  );
 
-  // Get a random index to select an avatar
-  const randomIndex = Math.floor(Math.random() * avatarKeys.length);
+  // If no avatars are available, handle this case (e.g., return null or a default image)
+  if (availableAvatars.length === 0) {
+    return defaultAvatar; // or return a default image URL
+  }
 
-  // Check if the selected avatar is already in use, if not, return it
-  if (
-    players.every(
-      (player) => player.avatarUri !== avatarImages[avatarKeys[randomIndex]]
-    )
-  ) {
-    return avatarImages[avatarKeys[randomIndex]];
-  } else return defaultAvatar;
+  // Select a random avatar from the remaining unused avatars
+  const randomIndex = Math.floor(Math.random() * availableAvatars.length);
+  return avatarImages[availableAvatars[randomIndex]];
 };

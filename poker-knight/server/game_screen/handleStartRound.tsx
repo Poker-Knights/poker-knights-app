@@ -23,10 +23,6 @@ export const handleStartRound = (game: Game) => {
   });
 
   // Assign Blind Bets
-
-  // Here we need to find the next player who hasn't been eliminated, make them the little blind, if this instance isnt the first round
-
-
   if (game.roundCount !== 0) {
     let currLittleBlind = game.curLittleBlind + 1;
     if (currLittleBlind === game.playerCount + 1) currLittleBlind = 1;
@@ -38,24 +34,18 @@ export const handleStartRound = (game: Game) => {
     game.curLittleBlind = currLittleBlind;
   }
 
-
   if (players[game.curLittleBlind - 1].money <= game.littleBlindBet) {
     players[game.curLittleBlind - 1].allInFg = true;
-    players[game.curLittleBlind - 1].lastBet = players[game.curLittleBlind - 1].money;
+    players[game.curLittleBlind - 1].lastBet =
+      players[game.curLittleBlind - 1].money;
     players[game.curLittleBlind - 1].money = 0;
-  }
-
-  else{
-
+  } else {
     players[game.curLittleBlind - 1].money -= game.littleBlindBet;
   }
-  
-  // if the player's money goes below 0, make them go all in, set their approriate last bets
 
   players[game.curLittleBlind - 1].isLittleBlind = true;
   players[game.curLittleBlind - 1].lastBet = game.littleBlindBet;
   game.potSize += players[game.curLittleBlind - 1].lastBet;
-
 
   if (game.roundCount !== 0) {
     let curBigInd = game.curLittleBlind + 1;
@@ -71,13 +61,10 @@ export const handleStartRound = (game: Game) => {
     players[game.curBigBlind - 1].allInFg = true;
     players[game.curBigBlind - 1].lastBet = players[game.curBigBlind - 1].money;
     players[game.curBigBlind - 1].money = 0;
-  }
-
-  else
-  {
+  } else {
     players[game.curBigBlind - 1].money -= game.bigBlindBet;
   }
-  
+
   players[game.curBigBlind - 1].isBigBlind = true;
   players[game.curBigBlind - 1].lastBet = game.bigBlindBet;
   game.potSize += players[game.curBigBlind - 1].lastBet;
@@ -103,20 +90,8 @@ export const handleStartRound = (game: Game) => {
 
   game.currentBet = game.bigBlindBet;
 
-  console.log("Updated Little Blind: " + players[game.curLittleBlind - 1].name)
-  console.log("Updated Big Blind: " + players[game.curBigBlind - 1].name)
-
   game = handleStartBettingRound(game);
 
-  console.log(" Little Blind After Start Betting Round: " + players[game.curLittleBlind - 1].name)
-  console.log("Updated Big Blind After Start Betting Round : " + players[game.curBigBlind - 1].name)
-
-  // iterate through the players and display whether or not its their turn 
-  console.log("-----------------")
-  players.forEach((player) => {
-    console.log(player.name + " " + player.currentTurn);
-  });
-  console.log("-----------------")
   // Start betting round
   return game;
 };
