@@ -73,7 +73,7 @@ io.on("connection", (socket: Socket) => {
         endBettingRoundFG = false;
       }
 
-      if (player.foldFG || player.eliminated) {
+      if (player.foldFG) {
         numOfFoldedPlayers++;
         if (player.lastTurnCheckFG) {
           games[gameID].checkCounter--;
