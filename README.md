@@ -1,7 +1,5 @@
 # Poker Knights 
-
-<a href="url"><img src="http://url.to/image.png](https://github.com/Poker-Knights/poker-knight-app/assets/114107991/1ac88232-2d77-444c-8781-32c972a8a436" align="left" height="100" width="100" ></a>
-
+<img src="[https://your-image-url.type](https://github.com/Poker-Knights/poker-knight-app/assets/114107991/1ac88232-2d77-444c-8781-32c972a8a436)" width="400" height="400"
 ## Overview
 
 Poker Knights is a simple, cross-platform poker game for Android and iOS. It features a lovingly crafted 8-bit aesthetic and supports up to 4 players over LAN. Poker Knights is built using React Native, Node, and Express and features the pokersolver library (credit: goldfire) for hand analysis.
