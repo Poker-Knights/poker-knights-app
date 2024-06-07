@@ -1,5 +1,5 @@
 # Poker Knights 
-<img src="[https://your-image-url.type]([https://github.com/Poker-Knights/poker-knight-app/assets/114107991/1ac88232-2d77-444c-8781-32c972a8a436](https://github.com/Poker-Knights/poker-knight-app/blob/f3ef14fe09faf52e4cb90963d76df676d40bc4b2/poker-knight/src/Graphics/PKLogo.png))" width="400" height="400"/>
+<img src="https://github.com/Poker-Knights/poker-knight-app/blob/f3ef14fe09faf52e4cb90963d76df676d40bc4b2/poker-knight/src/Graphics/PKLogo.png" width="400" height="400"/>
 
 ## Overview
 
