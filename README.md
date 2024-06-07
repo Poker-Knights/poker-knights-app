@@ -17,8 +17,8 @@ Poker Knights is a simple, cross-platform poker game for Android and iOS. It fea
 To run this app locally, make sure you have Node.js and Yarn installed on your machine. Then, clone this repository and install the required dependencies using Yarn:
 
 ````bash
-git clone <https://github.com/Poker-Knights/poker-knight-app>
-cd poker-knight-app
+git clone <https://github.com/Poker-Knights/poker-knights-app>
+cd poker-knights-app
 yarn install
 
 yarn add @expo/metro-runtime@^3.1.3
