@@ -1,18 +1,19 @@
-# poker-knight-app
+# Poker Knights 
 
-This repository contains the code for our Poker Project.
+![Poker Knights Logo]([http://url/to/img.png](https://github.com/Poker-Knights/poker-knight-app/blob/f3ef14fe09faf52e4cb90963d76df676d40bc4b2/poker-knight/src/Graphics/PKLogo.png))
 
 ## Overview
 
-Our Poker Project, Poker Knight, is a mobile application built using React Native and Expo. It provides a platform for users to play poker games and engage in multiplayer sessions with friends when you don't have a poker set! The app offers a simplistic 8 bit design, features such as real-time game interaction, and integration with the pokersolver library for hand analysis.
+Poker Knights is a simple, cross-platform poker game for Android and iOS. It features a lovingly crafted 8-bit aesthetic and supports up to 4 players over LAN. Poker Knights is built using React Native, Node, and Express and features the pokersolver library (credit: goldfire) for hand analysis.
+
 
 ## Features
 
 - **Multiplayer Poker**: Play poker games with 3 other friends on the same LAN connection.
-- **Hand Analysis**: Utilize the pokersolver library for hand analysis and evaluation.
+- **Hand Analysis**: Utilizes the pokersolver library for hand analysis and evaluation.
 - **Cross-Platform Compatibility**: Compatible with both iOS and Android devices.
 
-## Installation
+## Build Instructions
 
 To run this app locally, make sure you have Node.js and Yarn installed on your machine. Then, clone this repository and install the required dependencies using Yarn:
 
