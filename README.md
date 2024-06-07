@@ -1,6 +1,7 @@
 # Poker Knights 
 
 ![Poker Knights Logo](https://github.com/Poker-Knights/poker-knight-app/assets/114107991/1ac88232-2d77-444c-8781-32c972a8a436)
+<a href="url"><img src="[http://url.to/image.png](https://github.com/Poker-Knights/poker-knight-app/assets/114107991/1ac88232-2d77-444c-8781-32c972a8a436)" align="left" height="100" width="100" ></a>
 
 ## Overview
 
